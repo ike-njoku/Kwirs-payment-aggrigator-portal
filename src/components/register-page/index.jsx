@@ -45,10 +45,10 @@ const RegisterPage = () => {
             </h3>
             <form className="w-full my-5">
               <PrimaryInput
-                label="full name"
-                name="fullName"
+                label="TIN"
+                name="taxIdentificationNumber"
                 type="text"
-                placeholder="eg.John Doe"
+                placeholder="N123456789"
               />
               <PrimaryInput
                 label="email"
