@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.custom-bg {
+  width: 100%;
+  background-image: url("/images/finance-bg.jpg");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
