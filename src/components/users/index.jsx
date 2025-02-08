@@ -38,26 +38,37 @@ const UsersTable = () => {
           </tr>
         </thead>
         <tbody>
-          {userList.map((user, i) => (
-            <tr
-              className="odd:bg-white even:bg-gray-100 border-b border-gray-200"
-              key={i}
-            >
-              <td scope="row" class="px-6 py-4 font-medium text-gray-900 ">
-                {user.userName}
-              </td>
-              <td class="px-6 py-4 text-gray-900 ">{user.email}</td>
-              <td class="px-6 py-4 text-gray-900">{user.phone}</td>
-              <td class="px-6 py-4 text-gray-900">{user.role}</td>
-              <td class="px-6 py-4 text-gray-900">
-                <SwitchIcon
-                  isActive={user.isActive}
-                  onToggle={toggleUserStatus}
-                  index={i}
-                />
+          {userList.length > 0 &&
+            userList.map((user, i) => (
+              <tr
+                className="odd:bg-white even:bg-gray-100 border-b border-gray-200"
+                key={i}
+              >
+                <td scope="row" class="px-6 py-4 font-medium text-gray-900 ">
+                  {user.userName}
+                </td>
+                <td class="px-6 py-4 text-gray-900 ">{user.email}</td>
+                <td class="px-6 py-4 text-gray-900">{user.phone}</td>
+                <td class="px-6 py-4 text-gray-900">{user.role}</td>
+                <td class="px-6 py-4 text-gray-900">
+                  <SwitchIcon
+                    isActive={user.isActive}
+                    onToggle={toggleUserStatus}
+                    index={i}
+                  />
+                </td>
+              </tr>
+            ))}
+
+          {userList.length === 0 && (
+            <tr>
+              <td colSpan={5} className="bg-white">
+                <h3 className="w-full font-semibold py-5 text-2xl text-center">
+                  No data available
+                </h3>
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </div>

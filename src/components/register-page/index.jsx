@@ -3,8 +3,16 @@ import AuthLayout from "../shared-components/auth-components/AuthLayout";
 import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 import AuthButtons from "../shared-components/buttons/AuthButtons";
 import Link from "next/link";
+import { AxiosGet } from "../../services/http-service";
 
 const RegisterPage = () => {
+  const verifyTin = () => {
+    console.log("THIS FUNCTION WAS CALLED");
+    return AxiosGet("https://jsonplaceholder.typicode.com/todos/1", "");
+  };
+
+  verifyTin();
+
   return (
     <AuthLayout>
       <div className="w-full">

@@ -15,7 +15,7 @@ const ResourcesPage = () => {
         <div className=" w-[90%] mx-auto py-5">
           <div className=" w-full lg:mt-10">
             {/* search bar and filter options here */}
-            <section className="w-full mb-3 flex justify-between items-center gap-5">
+            <section className="w-full mb-3 flex justify-end items-center gap-5 lg:justify-start">
               <button
                 id="dropdownBgHoverButton"
                 data-dropdown-toggle="dropdownBgHover"
