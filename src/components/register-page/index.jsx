@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import AuthLayout from "../shared-components/auth-components/AuthLayout";
 import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 import AuthButtons from "../shared-components/buttons/AuthButtons";
@@ -8,10 +9,39 @@ import { AxiosGet } from "../../services/http-service";
 const RegisterPage = () => {
   const verifyTin = () => {
     console.log("THIS FUNCTION WAS CALLED");
-    return AxiosGet("https://jsonplaceholder.typicode.com/todos/1", "");
+    const defaultSID = "1";
+    const uid = "";
+    const tinValidationURL = `https://fcttaxportal.fctirs.gov.ng/api/etranzact/validation/${uid}/${defaultSID}`;
+    return AxiosGet(tinValidationURL, "");
   };
 
-  verifyTin();
+  const [registerationDetails, setRegistrationDetails] = useState({
+    taxIdentificationNumber: "",
+    email: "",
+    password: "",
+  });
+
+  const [registrationButtonIsDisabled, setRegistrationButtonIsDisabled] =
+    useState(true);
+
+  const updateRegistrationDetails = (e) => {
+    const name = e.target.name;
+    setRegistrationDetails((previousValue) => ({
+      ...previousValue,
+      [name]: e.target.value,
+    }));
+
+    setRegistrationButtonIsDisabled(
+      registerationDetails.email &&
+        registerationDetails.taxIdentificationNumber &&
+        registerationDetails.password
+    );
+  };
+
+  const submitRequest = async () => {
+    window.alert("Fill out form");
+    return verifyTin();
+  };
 
   return (
     <AuthLayout>
@@ -49,21 +79,27 @@ const RegisterPage = () => {
                 name="taxIdentificationNumber"
                 type="text"
                 placeholder="N123456789"
+                handleChange={updateRegistrationDetails}
               />
               <PrimaryInput
                 label="email"
                 name="email"
                 type="email"
                 placeholder="abc@gmail.com"
+                handleChange={updateRegistrationDetails}
               />
               <PrimaryInput
                 label="password"
                 name="password"
                 type="password"
                 placeholder="********"
+                handleChange={updateRegistrationDetails}
               />
 
-              <AuthButtons label="register" />
+              <AuthButtons
+                isDisabled={registrationButtonIsDisabled}
+                label="register"
+              />
             </form>
           </div>
         </section>

@@ -28,7 +28,7 @@ const DashboardLayout = ({
       <div className="fixed max-w-[250px] w-full hidden lg:block top-0 left-0 bottom-0 bg-[rgba(32,32,32,1)]">
         <div className="w-full h-full py-6 text-white">
           <h3 className="w-full font-bold text-2xl italic px-8 my-5">
-            Easy<span className="text-pumpkin">Tax</span>
+            Quantum<span className="text-pumpkin">Gateway</span>
           </h3>
 
           <div className="w-full py-5 mt-10">
@@ -82,7 +82,7 @@ const DashboardLayout = ({
             <div className="w-[90%] mx-auto lg:hidden text-black">
               <article className="w-full flex items-center justify-between ">
                 <h3 className="w-full font-bold text-2xl italic">
-                  Easy<span className="text-pumpkin">Tax</span>
+                  Quantum<span className="text-pumpkin">Gateway</span>
                 </h3>
 
                 <button
