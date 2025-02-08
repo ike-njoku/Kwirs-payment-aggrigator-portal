@@ -27,7 +27,7 @@ const DashboardLayout = ({
     <section className="w-full ">
       <div className="fixed max-w-[250px] w-full hidden lg:block top-0 left-0 bottom-0 bg-[rgba(32,32,32,1)]">
         <div className="w-full h-full py-6 text-white">
-          <h3 className="w-full font-bold text-2xl italic px-8 my-5">
+          <h3 className="w-full font-bold text-xl italic px-8 my-5">
             Quantum<span className="text-pumpkin">Gateway</span>
           </h3>
 
