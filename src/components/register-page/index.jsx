@@ -13,11 +13,11 @@ const RegisterPage = () => {
     const uid = registerationDetails.taxIdentificationNumber;
     const tinValidationURL = `https://fcttaxportal.fctirs.gov.ng/api/etranzact/validation/${uid}/${defaultSID}`;
     const registrationResponse = await AxiosGet(tinValidationURL, "");
-
-    console.table({ DOING_THIS: "THIS " });
-    if (registrationResponse.message == TIN_VALIDATION_ERROR) {
-      console.log("----->>> ", registrationResponse.message);
+    const { data } = registrationResponse;
+    if (data.message == TIN_VALIDATION_ERROR) {
+      return {}; // this is the part where we drop toast notification
     }
+    // store the data that has come back and reroute with the new intermediary page
   };
 
   const [registerationDetails, setRegistrationDetails] = useState({

@@ -11,8 +11,14 @@ export const AxiosPost = async (url, parameters) => {
 };
 
 export const AxiosGet = async (url, parameters) => {
-  return await axios
-    .get(url, parameters)
-    .then((response) => console.log(response.data))
-    .catch((error) => showToastNotification(error.message));
+  try {
+    const httpResponse = await axios.get(url, parameters);
+    return {
+      status: httpResponse.status,
+      data: httpResponse.data,
+      statusText: httpResponse.statusText,
+    };
+  } catch (error) {
+    console.log("THIS IS AN ERROR -------->>> ", error);
+  }
 };
