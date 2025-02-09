@@ -36,7 +36,7 @@ const DashboardLayout = ({
               {sidebarMenu.map((menu, i) => (
                 <li
                   className={`w-full px-8 flex gap-2 items-center text-xl text-white capitalize py-2 ${
-                    pathname === menu.url && "bg-pumpkin"
+                    pathname.includes(menu.url) && "bg-pumpkin"
                   }`}
                   key={i}
                 >

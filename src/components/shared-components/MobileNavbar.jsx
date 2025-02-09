@@ -42,7 +42,7 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
             {sidebarMenu.map((menu, i) => (
               <li
                 className={`w-full px-6 flex gap-2 items-center text-lg text-black capitalize py-2 ${
-                  pathname === menu.url &&
+                  pathname.includes(menu.url) &&
                   "bg-pumpkin text-white rounded-[30px]"
                 }`}
                 key={i}

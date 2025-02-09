@@ -4,6 +4,7 @@ import DashCard from "./DashCard";
 import DashProfileCard from "./DashProfileCard";
 import { FaCaretDown, FaPlus } from "react-icons/fa";
 import TransctionComponent from "./TransctionComponent";
+import Link from "next/link";
 
 const UserDashboard = () => {
   return (
@@ -31,7 +32,8 @@ const UserDashboard = () => {
             <div className="lg:max-w-[600px] w-full border-2 border-gray-200 rounded-[28px] p-6 gap-8">
               {/* create transaction */}
               <section className="w-full mb-3 flex justify-end items-center gap-5">
-                <button
+                <Link
+                  href="/transactions/new"
                   id="dropdownBgHoverButton"
                   data-dropdown-toggle="dropdownBgHover"
                   className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center  relative  gap-2 border border-pumpkin"
@@ -39,7 +41,7 @@ const UserDashboard = () => {
                 >
                   New Transaction
                   <FaPlus />
-                </button>
+                </Link>
               </section>
               <div className="w-full flex items-center justify-between">
                 <article className="flex flex-col">

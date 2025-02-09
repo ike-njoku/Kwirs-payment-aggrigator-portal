@@ -2,6 +2,7 @@ import React from "react";
 import DashboardLayout from "../shared-components/layouts/DashboardLayout";
 import { FaPlus, FaCaretDown } from "react-icons/fa";
 import TransctionComponent from "../dashboard/TransctionComponent";
+import Link from "next/link";
 
 const TransactionPage = () => {
   return (
@@ -9,7 +10,8 @@ const TransactionPage = () => {
       <section className="w-full h-full mt-5">
         <div className="w-[90%] mx-auto xl:max-w-[1140px] lg:py-10">
           <section className="w-full mb-3 flex justify-end items-center gap-5">
-            <button
+            <Link
+              href="/transactions/new"
               id="dropdownBgHoverButton"
               data-dropdown-toggle="dropdownBgHover"
               className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center  relative  gap-2 border border-pumpkin"
@@ -17,7 +19,7 @@ const TransactionPage = () => {
             >
               New Transaction
               <FaPlus />
-            </button>
+            </Link>
           </section>
 
           <div className="w-full flex items-center justify-between">
