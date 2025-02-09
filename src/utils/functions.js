@@ -60,7 +60,7 @@ const displayMonth = () => {
 const displayDay = () => {
   let day = formatDate();
   let dayOfTheWeek = "";
-  switch (date.month) {
+  switch (day.month) {
     case 0:
       dayOfTheWeek = "Sun";
       break;
@@ -93,5 +93,9 @@ const displayDay = () => {
 
 export const displayDate = () => {
   let month = displayMonth();
-  return month;
+  let dayOfTheWeek = displayDay();
+  let day = formatDate().date;
+  let year = formatDate().year;
+
+  return `${dayOfTheWeek} ${month} ${day}, ${year}`;
 };

@@ -9,11 +9,11 @@ export const sidebarMenu = [
     icon: <MdSpaceDashboard />,
     url: "/dashboard",
   },
-  {
-    path: "profile",
-    icon: <FaUser />,
-    url: "/profile",
-  },
+  // {
+  //   path: "profile",
+  //   icon: <FaUser />,
+  //   url: "/profile",
+  // },
   {
     path: "settings",
     icon: <IoSettings />,
@@ -59,3 +59,19 @@ export const usersList = [
     role: "User",
   },
 ];
+
+export const profileData = {
+  name: "John Doe",
+  role: "Software Engineer",
+  TIN: "1053249494",
+  email: "james.olukotun@fctirs.gov.ng",
+  bvn: "",
+  firstname: "JAMES OLANREWAJU OLUKOTUN",
+  lastname: "OLUKOTUN",
+  status: "Found",
+  dob: "1979-03-29T00:00:00",
+  TaxOffice: "KUB",
+  // mYear: null,
+  // mDay: null,
+  // mMonth: null,
+};

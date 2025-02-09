@@ -71,7 +71,7 @@ const DashboardLayout = ({
                   </p>
                 </article>
 
-                <figure className="m-0 p-0 w-[50px] h-[50px] relative border border-white rounded-[50%] overflow-hidden">
+                <figure className="m-0 p-0 w-[50px] h-[50px] relative border border-pumpkin rounded-[50%] overflow-hidden">
                   <Image
                     fill
                     alt="user-pic"
