@@ -13,6 +13,12 @@ export default {
       background: {
         "custom-bg": "url('')",
       },
+      backgroundImage: {
+        // customGradient:
+        //   "linear-gradient(135deg, rgba(255,255,255,0.6) 0.2%, rgb(255,117,24) 100%)",
+        customGradient:
+          "linear-gradient(135deg, rgb(70,70,70) 10%, rgb(40,40,40) 100%)",
+      },
     },
   },
   plugins: [],

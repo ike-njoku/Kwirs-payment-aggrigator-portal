@@ -23,8 +23,7 @@ const LoginPage = () => {
             <div className="w-full mt-16">
               <div className="w-full border-[3px] border-pumpkin max-w-[100px]"></div>
               <p className=" text-base leading-normal mt-3">
-                Lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum
-                lorem ipsum.
+                Manage your tax payments seamlessly and securely.
               </p>
             </div>
           </div>

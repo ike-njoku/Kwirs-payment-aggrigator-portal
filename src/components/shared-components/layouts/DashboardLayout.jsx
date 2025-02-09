@@ -50,21 +50,23 @@ const DashboardLayout = ({
 
       <div className="w-full lg:relative lg:left-[250px] lg:w-[calc(100%-250px)] min-h-screen">
         <section className="w-full">
-          <div className="lg:bg-pumpkin w-full py-6 shadow-lg">
+          <div className="lg:text-pumpkin w-full py-6 shadow-lg">
             <div className="w-[90%] mx-auto lg:flex justify-between gap-5 items-center hidden">
               <article className="flex flex-col gap-2">
-                <h4 className="text-4xl capitalize text-white font-semibold">
+                <h4 className="text-4xl capitalize text-pumpkin font-semibold">
                   {page}
                 </h4>
-                <p className="text-white font-light text-base">{subheading}</p>
+                <p className="text-pumpkin font-light text-base">
+                  {subheading}
+                </p>
               </article>
 
               <div className="flex items-center gap-2 justify-end">
                 <article className="flex flex-col gap-1 items-end">
-                  <h5 className="text-base capitalize text-white font-semibold">
+                  <h5 className="text-base capitalize text-pumpkin font-semibold">
                     Jane Doe
                   </h5>
-                  <p className="text-white font-light text-sm">
+                  <p className="text-pumpkin font-light text-sm">
                     Software Engineer
                   </p>
                 </article>
