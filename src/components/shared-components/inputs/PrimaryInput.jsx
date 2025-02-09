@@ -13,6 +13,7 @@ const PrimaryInput = ({ label, name, type, placeholder, handleChange }) => {
           className="w-full h-full outline-none border-none bg-transparent p-3 placeholder:text-white text-base font-light"
           type={type}
           placeholder={placeholder}
+          name={name}
         />
       </div>
     </div>

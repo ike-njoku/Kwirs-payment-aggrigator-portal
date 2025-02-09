@@ -86,6 +86,8 @@ const RolesPage = () => {
               openEditModal={openEditModal}
               handleDeleteItem={handleDeleteItem}
               handleEditItem={handleEditItem}
+              label="Role name"
+              heading="Upate Roles"
             />
           </div>
         </div>

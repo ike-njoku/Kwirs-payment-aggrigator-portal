@@ -4,15 +4,15 @@ import AuthLayout from "../shared-components/auth-components/AuthLayout";
 import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 import AuthButtons from "../shared-components/buttons/AuthButtons";
 import Link from "next/link";
-import { AxiosGet } from "../../services/http-service";
+import { AxiosGet, AxiosPost } from "../../services/http-service";
 
 const RegisterPage = () => {
-  const verifyTin = () => {
-    console.log("THIS FUNCTION WAS CALLED");
+  const verifyTin = async () => {
     const defaultSID = "1";
-    const uid = "";
+    const uid = registerationDetails.taxIdentificationNumber;
+    console.table({ TAX: registerationDetails.taxIdentificationNumber });
     const tinValidationURL = `https://fcttaxportal.fctirs.gov.ng/api/etranzact/validation/${uid}/${defaultSID}`;
-    return AxiosGet(tinValidationURL, "");
+    return await AxiosGet(tinValidationURL, "");
   };
 
   const [registerationDetails, setRegistrationDetails] = useState({
@@ -26,21 +26,24 @@ const RegisterPage = () => {
 
   const updateRegistrationDetails = (e) => {
     const name = e.target.name;
+    console.log({ [name]: e.target.value });
     setRegistrationDetails((previousValue) => ({
       ...previousValue,
       [name]: e.target.value,
     }));
 
-    setRegistrationButtonIsDisabled(
-      registerationDetails.email &&
-        registerationDetails.taxIdentificationNumber &&
-        registerationDetails.password
-    );
+    // setRegistrationButtonIsDisabled(
+    //   registerationDetails.email &&
+    //     registerationDetails.taxIdentificationNumber &&
+    //     registerationDetails.password
+    // );
+    setRegistrationButtonIsDisabled(false);
   };
 
-  const submitRequest = async () => {
-    window.alert("Fill out form");
-    return verifyTin();
+  const submitRegistrationRequest = async (e) => {
+    e.preventDefault();
+    console.table({ TAX: registerationDetails.taxIdentificationNumber });
+    return await verifyTin();
   };
 
   return (
@@ -73,7 +76,7 @@ const RegisterPage = () => {
             <h3 className="font-bold text-4xl capitalize text-center">
               register
             </h3>
-            <form className="w-full my-5">
+            <form className="w-full my-5" onSubmit={submitRegistrationRequest}>
               <PrimaryInput
                 label="TIN"
                 name="taxIdentificationNumber"
@@ -84,7 +87,7 @@ const RegisterPage = () => {
               <PrimaryInput
                 label="email"
                 name="email"
-                type="email"
+                type="text"
                 placeholder="abc@gmail.com"
                 handleChange={updateRegistrationDetails}
               />

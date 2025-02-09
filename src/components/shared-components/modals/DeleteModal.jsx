@@ -1,7 +1,12 @@
 import React from "react";
 import ModalLayout from "./ModalLayout";
 
-const DeleteModal = ({ handleCloseModal, handleDeleteItem, index }) => {
+const DeleteModal = ({
+  handleCloseModal,
+  handleDeleteItem,
+  index,
+  text = "Are you sure you want to delete this role?",
+}) => {
   const deleteItem = () => {
     handleDeleteItem(index);
   };
@@ -23,9 +28,7 @@ const DeleteModal = ({ handleCloseModal, handleDeleteItem, index }) => {
             d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
           />
         </svg>
-        <h3 className="mb-5 text-lg font-normal">
-          Are you sure you want to delete this role?
-        </h3>
+        <h3 className="mb-5 text-lg font-normal">{text}</h3>
         <button
           data-modal-hide="popup-modal"
           type="button"

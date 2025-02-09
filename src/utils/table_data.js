@@ -20,9 +20,11 @@ export const resourcesTableData = [
   {
     name: "https://some-url.com",
     dateCreated: "today",
+    id: 1,
   },
   {
-    name: "https://some-url.com",
+    name: "https://some22-url.com",
     dateCreated: "yesterday",
+    id: 2,
   },
 ];

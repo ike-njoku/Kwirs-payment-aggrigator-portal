@@ -4,10 +4,56 @@ import DashboardLayout from "../shared-components/layouts/DashboardLayout";
 import CustomTable from "../shared-components/table";
 import { resourcesTableData } from "../../utils/table_data";
 import { FaPlus } from "react-icons/fa";
+import CreateResourceModal from "../shared-components/modals/CreateResourceModal";
 
 const ResourcesPage = () => {
   const tableHeadings = ["Name", "Date Created", "Actions"];
   const [tableData, setTableData] = useState(resourcesTableData);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [openResourceModal, setOpenResourceModal] = useState(false);
+  const handleDelete = () => {
+    setOpenDeleteModal(true);
+  };
+
+  const handleEdit = () => {
+    setOpenEditModal(true);
+  };
+
+  const handleDeleteItem = (id) => {
+    const filteredTableData = tableData.filter((item) => id !== item.id);
+    setTableData(filteredTableData);
+    setOpenDeleteModal(false);
+  };
+
+  const handleEditItem = (updatedItem, newRole) => {
+    if (newRole) {
+      setTableData((prevData) =>
+        prevData.map((item) =>
+          item.id === updatedItem.id ? { ...updatedItem, name: newRole } : item
+        )
+      );
+    }
+  };
+
+  const handleCloseCreateRoleModal = () => {
+    setOpenResourceModal(false);
+  };
+
+  const handleOpenCreateResourceModal = () => {
+    setOpenResourceModal(true);
+  };
+
+  const handleCreateResourceModal = (newRole) => {
+    console.log("resources");
+    const newRoleData = {
+      name: newRole,
+      id: tableData.length + 1,
+      dateCreated: "Tomorrow",
+    };
+
+    setTableData([...tableData, newRoleData]);
+  };
 
   return (
     <DashboardLayout page="Resources">
@@ -21,6 +67,7 @@ const ResourcesPage = () => {
                 data-dropdown-toggle="dropdownBgHover"
                 className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center  relative  gap-2 border border-pumpkin"
                 type="button"
+                onClick={handleOpenCreateResourceModal}
               >
                 Create Resource
                 <FaPlus />
@@ -31,9 +78,26 @@ const ResourcesPage = () => {
               tableHeadings={tableHeadings}
               tableData={tableData}
               isEllipseDropdwon={true}
+              handleDelete={handleDelete}
+              handleEdit={handleEdit}
+              openDeleteModal={openDeleteModal}
+              setOpenDeleteModal={setOpenDeleteModal}
+              setOpenEditModal={setOpenEditModal}
+              openEditModal={openEditModal}
+              handleDeleteItem={handleDeleteItem}
+              handleEditItem={handleEditItem}
+              text="Are you sure you want to delete this resource?"
+              label="Resource name"
+              heading="Update Resource"
             />
           </div>
         </div>
+        {openResourceModal && (
+          <CreateResourceModal
+            handleCloseModal={handleCloseCreateRoleModal}
+            handleCreateModal={handleCreateResourceModal}
+          />
+        )}
       </section>
     </DashboardLayout>
   );

@@ -17,6 +17,9 @@ const CustomTable = ({
   setOpenEditModal,
   handleDeleteItem,
   handleEditItem,
+  text,
+  heading,
+  label,
 }) => {
   const handleCloseDeleteModal = () => {
     setOpenDeleteModal(false);
@@ -95,6 +98,7 @@ const CustomTable = ({
           handleCloseModal={handleCloseDeleteModal}
           handleDeleteItem={handleDeleteItem}
           index={selectedItem}
+          text={text}
         />
       )}
       {openEditModal && (
@@ -102,6 +106,8 @@ const CustomTable = ({
           handleCloseModal={handleCloseEditModal}
           index={selectedItem}
           handleEditModal={handleEditItem}
+          heading={heading}
+          label={label}
         />
       )}
     </>
