@@ -2,6 +2,7 @@ import { MdSpaceDashboard } from "react-icons/md";
 import { FaUser, FaUsers, FaTasks, FaUserTie } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
 import { IoNotifications } from "react-icons/io5";
+import { MdPayment } from "react-icons/md";
 
 export const sidebarMenu = [
   {
@@ -38,6 +39,11 @@ export const sidebarMenu = [
     path: "roles",
     icon: <FaUserTie />,
     url: "/roles",
+  },
+  {
+    path: "transactions",
+    icon: <MdPayment />,
+    url: "/transactions",
   },
 ];
 

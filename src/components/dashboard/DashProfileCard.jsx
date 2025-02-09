@@ -19,7 +19,7 @@ const DashProfileCard = () => {
   return (
     <>
       <div
-        className={`border border-[rgb(70,70,70)] rounded-[25px] p-6 mt-3 w-[373px] lg:max-w-full cursor-pointer`}
+        className={`border border-[rgb(70,70,70)] rounded-[25px] p-6 mt-3 w-[373px] lg:w-full cursor-pointer`}
         onClick={handleOpenProfileModal}
       >
         <article className="flex justify-between gap-3">

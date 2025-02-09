@@ -5,14 +5,19 @@ import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 import AuthButtons from "../shared-components/buttons/AuthButtons";
 import Link from "next/link";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
+import { TIN_VALIDATION_ERROR } from "../../utils/constants";
 
 const RegisterPage = () => {
   const verifyTin = async () => {
     const defaultSID = "1";
     const uid = registerationDetails.taxIdentificationNumber;
-    console.table({ TAX: registerationDetails.taxIdentificationNumber });
     const tinValidationURL = `https://fcttaxportal.fctirs.gov.ng/api/etranzact/validation/${uid}/${defaultSID}`;
-    return await AxiosGet(tinValidationURL, "");
+    const registrationResponse = await AxiosGet(tinValidationURL, "");
+
+    console.table({ DOING_THIS: "THIS " });
+    if (registrationResponse.message == TIN_VALIDATION_ERROR) {
+      console.log("----->>> ", registrationResponse.message);
+    }
   };
 
   const [registerationDetails, setRegistrationDetails] = useState({
@@ -26,7 +31,6 @@ const RegisterPage = () => {
 
   const updateRegistrationDetails = (e) => {
     const name = e.target.name;
-    console.log({ [name]: e.target.value });
     setRegistrationDetails((previousValue) => ({
       ...previousValue,
       [name]: e.target.value,
@@ -42,7 +46,6 @@ const RegisterPage = () => {
 
   const submitRegistrationRequest = async (e) => {
     e.preventDefault();
-    console.table({ TAX: registerationDetails.taxIdentificationNumber });
     return await verifyTin();
   };
 

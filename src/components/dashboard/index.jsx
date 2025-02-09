@@ -3,6 +3,7 @@ import DashboardLayout from "../shared-components/layouts/DashboardLayout";
 import DashCard from "./DashCard";
 import DashProfileCard from "./DashProfileCard";
 import { FaCaretDown, FaPlus } from "react-icons/fa";
+import TransctionComponent from "./TransctionComponent";
 
 const UserDashboard = () => {
   return (
@@ -27,7 +28,7 @@ const UserDashboard = () => {
               </div>
             </div>
 
-            <div className="lg:max-w-[500px] w-full border-2 border-gray-200 rounded-[28px] p-6 gap-8">
+            <div className="lg:max-w-[600px] w-full border-2 border-gray-200 rounded-[28px] p-6 gap-8">
               {/* create transaction */}
               <section className="w-full mb-3 flex justify-end items-center gap-5">
                 <button
@@ -42,19 +43,20 @@ const UserDashboard = () => {
               </section>
               <div className="w-full flex items-center justify-between">
                 <article className="flex flex-col">
-                  <h3 className="font-semibold text-xl lg:text-2xl capitalize mb-3">
+                  <h3 className="font-semibold text-xl lg:text-2xl capitalize ">
                     Transactions
                   </h3>
 
                   <div className="flex items-center gap-2">
-                    <h3 className="text-base capitalize flex items-center gap-2">
+                    <h3 className="text-sm capitalize flex items-center gap-2">
                       sort by:{" "}
-                      <span className="text-pumpkin text-base">Recently</span>
+                      <span className="text-pumpkin text-sm">Recently</span>
                     </h3>
                     <FaCaretDown />
                   </div>
                 </article>
               </div>
+              <TransctionComponent />
             </div>
           </section>
         </div>
