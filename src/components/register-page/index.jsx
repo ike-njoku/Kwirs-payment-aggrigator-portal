@@ -5,7 +5,10 @@ import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 import AuthButtons from "../shared-components/buttons/AuthButtons";
 import Link from "next/link";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
-import { TIN_VALIDATION_ERROR } from "../../utils/constants";
+import {
+  CLIENT_TIN_VALIDATION_ERROR,
+  TIN_VALIDATION_ERROR,
+} from "../../utils/constants";
 import VerifyInput from "../shared-components/inputs/VerifyInput";
 import { toast } from "react-toastify";
 
@@ -14,12 +17,15 @@ const RegisterPage = () => {
     const defaultSID = "1";
     const uid = registerationDetails.taxIdentificationNumber;
     const tinValidationURL = `https://fcttaxportal.fctirs.gov.ng/api/etranzact/validation/${uid}/${defaultSID}`;
-    const registrationResponse = await AxiosGet(tinValidationURL, "");
-    const { data } = registrationResponse;
+    const taxIDValidationResponse = await AxiosGet(tinValidationURL, "");
+    const { data } = taxIDValidationResponse;
     if (data.message == TIN_VALIDATION_ERROR) {
-      return {}; // this is the part where we drop toast notification
+      toast.error(CLIENT_TIN_VALIDATION_ERROR);
+      return;
     }
-    // store the data that has come back and reroute with the new intermediary page
+
+    setTinDetials({ ...data });
+    setShowNextComponent(true);
   };
 
   const [registerationDetails, setRegistrationDetails] = useState({
@@ -27,6 +33,8 @@ const RegisterPage = () => {
     email: "",
     password: "",
   });
+
+  const [tinDetails, setTinDetials] = useState({});
 
   const [showNextComponent, setShowNextComponent] = useState(false);
 
@@ -98,17 +106,36 @@ const RegisterPage = () => {
                 className="w-full my-5 max-h-[350px] overflow-y-auto customScroll"
                 onSubmit={submitRegistrationRequest}
               >
-                <VerifyInput label="TIN" value="N123456789" />
-                <VerifyInput label="email" value="johndoe@gmail.com" />
-                <VerifyInput label="fullname" value="John Doe" />
-                <VerifyInput label="BVN" value="323456789" />
-                <VerifyInput label="Date of birth" value="23/04/2024" />
-                <VerifyInput label="tax office" value="KUB" />
+                <VerifyInput
+                  disabled={true}
+                  label="Tax Identification Number"
+                  value={tinDetails.uid}
+                />
+                <VerifyInput
+                  disabled={true}
+                  label="fullname"
+                  value={tinDetails.name}
+                />
+                <VerifyInput
+                  disabled={true}
+                  label="email"
+                  value={tinDetails.email}
+                />
+                {/* <VerifyInput disabled={true} label="BVN" value="323456789" /> */}
+                {/* <VerifyInput
+                  disabled={true}
+                  label="Date of birth"
+                  value="23/04/2024"
+                /> */}
+                {/* <VerifyInput disabled={true} label="tax office" value="KUB" /> */}
 
-                <AuthButtons isDisabled={false} label="Verify" />
+                <AuthButtons isDisabled={false} label="Confirm Registration" />
               </form>
             ) : (
-              <form className="w-full my-5" onSubmit={handleShowNextComponent}>
+              <form
+                className="w-full my-5"
+                onSubmit={submitRegistrationRequest}
+              >
                 <PrimaryInput
                   label="TIN"
                   name="taxIdentificationNumber"
