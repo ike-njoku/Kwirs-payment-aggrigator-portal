@@ -1,11 +1,13 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AuthLayout from "../shared-components/auth-components/AuthLayout";
 import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 import AuthButtons from "../shared-components/buttons/AuthButtons";
 import Link from "next/link";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { TIN_VALIDATION_ERROR } from "../../utils/constants";
+import VerifyInput from "../shared-components/inputs/VerifyInput";
+import { toast } from "react-toastify";
 
 const RegisterPage = () => {
   const verifyTin = async () => {
@@ -26,8 +28,18 @@ const RegisterPage = () => {
     password: "",
   });
 
+  const [showNextComponent, setShowNextComponent] = useState(false);
+
   const [registrationButtonIsDisabled, setRegistrationButtonIsDisabled] =
     useState(true);
+
+  const handleShowNextComponent = (e) => {
+    e.preventDefault();
+    const { taxIdentificationNumber, email, password } = registerationDetails;
+    const isFormValid = taxIdentificationNumber && email && password;
+    setRegistrationButtonIsDisabled(!isFormValid);
+    setShowNextComponent(true);
+  };
 
   const updateRegistrationDetails = (e) => {
     const name = e.target.name;
@@ -36,11 +48,6 @@ const RegisterPage = () => {
       [name]: e.target.value,
     }));
 
-    // setRegistrationButtonIsDisabled(
-    //   registerationDetails.email &&
-    //     registerationDetails.taxIdentificationNumber &&
-    //     registerationDetails.password
-    // );
     setRegistrationButtonIsDisabled(false);
   };
 
@@ -48,6 +55,13 @@ const RegisterPage = () => {
     e.preventDefault();
     return await verifyTin();
   };
+
+  useEffect(() => {
+    const { taxIdentificationNumber, email, password } = registerationDetails;
+    setRegistrationButtonIsDisabled(
+      !(taxIdentificationNumber && email && password)
+    );
+  }, [registerationDetails]);
 
   return (
     <AuthLayout>
@@ -74,38 +88,55 @@ const RegisterPage = () => {
             </div>
           </div>
           {/*  */}
+
           <div className="w-full sm:max-w-[450px] mx-auto py-8 px-10 rounded-[28px] bg-[rgba(255,255,255,0.5)]">
             <h3 className="font-bold text-4xl capitalize text-center">
-              register
+              {showNextComponent ? "Verify Details" : "Register"}
             </h3>
-            <form className="w-full my-5" onSubmit={submitRegistrationRequest}>
-              <PrimaryInput
-                label="TIN"
-                name="taxIdentificationNumber"
-                type="text"
-                placeholder="N123456789"
-                handleChange={updateRegistrationDetails}
-              />
-              <PrimaryInput
-                label="email"
-                name="email"
-                type="text"
-                placeholder="abc@gmail.com"
-                handleChange={updateRegistrationDetails}
-              />
-              <PrimaryInput
-                label="password"
-                name="password"
-                type="password"
-                placeholder="********"
-                handleChange={updateRegistrationDetails}
-              />
+            {showNextComponent ? (
+              <form
+                className="w-full my-5 max-h-[350px] overflow-y-auto customScroll"
+                onSubmit={submitRegistrationRequest}
+              >
+                <VerifyInput label="TIN" value="N123456789" />
+                <VerifyInput label="email" value="johndoe@gmail.com" />
+                <VerifyInput label="fullname" value="John Doe" />
+                <VerifyInput label="BVN" value="323456789" />
+                <VerifyInput label="Date of birth" value="23/04/2024" />
+                <VerifyInput label="tax office" value="KUB" />
 
-              <AuthButtons
-                isDisabled={registrationButtonIsDisabled}
-                label="register"
-              />
-            </form>
+                <AuthButtons isDisabled={false} label="Verify" />
+              </form>
+            ) : (
+              <form className="w-full my-5" onSubmit={handleShowNextComponent}>
+                <PrimaryInput
+                  label="TIN"
+                  name="taxIdentificationNumber"
+                  type="text"
+                  placeholder="N123456789"
+                  handleChange={updateRegistrationDetails}
+                />
+                <PrimaryInput
+                  label="email"
+                  name="email"
+                  type="text"
+                  placeholder="abc@gmail.com"
+                  handleChange={updateRegistrationDetails}
+                />
+                <PrimaryInput
+                  label="password"
+                  name="password"
+                  type="password"
+                  placeholder="********"
+                  handleChange={updateRegistrationDetails}
+                />
+
+                <AuthButtons
+                  isDisabled={registrationButtonIsDisabled}
+                  label="register"
+                />
+              </form>
+            )}
           </div>
         </section>
 

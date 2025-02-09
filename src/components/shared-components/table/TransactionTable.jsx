@@ -1,6 +1,8 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { IoTimeSharp } from "react-icons/io5";
+import TransactionDetails from "../modals/TransactionDetails";
 
 const TransactionTable = () => {
   const tableData = [
@@ -47,7 +49,19 @@ const TransactionTable = () => {
       status: "done",
     },
   ];
-  const tableHeadings = ["title", "date", "amount(₦)", "status"];
+  const tableHeadings = ["description", "date", "amount(₦)", "status"];
+
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState({});
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
+  const handleOpenModal = (transaction) => {
+    setSelectedTransaction(transaction);
+    setOpenModal(true);
+  };
   return (
     <div className="relative overflow-x-auto h-auto shadow-md sm:rounded-lg">
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 ">
@@ -92,9 +106,12 @@ const TransactionTable = () => {
                     </p>
                   )}
                   {tableInfo.status === "pending" && (
-                    <p className="flex capitalize gap-1 items-center text-yellow-500">
+                    <button
+                      className="flex capitalize gap-1 items-center text-yellow-500"
+                      onClick={() => handleOpenModal(tableInfo)}
+                    >
                       <IoTimeSharp /> pending
-                    </p>
+                    </button>
                   )}
                 </td>
               </tr>
@@ -112,6 +129,13 @@ const TransactionTable = () => {
         </tbody>
       </table>
       {/* pagination needed */}
+
+      {openModal && (
+        <TransactionDetails
+          details={selectedTransaction}
+          handleCloseModal={handleCloseModal}
+        />
+      )}
     </div>
   );
 };
