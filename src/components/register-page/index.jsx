@@ -11,6 +11,7 @@ import {
 } from "../../utils/constants";
 import VerifyInput from "../shared-components/inputs/VerifyInput";
 import { toast } from "react-toastify";
+import { FaAngleLeft } from "react-icons/fa";
 
 const RegisterPage = () => {
   const verifyTin = async () => {
@@ -91,7 +92,7 @@ const RegisterPage = () => {
             <div className="w-full mt-16">
               <div className="w-full border-[3px] border-pumpkin max-w-[100px]"></div>
               <p className=" text-base leading-normal mt-3">
-                Simplify tax payments with an easy and efficient system.
+                Payment aggregation system.
               </p>
             </div>
           </div>
@@ -101,6 +102,7 @@ const RegisterPage = () => {
             <h3 className="font-bold text-4xl capitalize text-center">
               {showNextComponent ? "Verify Details" : "Register"}
             </h3>
+
             {showNextComponent ? (
               <form
                 className="w-full my-5 max-h-[350px] overflow-y-auto customScroll"
