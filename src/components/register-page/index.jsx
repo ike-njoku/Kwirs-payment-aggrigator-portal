@@ -99,8 +99,18 @@ const RegisterPage = () => {
           {/*  */}
 
           <div className="w-full sm:max-w-[450px] mx-auto py-8 px-10 rounded-[28px] bg-[rgba(255,255,255,0.5)]">
-            <h3 className="font-bold text-4xl capitalize text-center">
-              {showNextComponent ? "Verify Details" : "Register"}
+            <h3 className={` font-bold text-4xl capitalize text-center`}>
+              {showNextComponent ? (
+                <span className="flex items-center  gap-5 w-full">
+                  <button onClick={() => setShowNextComponent(false)}>
+                    <FaAngleLeft />
+                  </button>
+
+                  <span className="">Verify Details</span>
+                </span>
+              ) : (
+                "Register"
+              )}
             </h3>
 
             {showNextComponent ? (
