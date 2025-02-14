@@ -15,23 +15,25 @@ import { FaAngleLeft } from "react-icons/fa";
 
 const RegisterPage = () => {
   const verifyTin = async () => {
+    console.table({ MESSAGE: "FIRST" });
     const defaultSID = "1";
     const uid = registerationDetails.taxIdentificationNumber;
     const tinValidationURL = `https://fcttaxportal.fctirs.gov.ng/api/etranzact/validation/${uid}/${defaultSID}`;
     const taxIDValidationResponse = await AxiosGet(tinValidationURL, "");
     const { data } = taxIDValidationResponse;
+
     if (data.message == TIN_VALIDATION_ERROR) {
       toast.error(CLIENT_TIN_VALIDATION_ERROR);
       return;
     }
 
     setTinDetials({ ...data });
-    setShowNextComponent(true);
+    handleShowNextComponent();
   };
 
   const [registerationDetails, setRegistrationDetails] = useState({
     taxIdentificationNumber: "",
-    email: "",
+    dateOfBirth: "",
     password: "",
   });
 
@@ -116,7 +118,7 @@ const RegisterPage = () => {
             {showNextComponent ? (
               <form
                 className="w-full my-5 max-h-[350px] overflow-y-auto customScroll"
-                onSubmit={submitRegistrationRequest}
+                onSubmit={submitRegistrationRequest()}
               >
                 <VerifyInput
                   disabled={true}
@@ -153,6 +155,13 @@ const RegisterPage = () => {
                   name="taxIdentificationNumber"
                   type="text"
                   placeholder="N123456789"
+                  handleChange={updateRegistrationDetails}
+                />
+                <PrimaryInput
+                  label="Date of Birth / Date of Incoporation (non individual)"
+                  name="dateOfBirth"
+                  type="date"
+                  placeholder="Date of Birth / Date of Incoporation (non individual)"
                   handleChange={updateRegistrationDetails}
                 />
                 {/* <PrimaryInput
