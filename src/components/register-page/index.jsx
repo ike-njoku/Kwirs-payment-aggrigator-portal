@@ -16,10 +16,15 @@ import { FaAngleLeft } from "react-icons/fa";
 const RegisterPage = () => {
   const verifyTin = async () => {
     console.table({ MESSAGE: "FIRST" });
-    const defaultSID = "1";
-    const uid = registerationDetails.taxIdentificationNumber;
-    const tinValidationURL = `https://fcttaxportal.fctirs.gov.ng/api/etranzact/validation/${uid}/${defaultSID}`;
-    const taxIDValidationResponse = await AxiosGet(tinValidationURL, "");
+    const TIN = registerationDetails.taxIdentificationNumber;
+    const dob = registerationDetails.dateOfBirth;
+    const requestBody = { TIN, dob };
+
+    const tinValidationURL = `http://fcttaxportal.fctirs.gov.ng/api/TIN`;
+    const taxIDValidationResponse = await AxiosPost(
+      tinValidationURL,
+      requestBody
+    );
     const { data } = taxIDValidationResponse;
 
     if (data.message == TIN_VALIDATION_ERROR) {
@@ -28,7 +33,7 @@ const RegisterPage = () => {
     }
 
     setTinDetials({ ...data });
-    handleShowNextComponent();
+    setShowNextComponent(true);
   };
 
   const [registerationDetails, setRegistrationDetails] = useState({
@@ -68,9 +73,10 @@ const RegisterPage = () => {
   };
 
   useEffect(() => {
-    const { taxIdentificationNumber, email, password } = registerationDetails;
+    const { taxIdentificationNumber, dateOfBirth, password } =
+      registerationDetails;
     setRegistrationButtonIsDisabled(
-      !(taxIdentificationNumber && email && password)
+      !(taxIdentificationNumber && dateOfBirth && password)
     );
   }, [registerationDetails]);
 
