@@ -145,13 +145,13 @@ const RegisterPage = () => {
                   placeholder="N123456789"
                   handleChange={updateRegistrationDetails}
                 />
-                <PrimaryInput
+                {/* <PrimaryInput
                   label="email"
                   name="email"
                   type="text"
                   placeholder="abc@gmail.com"
                   handleChange={updateRegistrationDetails}
-                />
+                /> */}
                 <PrimaryInput
                   label="password"
                   name="password"

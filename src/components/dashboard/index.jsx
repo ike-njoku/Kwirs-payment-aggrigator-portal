@@ -16,7 +16,8 @@ const UserDashboard = () => {
       { body: requestParamaters }
     );
 
-    console.table(httpResponse);
+    console.log(" R E S P O N S E ----------------->>> ");
+    console.log(httpResponse);
   };
 
   getTaxIdentificationDetails();
