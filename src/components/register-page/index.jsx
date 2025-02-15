@@ -14,8 +14,17 @@ import { toast } from "react-toastify";
 import { FaAngleLeft } from "react-icons/fa";
 
 const RegisterPage = () => {
+  const [tinDetails, setTinDetials] = useState({});
+
+  const [showNextComponent, setShowNextComponent] = useState(false);
+
+  const [registrationButtonIsDisabled, setRegistrationButtonIsDisabled] =
+    useState(true);
+
   const verifyTin = async () => {
-    console.table({ MESSAGE: "FIRST" });
+    //delete the following lines later
+    setShowNextComponent(true);
+
     const TIN = registerationDetails.taxIdentificationNumber;
     const dob = registerationDetails.dateOfBirth;
     const requestBody = { TIN, dob };
@@ -25,15 +34,27 @@ const RegisterPage = () => {
       tinValidationURL,
       requestBody
     );
-    const { data } = taxIDValidationResponse;
+    // const { data } = taxIDValidationResponse;
 
-    if (data.message == TIN_VALIDATION_ERROR) {
-      toast.error(CLIENT_TIN_VALIDATION_ERROR);
-      return;
-    }
+    // if (data.message == TIN_VALIDATION_ERROR) {
+    //   toast.error(CLIENT_TIN_VALIDATION_ERROR);
+    //   return;
+    // }
 
-    setTinDetials({ ...data });
+    // setTinDetials({ ...data });
+    setTinDetials({
+      response: "ok",
+      uid: "1053249494",
+      sid: "something",
+      amount: 100.0,
+      name: "JAMES OLANREWAJU OLUKOTUN",
+      email: "james.olukotun@fctirs.gov.ng",
+      phoneNumber: "NA",
+      message: "Valid TIN",
+    });
     setShowNextComponent(true);
+
+    return true;
   };
 
   const [registerationDetails, setRegistrationDetails] = useState({
@@ -41,13 +62,6 @@ const RegisterPage = () => {
     dateOfBirth: "",
     password: "",
   });
-
-  const [tinDetails, setTinDetials] = useState({});
-
-  const [showNextComponent, setShowNextComponent] = useState(false);
-
-  const [registrationButtonIsDisabled, setRegistrationButtonIsDisabled] =
-    useState(true);
 
   const handleShowNextComponent = (e) => {
     e.preventDefault();
@@ -70,6 +84,36 @@ const RegisterPage = () => {
   const submitRegistrationRequest = async (e) => {
     e.preventDefault();
     return await verifyTin();
+  };
+
+  const completeRegistration = async (e) => {
+    e.preventDefault();
+    console.table(tinDetails);
+    const requestBody = {
+      FirstName: tinDetails.FirstName,
+      LastName: tinDetails.LastName,
+      DateOfBirth: tinDetails.DateOfBirth,
+      ChangePassword: true,
+      IsActive: true,
+      Email: tinDetails.Email,
+      Password: "Olanrewaju01.",
+
+      // Address: "Abuja",
+      // City: "Abuja",
+      // StateId: "22",
+      // CountryId: "1",
+      // LGAId: "259",
+      // PrimaryPhone: "08000000000",
+      // CreateDate: "2025-02-07",
+      // UserName: taxIDValidationResponse
+    };
+
+    const registrationResponse = await AxiosPost(
+      "http://nofifications.fctirs.gov.ng//api/userManagement/Create",
+      requestBody
+    );
+
+    console.log("--------->>>> ", registrationResponse);
   };
 
   useEffect(() => {
@@ -107,14 +151,16 @@ const RegisterPage = () => {
           {/*  */}
 
           <div className="w-full sm:max-w-[450px] mx-auto py-8 px-10 rounded-[28px] bg-[rgba(255,255,255,0.5)]">
-            <h3 className={` font-bold text-4xl capitalize text-center`}>
+            <h3
+              className={` font-bold sm:text-4xl capitalize text-center text-2xl `}
+            >
               {showNextComponent ? (
-                <span className="flex items-center  gap-5 w-full">
+                <span className="flex items-center  gap-6 w-full">
                   <button onClick={() => setShowNextComponent(false)}>
                     <FaAngleLeft />
                   </button>
 
-                  <span className="">Verify Details</span>
+                  <span className="w-full">Verify Details</span>
                 </span>
               ) : (
                 "Register"
@@ -124,7 +170,7 @@ const RegisterPage = () => {
             {showNextComponent ? (
               <form
                 className="w-full my-5 max-h-[350px] overflow-y-auto customScroll"
-                onSubmit={submitRegistrationRequest()}
+                onSubmit={completeRegistration}
               >
                 <VerifyInput
                   disabled={true}
