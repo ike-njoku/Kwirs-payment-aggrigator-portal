@@ -12,7 +12,7 @@ const UserDashboard = () => {
     const requestParamaters = { TIN: "1053249494", dob: "1979-03-29", bvn: "" };
 
     const httpResponse = await AxiosPost(
-      "http://fcttaxportal.fctirs.gov.ng/api/TIN",
+      "https://fcttaxportal.fctirs.gov.ng/api/TIN",
       { body: requestParamaters }
     );
 

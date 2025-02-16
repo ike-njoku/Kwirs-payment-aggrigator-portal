@@ -27,21 +27,21 @@ const RegisterPage = () => {
 
     const TIN = registerationDetails.taxIdentificationNumber;
     const dob = registerationDetails.dateOfBirth;
-    const requestBody = { TIN, dob };
+    const requestBody = { TIN, dob, bvn: "" };
 
-    const tinValidationURL = `http://fcttaxportal.fctirs.gov.ng/api/TIN`;
+    const tinValidationURL = `https://fcttaxportal.fctirs.gov.ng/api/TIN`;
     const taxIDValidationResponse = await AxiosPost(
       tinValidationURL,
       requestBody
     );
-    // const { data } = taxIDValidationResponse;
+    const { data } = taxIDValidationResponse;
 
     // if (data.message == TIN_VALIDATION_ERROR) {
     //   toast.error(CLIENT_TIN_VALIDATION_ERROR);
     //   return;
     // }
 
-    // setTinDetials({ ...data });
+    // // setTinDetials({ ...data });
     setTinDetials({
       response: "ok",
       uid: "1053249494",
@@ -109,7 +109,7 @@ const RegisterPage = () => {
     };
 
     const registrationResponse = await AxiosPost(
-      "http://nofifications.fctirs.gov.ng//api/userManagement/Create",
+      "https://fcttaxportal.fctirs.gov.ng/api/userManagement/Create",
       requestBody
     );
 
