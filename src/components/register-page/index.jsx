@@ -29,12 +29,20 @@ const RegisterPage = () => {
     const dob = registerationDetails.dateOfBirth;
     const requestBody = { TIN, dob, bvn: "" };
 
-    const tinValidationURL = `https://fcttaxportal.fctirs.gov.ng/api/TIN`;
-    const taxIDValidationResponse = await AxiosPost(
-      tinValidationURL,
-      requestBody
-    );
-    const { data } = taxIDValidationResponse;
+    // const tinValidationURL = `https://fcttaxportal.fctirs.gov.ng/api/TIN`;
+    // const request = await fetch(tinValidationURL, {
+    //   method: "POST",
+    //   body: requestBody,
+    // });
+
+    // const result = await request.json();
+
+    // console.log({ result });
+    // const taxIDValidationResponse = await AxiosPost(
+    //   tinValidationURL,
+    //   requestBody
+    // );
+    // const { data } = taxIDValidationResponse;
 
     // if (data.message == TIN_VALIDATION_ERROR) {
     //   toast.error(CLIENT_TIN_VALIDATION_ERROR);
@@ -51,6 +59,8 @@ const RegisterPage = () => {
       email: "james.olukotun@fctirs.gov.ng",
       phoneNumber: "NA",
       message: "Valid TIN",
+      FirstName: "James",
+      LastName: "Olukotun",
     });
     setShowNextComponent(true);
 
@@ -88,32 +98,47 @@ const RegisterPage = () => {
 
   const completeRegistration = async (e) => {
     e.preventDefault();
-    console.table(tinDetails);
     const requestBody = {
-      FirstName: tinDetails.FirstName,
-      LastName: tinDetails.LastName,
-      DateOfBirth: tinDetails.DateOfBirth,
+      FirstName: tinDetails.FirstName ?? "Not",
+      LastName: tinDetails.LastName ?? "Available",
+      DateOfBirth: tinDetails.DateOfBirth ?? "20-02-2025",
       ChangePassword: true,
       IsActive: true,
-      Email: tinDetails.Email,
+      Email: tinDetails.Email ?? "james.olukotun@fctirs.gov.ng",
       Password: "Olanrewaju01.",
 
-      // Address: "Abuja",
-      // City: "Abuja",
-      // StateId: "22",
-      // CountryId: "1",
-      // LGAId: "259",
-      // PrimaryPhone: "08000000000",
-      // CreateDate: "2025-02-07",
-      // UserName: taxIDValidationResponse
+      Address: "Abuja",
+      City: "Abuja",
+      StateId: "22",
+      CountryId: "1",
+      LGAId: "259",
+      PrimaryPhone: "08000000000",
+      CreateDate: "2025-02-07",
+      UserName: tinDetails.FirstName + " " + tinDetails.LastName,
     };
+
+    console.table(requestBody);
 
     const registrationResponse = await AxiosPost(
       "https://fcttaxportal.fctirs.gov.ng/api/userManagement/Create",
       requestBody
     );
 
-    console.log("--------->>>> ", registrationResponse);
+    const request = await fetch(
+      "https://nofifications.fctirs.gov.ng/api/userManagement/Create",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: requestBody,
+      }
+    );
+
+    const result = await request.json();
+
+    console.log("--------->>>> ", result, request);
   };
 
   useEffect(() => {
