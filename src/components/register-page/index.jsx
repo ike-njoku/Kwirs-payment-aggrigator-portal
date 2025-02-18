@@ -1,5 +1,4 @@
-"use client";
-import React, { useState, useEffect } from "react";
+// import React, { useState, useEffect } from "react";
 import AuthLayout from "../shared-components/auth-components/AuthLayout";
 import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 import AuthButtons from "../shared-components/buttons/AuthButtons";
@@ -14,30 +13,30 @@ import { toast } from "react-toastify";
 import { FaAngleLeft } from "react-icons/fa";
 
 const RegisterPage = () => {
-  const [tinDetails, setTinDetials] = useState({});
+  // const [tinDetails, setTinDetials] = useState({});
 
-  const [showNextComponent, setShowNextComponent] = useState(false);
+  // const [showNextComponent, setShowNextComponent] = useState(false);
 
-  const [registrationButtonIsDisabled, setRegistrationButtonIsDisabled] =
-    useState(true);
+  // const [registrationButtonIsDisabled, setRegistrationButtonIsDisabled] =
+  //   useState(true);
 
   const verifyTin = async () => {
     //delete the following lines later
-    setShowNextComponent(true);
+    // setShowNextComponent(true);
 
-    const TIN = registerationDetails.taxIdentificationNumber;
-    const dob = registerationDetails.dateOfBirth;
-    const requestBody = { TIN, dob, bvn: "" };
+    // const TIN = registerationDetails.taxIdentificationNumber;
+    // const dob = registerationDetails.dateOfBirth;
+    const requestBody = { TIN: "N123455666", dob: "34/48/2025", bvn: "" };
 
-    // const tinValidationURL = `https://fcttaxportal.fctirs.gov.ng/api/TIN`;
-    // const request = await fetch(tinValidationURL, {
-    //   method: "POST",
-    //   body: requestBody,
-    // });
+    const tinValidationURL = `https://fcttaxportal.fctirs.gov.ng/api/TIN`;
+    const request = await fetch(tinValidationURL, {
+      method: "POST",
+      body: requestBody,
+    });
 
-    // const result = await request.json();
+    const result = await request.json();
 
-    // console.log({ result });
+    console.log({ result });
     // const taxIDValidationResponse = await AxiosPost(
     //   tinValidationURL,
     //   requestBody
@@ -50,104 +49,134 @@ const RegisterPage = () => {
     // }
 
     // // setTinDetials({ ...data });
-    setTinDetials({
-      response: "ok",
-      uid: "1053249494",
-      sid: "something",
-      amount: 100.0,
-      name: "JAMES OLANREWAJU OLUKOTUN",
-      email: "james.olukotun@fctirs.gov.ng",
-      phoneNumber: "NA",
-      message: "Valid TIN",
-      FirstName: "James",
-      LastName: "Olukotun",
-    });
-    setShowNextComponent(true);
+    // setTinDetials({
+    //   response: "ok",
+    //   uid: "1053249494",
+    //   sid: "something",
+    //   amount: 100.0,
+    //   name: "JAMES OLANREWAJU OLUKOTUN",
+    //   email: "james.olukotun@fctirs.gov.ng",
+    //   phoneNumber: "NA",
+    //   message: "Valid TIN",
+    //   FirstName: "James",
+    //   LastName: "Olukotun",
+    // });
+    // setShowNextComponent(true);
 
-    return true;
+    // return true;
   };
 
-  const [registerationDetails, setRegistrationDetails] = useState({
-    taxIdentificationNumber: "",
-    dateOfBirth: "",
-    password: "",
-  });
+  // verifyTin();
+
+  // const [registerationDetails, setRegistrationDetails] = useState({
+  //   taxIdentificationNumber: "",
+  //   dateOfBirth: "",
+  //   password: "",
+  // });
 
   const handleShowNextComponent = (e) => {
     e.preventDefault();
     const { taxIdentificationNumber, email, password } = registerationDetails;
     const isFormValid = taxIdentificationNumber && email && password;
-    setRegistrationButtonIsDisabled(!isFormValid);
-    setShowNextComponent(true);
+    // setRegistrationButtonIsDisabled(!isFormValid);
+    // setShowNextComponent(true);
   };
 
-  const updateRegistrationDetails = (e) => {
-    const name = e.target.name;
-    setRegistrationDetails((previousValue) => ({
-      ...previousValue,
-      [name]: e.target.value,
-    }));
+  // const updateRegistrationDetails = (e) => {
+  //   const name = e.target.name;
+  //   setRegistrationDetails((previousValue) => ({
+  //     ...previousValue,
+  //     [name]: e.target.value,
+  //   }));
 
-    setRegistrationButtonIsDisabled(false);
-  };
+  //   setRegistrationButtonIsDisabled(false);
+  // };
 
-  const submitRegistrationRequest = async (e) => {
-    e.preventDefault();
-    return await verifyTin();
-  };
+  // const submitRegistrationRequest = async (e) => {
+  //   e.preventDefault();
+  //   return await verifyTin();
+  // };
 
-  const completeRegistration = async (e) => {
-    e.preventDefault();
+  const completeRegistration = async () => {
+    // e.preventDefault();
+    // const requestBody = {
+    //   FirstName: tinDetails.FirstName ?? "Not",
+    //   LastName: tinDetails.LastName ?? "Available",
+    //   DateOfBirth: tinDetails.DateOfBirth ?? "20-02-2025",
+    //   ChangePassword: true,
+    //   IsActive: true,
+    //   Email: tinDetails.Email ?? "james.olukotun@fctirs.gov.ng",
+    //   Password: "Olanrewaju01.",
+
+    //   Address: "Abuja",
+    //   City: "Abuja",
+    //   StateId: "22",
+    //   CountryId: "1",
+    //   LGAId: "259",
+    //   PrimaryPhone: "08000000000",
+    //   CreateDate: "2025-02-07",
+    //   UserName: tinDetails.FirstName + " " + tinDetails.LastName,
+    // };
+
     const requestBody = {
-      FirstName: tinDetails.FirstName ?? "Not",
-      LastName: tinDetails.LastName ?? "Available",
-      DateOfBirth: tinDetails.DateOfBirth ?? "20-02-2025",
+      FirstName: "Not",
+      LastName: "Available",
+      DateOfBirth: "20-02-2025",
       ChangePassword: true,
       IsActive: true,
-      Email: tinDetails.Email ?? "james.olukotun@fctirs.gov.ng",
-      Password: "Olanrewaju01.",
+      Email: "my-email@example2.com",
+      Password: "Olanrewaju01!!.",
 
       Address: "Abuja",
       City: "Abuja",
       StateId: "22",
       CountryId: "1",
       LGAId: "259",
-      PrimaryPhone: "08000000000",
+      PrimaryPhone: "08000000001",
       CreateDate: "2025-02-07",
-      UserName: tinDetails.FirstName + " " + tinDetails.LastName,
+      UserName: "John doe ",
     };
 
-    console.table(requestBody);
+    const headers = {
+      "Content-Type": "application/json",
+    };
 
     const registrationResponse = await AxiosPost(
-      "https://fcttaxportal.fctirs.gov.ng/api/userManagement/Create",
-      requestBody
-    );
-
-    const request = await fetch(
-      "https://nofifications.fctirs.gov.ng/api/userManagement/Create",
+      "http://nofifications.fctirs.gov.ng/api/userManagement/Create",
+      requestBody,
       {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: requestBody,
+        headers: headers,
       }
     );
 
-    const result = await request.json();
+    console.log(" AXIOS POST -------->>> ", registrationResponse);
 
-    console.log("--------->>>> ", result, request);
+    // const req = await fetch(
+    //   "http://nofifications.fctirs.gov.ng/api/userManagement/Create",
+    //   // "http://localhost:4000/test",
+    //   {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "applicaiton/json",
+    //     },
+    //     body: requestBody,
+    //   }
+    // );
+
+    // const result = await req.text();
+
+    // console.log("FETCH REQUEST--------->>>> ", result);
   };
 
-  useEffect(() => {
-    const { taxIdentificationNumber, dateOfBirth, password } =
-      registerationDetails;
-    setRegistrationButtonIsDisabled(
-      !(taxIdentificationNumber && dateOfBirth && password)
-    );
-  }, [registerationDetails]);
+  completeRegistration();
+
+  // useEffect(() => {
+  //   const { taxIdentificationNumber, dateOfBirth, password } =
+  //     registerationDetails;
+  //   setRegistrationButtonIsDisabled(
+  //     !(taxIdentificationNumber && dateOfBirth && password)
+  //   );
+  // }, [registerationDetails]);
 
   return (
     <AuthLayout>
@@ -179,7 +208,7 @@ const RegisterPage = () => {
             <h3
               className={` font-bold sm:text-4xl capitalize text-center text-2xl `}
             >
-              {showNextComponent ? (
+              {/* {showNextComponent ? (
                 <span className="flex items-center  gap-6 w-full">
                   <button onClick={() => setShowNextComponent(false)}>
                     <FaAngleLeft />
@@ -189,13 +218,13 @@ const RegisterPage = () => {
                 </span>
               ) : (
                 "Register"
-              )}
+              )} */}
             </h3>
 
-            {showNextComponent ? (
+            {/* {showNextComponent ? (
               <form
                 className="w-full my-5 max-h-[350px] overflow-y-auto customScroll"
-                onSubmit={completeRegistration}
+                // onSubmit={completeRegistration}
               >
                 <VerifyInput
                   disabled={true}
@@ -213,19 +242,19 @@ const RegisterPage = () => {
                   value={tinDetails.email}
                 />
                 {/* <VerifyInput disabled={true} label="BVN" value="323456789" /> */}
-                {/* <VerifyInput
+            {/* <VerifyInput
                   disabled={true}
                   label="Date of birth"
                   value="23/04/2024"
                 /> */}
-                {/* <VerifyInput disabled={true} label="tax office" value="KUB" /> */}
+            {/* <VerifyInput disabled={true} label="tax office" value="KUB" /> */}
 
-                <AuthButtons isDisabled={false} label="Confirm Registration" />
-              </form>
-            ) : (
+            {/* <AuthButtons isDisabled={false} label="Confirm Registration" />
+              </form> */}
+            {/* ) : (
               <form
                 className="w-full my-5"
-                onSubmit={submitRegistrationRequest}
+                // onSubmit={submitRegistrationRequest}
               >
                 <PrimaryInput
                   label="TIN"
@@ -248,7 +277,7 @@ const RegisterPage = () => {
                   placeholder="abc@gmail.com"
                   handleChange={updateRegistrationDetails}
                 /> */}
-                <PrimaryInput
+            {/* <PrimaryInput
                   label="password"
                   name="password"
                   type="password"
@@ -261,7 +290,7 @@ const RegisterPage = () => {
                   label="register"
                 />
               </form>
-            )}
+            )} */}
           </div>
         </section>
 
