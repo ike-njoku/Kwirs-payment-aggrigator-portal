@@ -4,8 +4,13 @@ const axios = require("axios").default;
 showToastNotification;
 
 export const AxiosPost = async (url, parameters) => {
+  const headers = {
+    "Content-Type": "application/json",
+  };
   return await axios
-    .post(url, parameters)
+    .post(url, parameters, {
+      headers: headers,
+    })
     .then((response) => response.data)
     .catch((error) => showToastNotification(error.message));
 };
