@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import GatewayRadio from "../shared-components/inputs/GatewayRadio";
-import visa from "../../../public/images/visa-logo.png";
+import visa from "../../../public/images/icad-logo.png";
 import remita from "../../../public/images/remita.png";
 import interswitch from "../../../public/images/interswitch.png";
 import etranzact from "../../../public/images/etranzact.jpg";

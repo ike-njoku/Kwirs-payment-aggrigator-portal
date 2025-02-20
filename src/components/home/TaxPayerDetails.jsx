@@ -11,7 +11,7 @@ const TaxPayerDetails = ({ showNextComponent, showPreviousComponent }) => {
       >
         Tax Payer Details
       </h3>
-      <div className="w-full my-5 max-h-[350px] overflow-y-auto customScroll">
+      <div className="w-full my-5  customScroll">
         <PrimaryInput
           label="TIN"
           placeholder="Enter TIIN"

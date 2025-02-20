@@ -15,7 +15,7 @@ const AssessmentNumberComponent = ({ showNextComponent }) => {
     setAssessmentNumber(e.target.value);
   };
   return (
-    <div className="w-full sm:max-w-[450px] sm:mx-auto md:mx-0 md:ml-auto py-8 px-10 rounded-[28px] bg-[rgba(255,255,255,0.7)] mt-16 md:mt-24 xl:mt-40">
+    <div className="w-full sm:max-w-[450px] sm:mx-auto md:mx-0 md:ml-auto py-8 px-10 rounded-[28px] bg-[rgba(255,255,255,0.7)] mt-16 md:mt-26">
       <h3 className="font-bold text-3xl capitalize text-center text-white">
         Select Payment Option
       </h3>

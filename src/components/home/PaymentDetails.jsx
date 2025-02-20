@@ -11,9 +11,9 @@ const PaymentDetails = ({ showNextComponent, showPreviousComponent }) => {
       >
         Payment Details
       </h3>
-      <div className="w-full my-5 max-h-[350px] overflow-y-auto customScroll">
+      <div className="w-full my-5 ">
         <PrimaryInput
-          label="Primary Ref Number (PRN)"
+          label="Payment Ref Number (PRN)"
           placeholder="Enter PRN"
           name="prn"
           type="text"
