@@ -9,6 +9,15 @@
   background-size: 100% 100%;
 }
 
+.home-bg {
+  width: 100%;
+  /* background-image: url("/images/calculator.jpg"); */
+  background-image: url("/images/finance-bg.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
 .customScroll::-webkit-scrollbar {
   background-color: transparent;
 }

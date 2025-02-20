@@ -1,7 +1,6 @@
 import React from "react";
 
 const AuthButtons = ({ label = "login", textColor, isDisabled }) => {
-  console.log(isDisabled);
   return (
     <div
       className={` w-full rounded-[30px] h-[48px] max-w-[250px] overflow-hidden mx-auto hover:bg-transparent border-2 border-pumpkin transition-all mt-5 ${

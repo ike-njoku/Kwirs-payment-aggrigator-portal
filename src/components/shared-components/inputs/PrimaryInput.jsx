@@ -1,9 +1,20 @@
 import React from "react";
 
-const PrimaryInput = ({ label, name, type, placeholder, handleChange }) => {
+const PrimaryInput = ({
+  label,
+  name,
+  type,
+  placeholder,
+  handleChange,
+  value,
+  labelStyle = "uppercase",
+}) => {
   return (
     <div className="w-full mb-5">
-      <label className="uppercase text-base font-medium" htmlFor={name}>
+      <label
+        className={`text-base font-medium text-white ${labelStyle}`}
+        htmlFor={name}
+      >
         {label}
       </label>
 
@@ -14,6 +25,7 @@ const PrimaryInput = ({ label, name, type, placeholder, handleChange }) => {
           type={type}
           placeholder={placeholder}
           name={name}
+          value={value}
         />
       </div>
     </div>
