@@ -1,8 +1,7 @@
 import React from "react";
 import Image from "next/image";
 
-const GatewayRadio = ({ value, checkedValue, onChange, img, name }) => {
-  console.log(checkedValue, value);
+const GatewayRadio = ({ value, checkedValue, onChange, img }) => {
   return (
     <div className="w-full my-6 flex items-center gap-3">
       <input
@@ -11,11 +10,10 @@ const GatewayRadio = ({ value, checkedValue, onChange, img, name }) => {
         value={value}
         checked={checkedValue === value}
         onChange={onChange}
-        name={name}
       />
 
       <label
-        className={`text-base font-medium text-white rounded-lg w-full py-6 relative cursor-pointer h-[60px] overflow-hidden bg-white ${
+        className={`text-base font-medium text-white rounded-lg w-full py-6 relative cursor-pointer h-[40px] overflow-hidden bg-white ${
           checkedValue === value
             ? "border-pumpkin border-2"
             : " border border-gray-400 "
