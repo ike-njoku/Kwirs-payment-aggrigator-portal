@@ -15,11 +15,8 @@ import { FaAngleLeft } from "react-icons/fa";
 import { useRouter } from "next/router";
 
 const RegisterPage = () => {
-  // const router = useRouter();
   const [tinDetails, setTinDetials] = useState({});
-
   const [showNextComponent, setShowNextComponent] = useState(false);
-
   const [registrationButtonIsDisabled, setRegistrationButtonIsDisabled] =
     useState(true);
 
@@ -28,9 +25,16 @@ const RegisterPage = () => {
     const dob = registerationDetails.dateOfBirth;
     const requestBody = { TIN, dob, bvn: "" };
 
-    const other_trial = "http://nofifications.fctirs.gov.ng/api/utility/TIN";
-    const taxIDValidationResponse = await AxiosPost(other_trial, requestBody);
+    const validationURL = "http://nofifications.fctirs.gov.ng/api/utility/TIN";
+    const taxIDValidationResponse = await AxiosPost(validationURL, requestBody);
     const data = JSON.parse(taxIDValidationResponse);
+
+    if (
+      registerationDetails.password !== registerationDetails.confirmPassword
+    ) {
+      toast.error("Passwords do not match");
+      return;
+    }
 
     if (data.status == TIN_VALIDATION_ERROR) {
       toast.error(CLIENT_TIN_VALIDATION_ERROR);
@@ -45,6 +49,7 @@ const RegisterPage = () => {
     taxIdentificationNumber: "",
     dateOfBirth: "",
     password: "",
+    confirmPassword: "",
   });
 
   const updateRegistrationDetails = (e) => {
@@ -64,24 +69,27 @@ const RegisterPage = () => {
 
   const completeRegistration = async (e) => {
     e.preventDefault();
+
     const requestBody = {
-      FirstName: tinDetails.FirstName ?? "Not",
-      LastName: tinDetails.LastName ?? "Available",
-      DateOfBirth: tinDetails.DateOfBirth ?? "2025-03-20",
+      FirstName: tinDetails.firstname,
+      LastName: tinDetails.lastname,
+      DateOfBirth: tinDetails.dob,
       ChangePassword: true,
       IsActive: true,
-      // Email: tinDetails.Email ?? "Random@email.com",
-      Email: tinDetails.email,
-      Password: "Olanrewaju01.",
-      Address: "Abuja",
-      City: "Abuja",
-      StateId: "22",
-      CountryId: "1",
-      LGAId: "259",
+      Email: tinDetails.email + "mandoimm",
+      Password: registerationDetails.confirmPassword,
       PrimaryPhone: "08000000000",
-      CreateDate: "2025-02-07",
-      UserName: tinDetails.FirstName + " " + tinDetails.LastName,
+      UserName: tinDetails.firstname + " " + tinDetails.lastname,
+
+      // Address: "Abuja",
+      // City: "Abuja",
+      // StateId: "22",
+      // CountryId: "1",
+      // LGAId: "259",
+      // CreateDate: "2025-02-07",
     };
+
+    console.table(requestBody);
 
     const registrationResponse = await AxiosPost(
       "http://nofifications.fctirs.gov.ng/api/userManagement/Create",
@@ -149,6 +157,16 @@ const RegisterPage = () => {
               >
                 <VerifyInput
                   disabled={true}
+                  label="First Name"
+                  value={tinDetails.firstname}
+                />
+                <VerifyInput
+                  disabled={true}
+                  label="Last Name"
+                  value={tinDetails.lastname}
+                />
+                <VerifyInput
+                  disabled={true}
                   label="Tax Identification Number"
                   value={tinDetails.TIN}
                 />
@@ -157,13 +175,23 @@ const RegisterPage = () => {
                   label="email"
                   value={tinDetails.email}
                 />
-                <VerifyInput disabled={true} label="BVN" value="323456789" />
+                <VerifyInput
+                  disabled={true}
+                  label="BVN"
+                  value={tinDetails.bvn.length > 0 ? tinDetails.bvn : "N/A"}
+                />
                 <VerifyInput
                   disabled={true}
                   label="Date of birth"
-                  value="23/04/2024"
+                  type="date"
+                  value={new Date(tinDetails.dob).toDateString()}
                 />
-                <VerifyInput disabled={true} label="tax office" value="KUB" /> *
+                <VerifyInput
+                  disabled={true}
+                  label="tax office"
+                  value={tinDetails.TaxOffice}
+                />{" "}
+                *
                 <AuthButtons isDisabled={false} label="Confirm Registration" />
               </form>
             ) : (
@@ -189,6 +217,14 @@ const RegisterPage = () => {
                 <PrimaryInput
                   label="password"
                   name="password"
+                  type="password"
+                  placeholder="********"
+                  handleChange={updateRegistrationDetails}
+                />
+
+                <PrimaryInput
+                  label="Confirm Password"
+                  name="confirmPassword"
                   type="password"
                   placeholder="********"
                   handleChange={updateRegistrationDetails}
