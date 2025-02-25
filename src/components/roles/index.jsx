@@ -5,7 +5,7 @@ import CustomTable from "../shared-components/table";
 import { roleTableData } from "../../utils/table_data";
 import { FaPlus } from "react-icons/fa";
 import CreateRoleModel from "../shared-components/modals/CreateRoleModel";
-import { AxiosGet } from "../../services/http-service";
+import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
 
 const RolesPage = () => {
@@ -14,6 +14,7 @@ const RolesPage = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openRoleModal, setOpenRoleModal] = useState(false);
+  const [authenticatedUser, setAuthenticatedUser] = useState({});
 
   const handleDelete = () => {
     setOpenDeleteModal(true);
@@ -29,13 +30,25 @@ const RolesPage = () => {
     setOpenDeleteModal(false);
   };
 
-  const handleEditItem = (updatedItem, newRole) => {
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("authDetails"));
+    if (user && user.email) setAuthenticatedUser(user);
+  }, []);
+
+  const handleEditItem = async (updatedItem, newRole) => {
     if (newRole) {
-      setTableData((prevData) =>
-        prevData.map((item) =>
-          item.id === updatedItem.id ? { ...updatedItem, name: newRole } : item
-        )
+      const selectedRole = tableData.find((item) => item.id === updatedItem.id);
+      selectedRole.name = newRole;
+      selectedRole.RoleId = selectedRole.Id;
+      selectedRole.UserName = authenticatedUser.email;
+
+      const updateRoleResponse = await AxiosPost(
+        "http://nofifications.fctirs.gov.ng/api/Roles/Update",
+        selectedRole
       );
+      console.table(updateRoleResponse);
+      if (updateRoleResponse.StatusCode == 200) toast.success("Role Updated");
+      else toast.error("Could not update role");
     }
   };
 
@@ -70,13 +83,14 @@ const RolesPage = () => {
     const { data } = apiResponse;
     const tableData = data.Data;
     tableData.map((item) => (item.name = item.Name));
+    tableData.map((item) => (item.id = item.Id));
+
     tableData.map(
       (item) =>
         (item.dateCreated = new Date(item.UpdateDate)
           .toISOString()
           .split("T")[0])
     );
-    console.log(tableData);
     setTableData(tableData);
   };
 
