@@ -1,10 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DashboardLayout from "../shared-components/layouts/DashboardLayout";
 import CustomTable from "../shared-components/table";
 import { roleTableData } from "../../utils/table_data";
 import { FaPlus } from "react-icons/fa";
 import CreateRoleModel from "../shared-components/modals/CreateRoleModel";
+import { AxiosGet } from "../../services/http-service";
+import { toast } from "react-toastify";
 
 const RolesPage = () => {
   const tableHeadings = ["Name", "Date Created", "Actions"];
@@ -53,6 +55,29 @@ const RolesPage = () => {
     };
 
     setTableData([...tableData, newRoleData]);
+  };
+
+  useEffect(() => {
+    getRoles();
+  }, []);
+
+  const getRoles = async () => {
+    const apiResponse = await AxiosGet(
+      "http://nofifications.fctirs.gov.ng/api/Roles/GetAllRoles"
+    );
+    if (!apiResponse) toast.error("Could not fetch roles");
+
+    const { data } = apiResponse;
+    const tableData = data.Data;
+    tableData.map((item) => (item.name = item.Name));
+    tableData.map(
+      (item) =>
+        (item.dateCreated = new Date(item.UpdateDate)
+          .toISOString()
+          .split("T")[0])
+    );
+    console.log(tableData);
+    setTableData(tableData);
   };
 
   return (
