@@ -4,7 +4,7 @@ import AuthLayout from "../shared-components/auth-components/AuthLayout";
 import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 import AuthButtons from "../shared-components/buttons/AuthButtons";
 import Link from "next/link";
-import { AxiosGet, AxiosPost } from "../../services/http-service";
+import { AxiosPost } from "../../services/http-service";
 import {
   CLIENT_TIN_VALIDATION_ERROR,
   TIN_VALIDATION_ERROR,
@@ -67,6 +67,10 @@ const RegisterPage = () => {
     return await verifyTin();
   };
 
+  const storeAuthDetailsLocally = () => {
+    localStorage.setItem("authDetails", JSON.stringify(authenticationDetails));
+  };
+
   const completeRegistration = async (e) => {
     e.preventDefault();
 
@@ -76,10 +80,11 @@ const RegisterPage = () => {
       DateOfBirth: tinDetails.dob,
       ChangePassword: true,
       IsActive: true,
-      Email: tinDetails.email + "asfmandoimmasdadsssdsafd",
+      Email: tinDetails.email,
       Password: registerationDetails.confirmPassword,
       PrimaryPhone: "08000000000",
       UserName: tinDetails.firstname + " " + tinDetails.lastname,
+      //   "PrimaryPhone": "08000000000",
     };
 
     const registrationResponse = await AxiosPost(
@@ -91,11 +96,9 @@ const RegisterPage = () => {
       toast.error("Could not complete registration");
       return;
     }
-    console.log("reg response", registrationResponse);
+    storeAuthDetailsLocally(registrationResponse);
     toast.success("Registration successful");
-
-    const router = useRouter();
-    return router.push("/dashboard");
+    window.href = "/dashboard";
   };
 
   useEffect(() => {

@@ -1,10 +1,42 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 import AuthButtons from "../shared-components/buttons/AuthButtons";
 import Link from "next/link";
 import AuthLayout from "../shared-components/auth-components/AuthLayout";
+import { AxiosPost } from "../../services/http-service";
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
+  const [authenticationDetails, setAuthenticationDetails] = useState({
+    email: "",
+    password: "",
+  });
+
+  const updateAuthenticationDetails = (e) => {
+    const name = e.target.name;
+    setAuthenticationDetails((previousValue) => ({
+      ...previousValue,
+      [name]: e.target.value,
+    }));
+  };
+
+  const storeAuthDetailsLocally = () => {
+    localStorage.setItem("authDetails", JSON.stringify(authenticationDetails));
+  };
+
+  const authenticateUser = async (e) => {
+    e.preventDefault();
+    const authURL =
+      "http://nofifications.fctirs.gov.ng/api/userManagement/Login";
+    const authResponse = await AxiosPost(authURL, authenticationDetails);
+    if (authResponse.Status === "Fail") {
+      toast.error("Invalid Credentials");
+      return;
+    }
+    storeAuthDetailsLocally(authResponse);
+    window.location.href = "/dashboard";
+  };
   return (
     <AuthLayout>
       <div className="w-full">
@@ -30,18 +62,20 @@ const LoginPage = () => {
           {/*  */}
           <div className="w-full sm:max-w-[450px] mx-auto py-8 px-10 rounded-[28px] bg-[rgba(255,255,255,0.5)]">
             <h3 className="font-bold text-4xl capitalize text-center">login</h3>
-            <form className="w-full my-5">
+            <form onSubmit={authenticateUser} className="w-full my-5">
               <PrimaryInput
                 label="email"
                 name="email"
                 type="email"
-                placeholder="abc@gmail.com"
+                placeholder="abc@example.com"
+                handleChange={updateAuthenticationDetails}
               />
               <PrimaryInput
                 label="password"
                 name="password"
                 type="password"
                 placeholder="********"
+                handleChange={updateAuthenticationDetails}
               />
 
               <div className="flex justify-end">
