@@ -7,6 +7,7 @@ import { FaPlus } from "react-icons/fa";
 import CreateRoleModel from "../shared-components/modals/CreateRoleModel";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
+import { AsyncCallbackSet } from "next/dist/server/lib/async-callback-set";
 
 const RolesPage = () => {
   const tableHeadings = ["Name", "Date Created", "Actions"];
@@ -60,13 +61,26 @@ const RolesPage = () => {
     setOpenRoleModal(true);
   };
 
-  const handleCreateRoleModal = (newRole) => {
+  const handleCreateRoleModal = async (newRole) => {
     const newRoleData = {
       name: newRole,
-      id: tableData.length + 1,
-      dateCreated: "Tomorrow",
+      isActive: true,
     };
 
+    newRoleData.Name = newRole;
+    newRoleData.UserName = authenticatedUser.email;
+
+    const createRoleResponse = await AxiosPost(
+      "http://nofifications.fctirs.gov.ng/api/Roles/Create",
+      newRoleData
+    );
+
+    if (createRoleResponse.StatusCode !== 200) {
+      toast.error("Could not create role");
+      return;
+    }
+    toast.success("Role created successfully");
+    newRoleData.dateCreated = new Date().toISOString().split("T")[0];
     setTableData([...tableData, newRoleData]);
   };
 

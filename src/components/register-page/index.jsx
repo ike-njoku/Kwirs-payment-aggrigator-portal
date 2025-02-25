@@ -80,11 +80,10 @@ const RegisterPage = () => {
       DateOfBirth: tinDetails.dob,
       ChangePassword: true,
       IsActive: true,
-      Email: tinDetails.email + "test",
+      Email: tinDetails.email,
       Password: registerationDetails.confirmPassword,
       PrimaryPhone: "08000000000",
       UserName: tinDetails.firstname + " " + tinDetails.lastname,
-      //   "PrimaryPhone": "08000000000",
     };
 
     const registrationResponse = await AxiosPost(
@@ -98,7 +97,7 @@ const RegisterPage = () => {
     }
     storeAuthDetailsLocally(registrationResponse);
     toast.success("Registration successful");
-    window.href = "/dashboard";
+    window.location.href = "/dashboard";
   };
 
   useEffect(() => {
