@@ -1,4 +1,4 @@
-"use client";
+ "use client";
 import React, { useState } from "react";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
