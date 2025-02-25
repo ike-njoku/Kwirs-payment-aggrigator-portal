@@ -21,6 +21,13 @@ const RegisterPage = () => {
     useState(true);
 
   const verifyTin = async () => {
+    if (
+      registerationDetails.password !== registerationDetails.confirmPassword
+    ) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
     const TIN = registerationDetails.taxIdentificationNumber;
     const dob = registerationDetails.dateOfBirth;
     const requestBody = { TIN, dob, bvn: "" };
@@ -28,13 +35,6 @@ const RegisterPage = () => {
     const validationURL = "http://nofifications.fctirs.gov.ng/api/utility/TIN";
     const taxIDValidationResponse = await AxiosPost(validationURL, requestBody);
     const data = JSON.parse(taxIDValidationResponse);
-
-    if (
-      registerationDetails.password !== registerationDetails.confirmPassword
-    ) {
-      toast.error("Passwords do not match");
-      return;
-    }
 
     if (data.status == TIN_VALIDATION_ERROR) {
       toast.error(CLIENT_TIN_VALIDATION_ERROR);
@@ -76,27 +76,26 @@ const RegisterPage = () => {
       DateOfBirth: tinDetails.dob,
       ChangePassword: true,
       IsActive: true,
-      Email: tinDetails.email + "mandoimm",
+      Email: tinDetails.email + "asfmandoimmasdadsssdsafd",
       Password: registerationDetails.confirmPassword,
       PrimaryPhone: "08000000000",
       UserName: tinDetails.firstname + " " + tinDetails.lastname,
-
-      // Address: "Abuja",
-      // City: "Abuja",
-      // StateId: "22",
-      // CountryId: "1",
-      // LGAId: "259",
-      // CreateDate: "2025-02-07",
     };
-
-    console.table(requestBody);
 
     const registrationResponse = await AxiosPost(
       "http://nofifications.fctirs.gov.ng/api/userManagement/Create",
       requestBody
     );
 
-    // if (registrationResponse.status) router.push("/dashboard");
+    if (!registrationResponse) {
+      toast.error("Could not complete registration");
+      return;
+    }
+    console.log("reg response", registrationResponse);
+    toast.success("Registration successful");
+
+    const router = useRouter();
+    return router.push("/dashboard");
   };
 
   useEffect(() => {
@@ -191,7 +190,6 @@ const RegisterPage = () => {
                   label="tax office"
                   value={tinDetails.TaxOffice}
                 />{" "}
-                *
                 <AuthButtons isDisabled={false} label="Confirm Registration" />
               </form>
             ) : (
