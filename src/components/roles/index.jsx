@@ -25,10 +25,33 @@ const RolesPage = () => {
     setOpenEditModal(true);
   };
 
-  const handleDeleteItem = (id) => {
-    const filteredTableData = tableData.filter((item) => id !== item.id);
-    setTableData(filteredTableData);
-    setOpenDeleteModal(false);
+  // const handleDeleteItem = (id) => {
+  //   const filteredTableData = tableData.filter((item) => id !== item.id);
+  //   setTableData(filteredTableData);
+  //   setOpenDeleteModal(false);
+  // };
+
+  const handleDeleteItem = async (RoleId) => {
+    
+    try {
+      const deleteResponse = await AxiosPost(
+        "http://nofifications.fctirs.gov.ng/api/Roles/Remove/${RoleId}"   
+      );
+  
+      console.log("Delete Response:", deleteResponse);
+  
+      if (deleteResponse?.status === 200 || deleteResponse?.data?.StatusCode === 200) {
+        toast.success("Role deleted successfully");
+
+        setTableData((prevData) => prevData.filter((item) => item.id !== RoleId));
+        setOpenDeleteModal(false);
+      } else {
+        toast.error("Could not delete role");
+      }
+    } catch (error) {
+      console.error("Delete Error:", error.response?.data || error);
+      toast.error("An error occurred while deleting the role");
+    }
   };
 
   useEffect(() => {
@@ -51,7 +74,7 @@ const RolesPage = () => {
       if (updateRoleResponse.StatusCode == 200) toast.success("Role Updated");
       else toast.error("Could not update role");
     }
-  };
+  }; 
 
   const handleCloseCreateRoleModal = () => {
     setOpenRoleModal(false);
