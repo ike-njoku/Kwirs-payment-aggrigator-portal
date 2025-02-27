@@ -32,18 +32,17 @@ const RolesPage = () => {
   // };
 
   const handleDeleteItem = async (RoleId) => {
-    
     try {
       const deleteResponse = await AxiosPost(
-        "http://nofifications.fctirs.gov.ng/api/Roles/Remove/${RoleId}"   
+        `http://nofifications.fctirs.gov.ng/api/Roles/Remove/${RoleId}`
       );
-  
-      console.log("Delete Response:", deleteResponse);
-  
-      if (deleteResponse?.status === 200 || deleteResponse?.data?.StatusCode === 200) {
+
+      if (deleteResponse?.StatusCode === 200) {
         toast.success("Role deleted successfully");
 
-        setTableData((prevData) => prevData.filter((item) => item.id !== RoleId));
+        setTableData((prevData) =>
+          prevData.filter((item) => item.id !== RoleId)
+        );
         setOpenDeleteModal(false);
       } else {
         toast.error("Could not delete role");
@@ -74,7 +73,7 @@ const RolesPage = () => {
       if (updateRoleResponse.StatusCode == 200) toast.success("Role Updated");
       else toast.error("Could not update role");
     }
-  }; 
+  };
 
   const handleCloseCreateRoleModal = () => {
     setOpenRoleModal(false);
