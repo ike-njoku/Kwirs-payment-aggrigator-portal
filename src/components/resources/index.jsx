@@ -1,12 +1,13 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DashboardLayout from "../shared-components/layouts/DashboardLayout";
 import CustomTable from "../shared-components/table";
 import { resourcesTableData } from "../../utils/table_data";
 import { FaPlus } from "react-icons/fa";
 import CreateResourceModal from "../shared-components/modals/CreateResourceModal";
 import { AxiosPost } from "../../services/http-service";
-import { userIsAuthenticated } from "../../services/auth-service";
+import { authenticateUser } from "../../services/auth-service";
+import { toast } from "react-toastify";
 
 const ResourcesPage = () => {
   const tableHeadings = ["Name", "Date Created", "Actions"];
@@ -14,6 +15,7 @@ const ResourcesPage = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openResourceModal, setOpenResourceModal] = useState(false);
+  const [authenticatedUser, setAuthenticatedUser] = useState({});
   const handleDelete = () => {
     setOpenDeleteModal(true);
   };
@@ -32,9 +34,21 @@ const ResourcesPage = () => {
     if (newRole) {
       const updateResourceURL =
         "http://nofifications.fctirs.gov.ng//api/Resources/Update";
+      updatedItem.ResourceName = newRole;
+      updatedItem.Username = authenticateUser.email;
+      updatedItem.URL = newRole;
 
-      const updateResourceResponse = await AxiosPost();
+      const updateResourceResponse = await AxiosPost(
+        updateResourceURL,
+        updatedItem
+      );
 
+      if (!updateResourceResponse.StatusCode == 200) {
+        toast.error("Could not update Resource at this time");
+        return;
+      }
+
+      toast.success("Resource updated");
       setTableData((prevData) =>
         prevData.map((item) =>
           item.id === updatedItem.id ? { ...updatedItem, name: newRole } : item
@@ -61,6 +75,10 @@ const ResourcesPage = () => {
 
     setTableData([...tableData, newRoleData]);
   };
+
+  useEffect(() => {
+    setAuthenticatedUser(authenticateUser());
+  }, []);
 
   return (
     <DashboardLayout page="Resources">
