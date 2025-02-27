@@ -1,7 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usersList } from "../../utils/app_data";
 import SwitchIcon from "./SwitchIcon";
+import { AxiosGet } from "../../services/http-service";
+import { toast } from "react-toastify";
 
 const UsersTable = () => {
   const [userList, setUserList] = useState(usersList);
@@ -14,6 +16,41 @@ const UsersTable = () => {
       )
     );
   };
+
+  const openUserModal = () => {
+    console.log("openUserModal");
+  };
+
+  const getAllUsers = async () => {
+    const response = await AxiosGet(
+      "http://nofifications.fctirs.gov.ng/api/userManagement/GetAllUser"
+    );
+
+    const { data } = response;
+    if (!data.StatusCode) {
+      toast.error("Failed to fetch Users");
+      return;
+    }
+
+    const userList = data.Data;
+    userList.map((user) => (user.userName = user.UserName));
+    userList.map((user) => (user.email = user.Email));
+    userList.map((user) => (user.phone = user.PrimaryPhone));
+    userList.map((user) => (user.isActive = user.IsActive));
+
+    setUserList(userList);
+  };
+
+  const updateUserRole = async (index, role) => {
+    console.log(index, role);
+    setUserList((prevUsers) =>
+      prevUsers.map((user, i) => (i === index ? { ...user, role } : user))
+    );
+  };
+
+  useEffect(() => {
+    getAllUsers();
+  }, []);
 
   return (
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -43,6 +80,8 @@ const UsersTable = () => {
               <tr
                 className="odd:bg-white even:bg-gray-100 border-b border-gray-200"
                 key={i}
+                onClick={openUserModal}
+                style={{ cursor: "pointer" }}
               >
                 <td scope="row" class="px-6 py-4 font-medium text-gray-900 ">
                   {user.userName}
