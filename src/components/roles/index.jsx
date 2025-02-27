@@ -25,12 +25,6 @@ const RolesPage = () => {
     setOpenEditModal(true);
   };
 
-  // const handleDeleteItem = (id) => {
-  //   const filteredTableData = tableData.filter((item) => id !== item.id);
-  //   setTableData(filteredTableData);
-  //   setOpenDeleteModal(false);
-  // };
-
   const handleDeleteItem = async (RoleId) => {
     try {
       const deleteResponse = await AxiosPost(
