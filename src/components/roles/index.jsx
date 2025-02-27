@@ -36,14 +36,14 @@ const RolesPage = () => {
       const deleteResponse = await AxiosPost(
         `http://nofifications.fctirs.gov.ng/api/Roles/Remove/${RoleId}`
       );
-  
-      console.log("Delete Response:", deleteResponse);
-  
-      if (deleteResponse.StatusCode === 200) {
-        
+
+      if (deleteResponse?.StatusCode === 200) {
+        toast.success("Role deleted successfully");
+
+        setTableData((prevData) =>
+          prevData.filter((item) => item.id !== RoleId)
+        );
         setOpenDeleteModal(false);
-  
-        setTableData((prevData) => prevData.filter((item) => item.RoleId !== RoleId));
       } else {
         toast.error("Could not delete role");
       }

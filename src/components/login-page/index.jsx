@@ -34,7 +34,9 @@ const LoginPage = () => {
     const authURL =
       "http://nofifications.fctirs.gov.ng/api/userManagement/Login";
     const authResponse = await AxiosPost(authURL, _authenticationDetails);
-    if (authResponse === "Fail") {
+
+    console.table(authResponse);
+    if (authResponse && authResponse.Status === "Fail") {
       toast.error("Invalid Credentials");
       return;
     }
