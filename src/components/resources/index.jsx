@@ -108,58 +108,19 @@ const ResourcesPage = () => {
     setOpenResourceModal(false);
   };
 
-  const fetchAllResources = async () => {
-    const apiResponse = await AxiosGet(
-      "http://nofifications.fctirs.gov.ng/api/Resources/GetAllResource"
-    );
-
-    const { data } = apiResponse;
-    const tableData = data.Data || data.resources || [];
-
-    if (!tableData.length) {
-      toast.warn("No resources found");
-      return;
-    }
-
-    tableData.map((item) => (item.name = item.ResourceName));
-    tableData.map((item) => (item.id = item.ResourceId));
-
-    tableData.map(
-      (item) =>
-        (item.dateCreated = new Date(item.CreateDate)
-          .toISOString()
-          .split("T")[0])
-    );
-
-    setTableData(tableData);
+  const handleOpenCreateResourceModal = () => {
+    setOpenResourceModal(true);
   };
 
-  useEffect(() => {
-    setAuthenticatedUser(authenticateUser());
-    fetchAllResources();
-  }, []);
+  const handleCreateResourceModal = (newRole) => {
+    console.log("resources");
+    const newRoleData = {
+      name: newRole,
+      id: tableData.length + 1,
+      dateCreated: "Tomorrow",
+    };
 
-  const handleDeleteItem = async (ResourceId) => {
-    try {
-      const deleteResponse = await AxiosGet(
-        `http://nofifications.fctirs.gov.ng/api/Resources/Delete/${ResourceId}`
-      );
-
-      if (deleteResponse?.data?.StatusCode !== 200) {
-        toast.error("Could not delete resource");
-        return;
-      }
-
-      setTableData((prevData) =>
-        prevData.filter((item) => item.ResourceId !== ResourceId)
-      );
-      toast.success("Resource deleted successfully");
-
-      setOpenDeleteModal(false);
-    } catch (error) {
-      console.error("Delete Error:", error.response?.data || error);
-      toast.error("An error occurred while deleting the resource");
-    }
+    setTableData([...tableData, newRoleData]);
   };
 
   return (

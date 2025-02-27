@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 
-export const userIsAuthenticated = () => {
+export const authenticateUser = () => {
   const authenticatedUser = JSON.parse(localStorage.getItem("authDetails"));
   if (!authenticatedUser) {
     toast.error("You are not Logged in");
@@ -10,5 +10,6 @@ export const userIsAuthenticated = () => {
     router.push("/login");
     return false;
   }
-  return true;
+
+  return authenticatedUser;
 };
