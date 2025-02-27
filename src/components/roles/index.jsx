@@ -25,11 +25,35 @@ const RolesPage = () => {
     setOpenEditModal(true);
   };
 
-  const handleDeleteItem = (id) => {
-    const filteredTableData = tableData.filter((item) => id !== item.id);
-    setTableData(filteredTableData);
-    setOpenDeleteModal(false);
+  // const handleDeleteItem = (id) => {
+  //   const filteredTableData = tableData.filter((item) => id !== item.id);
+  //   setTableData(filteredTableData);
+  //   setOpenDeleteModal(false);
+  // };
+
+  const handleDeleteItem = async (RoleId) => {
+    try {
+      const deleteResponse = await AxiosPost(
+        `http://nofifications.fctirs.gov.ng/api/Roles/Remove/${RoleId}`
+      );
+  
+      console.log("Delete Response:", deleteResponse);
+  
+      if (deleteResponse.StatusCode === 200) {
+        
+        setOpenDeleteModal(false);
+  
+        setTableData((prevData) => prevData.filter((item) => item.RoleId !== RoleId));
+      } else {
+        toast.error("Could not delete role");
+      }
+    } catch (error) {
+      console.error("Delete Error:", error.response?.data || error);
+      toast.error("An error occurred while deleting the role");
+    }
   };
+  
+
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("authDetails"));
