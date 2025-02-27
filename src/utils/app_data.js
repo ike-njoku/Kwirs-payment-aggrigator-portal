@@ -36,6 +36,11 @@ export const sidebarMenu = [
     url: "/resources",
   },
   {
+    path: "resources allocation",
+    icon: <FaTasks />,
+    url: "/resources-allocation",
+  },
+  {
     path: "roles",
     icon: <FaUserTie />,
     url: "/roles",
@@ -47,24 +52,7 @@ export const sidebarMenu = [
   },
 ];
 
-export const usersList = [
-  {
-    userName: "Ike-njoku David",
-    createdAt: "01-10-2024",
-    email: "ikenjokudc@gmail.com",
-    phone: "08038686694",
-    isActive: true,
-    role: "Admin",
-  },
-  {
-    userName: "Florence Chikwendu",
-    createdAt: "01-10-2024",
-    email: "chidaluchekwendu@gmail.com",
-    phone: "07038792802",
-    isActive: false,
-    role: "User",
-  },
-];
+export const usersList = [];
 
 export const profileData = {
   name: "John Doe",

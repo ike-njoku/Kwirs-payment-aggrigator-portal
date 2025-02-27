@@ -10,7 +10,7 @@ import { authenticateUser } from "../../services/auth-service";
 import { toast } from "react-toastify";
 
 const ResourcesPage = () => {
-  const tableHeadings = ["Name", "Date Created", "Actions"];
+  const tableHeadings = ["Name", "Resource URL", "Actions"];
   const [tableData, setTableData] = useState(resourcesTableData);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
