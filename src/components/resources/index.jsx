@@ -6,7 +6,9 @@ import { resourcesTableData } from "../../utils/table_data";
 import { FaPlus } from "react-icons/fa";
 import CreateResourceModal from "../shared-components/modals/CreateResourceModal";
 import { toast } from "react-toastify";
-import { AxiosGet, AxiosPost } from "../../services/http-service"; 
+import { AxiosGet, AxiosPost } from "../../services/http-service";
+import { AxiosPost } from "../../services/http-service";
+import { userIsAuthenticated } from "../../services/auth-service";
 
 const ResourcesPage = () => {
   const tableHeadings = ["Name", "Date Created", "Actions"];
@@ -15,7 +17,6 @@ const ResourcesPage = () => {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [authenticatedUser, setAuthenticatedUser] = useState(null);
   const [openResourceModal, setOpenResourceModal] = useState(false);
-
 
   useEffect(() => {
     const storedUser = localStorage.getItem("authDetails");
@@ -35,15 +36,14 @@ const ResourcesPage = () => {
     }
   }, []);
 
-
   const handleCreateResourceModal = async ({ resourceName, resourceUrl }) => {
     const storedUser = localStorage.getItem("authDetails");
-  
+
     if (!storedUser) {
       toast.error("User authentication is required.");
       return;
     }
-  
+
     let authenticatedUser;
     try {
       authenticatedUser = JSON.parse(storedUser);
@@ -54,12 +54,12 @@ const ResourcesPage = () => {
       toast.error("Invalid authentication data. Please log in again.");
       return;
     }
-  
+
     if (!resourceName.trim() || !resourceUrl.trim()) {
       toast.error("Resource Name and URL are required.");
       return;
     }
-  
+
     const newResourceData = {
       ResourceName: resourceName,
       URL: resourceUrl,
@@ -67,87 +67,89 @@ const ResourcesPage = () => {
       Type: 2,
       ParentResourceId: 1,
     };
-  
+
     try {
       const createResourceResponse = await AxiosPost(
         "http://nofifications.fctirs.gov.ng/api/Resources/Create",
         newResourceData
       );
-  
+
       if (createResourceResponse.StatusCode !== 200) {
         toast.error("Could not create resource.");
         return;
       }
-  
+
       toast.success("Resource created successfully");
-  
+
       setTableData((prevData) => [
         {
           ...newResourceData,
-          ResourceId: createResourceResponse?.data?.ResourceId || prevData.length + 1,
+          ResourceId:
+            createResourceResponse?.data?.ResourceId || prevData.length + 1,
           dateCreated: new Date().toISOString().split("T")[0],
         },
-        ...prevData, 
+        ...prevData,
       ]);
-  
     } catch (error) {
-      toast.error(`An error occurred: ${error.response?.data?.message || "Request failed"}`);
+      toast.error(
+        `An error occurred: ${
+          error.response?.data?.message || "Request failed"
+        }`
+      );
     }
   };
-  
 
   const fetchAllResources = async () => {
     const apiResponse = await AxiosGet(
       "http://nofifications.fctirs.gov.ng/api/Resources/GetAllResource"
     );
-  
+
     if (!apiResponse) {
       toast.error("Could not fetch resources");
       return;
     }
-  
+
     const { data } = apiResponse;
     const tableData = data.Data || data.resources || [];
-  
+
     if (!tableData.length) {
       toast.warn("No resources found");
       setTableData([]);
       return;
     }
-  
+
     tableData.map((item) => (item.name = item.ResourceName));
     tableData.map((item) => (item.id = item.ResourceId));
-    
+
     tableData.map(
       (item) =>
-        (item.dateCreated = new Date(item.CreateDate).toISOString().split("T")[0])
+        (item.dateCreated = new Date(item.CreateDate)
+          .toISOString()
+          .split("T")[0])
     );
-  
+
     setTableData(tableData);
   };
-  
-  
 
   useEffect(() => {
     fetchAllResources();
   }, []);
-
 
   const handleDeleteItem = async (ResourceId) => {
     try {
       const deleteResponse = await AxiosGet(
         `http://nofifications.fctirs.gov.ng/api/Resources/Delete/${ResourceId}`
       );
-  
+
       console.log("Delete Response:", deleteResponse);
-  
+
       if (deleteResponse?.data?.StatusCode === 200) {
         toast.success("Resource deleted successfully");
-  
+
         setTableData((prevData) =>
           prevData.filter((item) => item.ResourceId !== ResourceId)
         );
-  
+
         setOpenDeleteModal(false);
       } else {
         toast.error("Could not delete resource");
@@ -157,9 +159,6 @@ const ResourcesPage = () => {
       toast.error("An error occurred while deleting the resource");
     }
   };
-  
-
-  
 
   return (
     <DashboardLayout page="Resources">
@@ -194,7 +193,9 @@ const ResourcesPage = () => {
                 if (newRole) {
                   setTableData((prevData) =>
                     prevData.map((item) =>
-                      item.id === updatedItem.id ? { ...updatedItem, name: newRole } : item
+                      item.id === updatedItem.id
+                        ? { ...updatedItem, name: newRole }
+                        : item
                     )
                   );
                 }
@@ -219,4 +220,3 @@ const ResourcesPage = () => {
 };
 
 export default ResourcesPage;
-
