@@ -5,6 +5,8 @@ import CustomTable from "../shared-components/table";
 import { resourcesTableData } from "../../utils/table_data";
 import { FaPlus } from "react-icons/fa";
 import CreateResourceModal from "../shared-components/modals/CreateResourceModal";
+import { AxiosPost } from "../../services/http-service";
+import { userIsAuthenticated } from "../../services/auth-service";
 
 const ResourcesPage = () => {
   const tableHeadings = ["Name", "Date Created", "Actions"];
@@ -26,8 +28,13 @@ const ResourcesPage = () => {
     setOpenDeleteModal(false);
   };
 
-  const handleEditItem = (updatedItem, newRole) => {
+  const handleEditItem = async (updatedItem, newRole) => {
     if (newRole) {
+      const updateResourceURL =
+        "http://nofifications.fctirs.gov.ng//api/Resources/Update";
+
+      const updateResourceResponse = await AxiosPost();
+
       setTableData((prevData) =>
         prevData.map((item) =>
           item.id === updatedItem.id ? { ...updatedItem, name: newRole } : item
