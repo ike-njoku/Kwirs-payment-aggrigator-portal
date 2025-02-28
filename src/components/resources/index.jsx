@@ -6,7 +6,7 @@ import { resourcesTableData } from "../../utils/table_data";
 import { FaPlus } from "react-icons/fa";
 import CreateResourceModal from "../shared-components/modals/CreateResourceModal";
 import { toast } from "react-toastify";
-import { AxiosGet, AxiosPost } from "../../services/http-service"; // Ensure correct import
+import { AxiosGet, AxiosPost } from "../../services/http-service"; 
 
 const ResourcesPage = () => {
   const tableHeadings = ["Name", "Date Created", "Actions"];
@@ -36,12 +36,11 @@ const ResourcesPage = () => {
   }, []);
 
 
-  const handleCreateResourceModal = async (newResourceURL) => {
+  const handleCreateResourceModal = async ({ resourceName, resourceUrl }) => {
     const storedUser = localStorage.getItem("authDetails");
   
     if (!storedUser) {
       toast.error("User authentication is required.");
-      console.error("No auth details found in localStorage.");
       return;
     }
   
@@ -52,49 +51,50 @@ const ResourcesPage = () => {
         throw new Error("Invalid user data");
       }
     } catch (error) {
-      console.error("Error parsing authDetails:", error);
       toast.error("Invalid authentication data. Please log in again.");
       return;
     }
   
+    if (!resourceName.trim() || !resourceUrl.trim()) {
+      toast.error("Resource Name and URL are required.");
+      return;
+    }
+  
     const newResourceData = {
-      ResourceName: "", 
-      URL: newResourceURL, 
+      ResourceName: resourceName,
+      URL: resourceUrl,
       Username: authenticatedUser.email,
-      // Type: 2,
-      // ParentResourceId: 1,
+      Type: 2,
+      ParentResourceId: 1,
     };
   
     try {
-      console.log("Sending request with data:", newResourceData);
-      
       const createResourceResponse = await AxiosPost(
         "http://nofifications.fctirs.gov.ng/api/Resources/Create",
         newResourceData
       );
   
-      console.log("API Response:", createResourceResponse);
-  
-      if (!createResourceResponse.StatusCode !== 200) {
-        toast.error(`Could not create resource`);
+      if (createResourceResponse.StatusCode !== 200) {
+        toast.error("Could not create resource.");
         return;
       }
   
       toast.success("Resource created successfully");
   
       setTableData((prevData) => [
-        ...prevData,
         {
           ...newResourceData,
           ResourceId: createResourceResponse?.data?.ResourceId || prevData.length + 1,
           dateCreated: new Date().toISOString().split("T")[0],
         },
+        ...prevData, 
       ]);
+  
     } catch (error) {
-      console.error("Create Resource Error:", error.response?.data || error.message);
       toast.error(`An error occurred: ${error.response?.data?.message || "Request failed"}`);
     }
   };
+  
 
   const fetchAllResources = async () => {
     const apiResponse = await AxiosGet(
@@ -132,6 +132,33 @@ const ResourcesPage = () => {
     fetchAllResources();
   }, []);
 
+
+  const handleDeleteItem = async (ResourceId) => {
+    try {
+      const deleteResponse = await AxiosGet(
+        `http://nofifications.fctirs.gov.ng/api/Resources/Delete/${ResourceId}`
+      );
+  
+      console.log("Delete Response:", deleteResponse);
+  
+      if (deleteResponse?.data?.StatusCode === 200) {
+        toast.success("Resource deleted successfully");
+  
+        setTableData((prevData) =>
+          prevData.filter((item) => item.ResourceId !== ResourceId)
+        );
+  
+        setOpenDeleteModal(false);
+      } else {
+        toast.error("Could not delete resource");
+      }
+    } catch (error) {
+      console.error("Delete Error:", error.response?.data || error);
+      toast.error("An error occurred while deleting the resource");
+    }
+  };
+  
+
   
 
   return (
@@ -162,10 +189,7 @@ const ResourcesPage = () => {
               setOpenDeleteModal={setOpenDeleteModal}
               setOpenEditModal={setOpenEditModal}
               openEditModal={openEditModal}
-              handleDeleteItem={(id) => {
-                setTableData((prevData) => prevData.filter((item) => item.id !== id));
-                setOpenDeleteModal(false);
-              }}
+              handleDeleteItem={handleDeleteItem}
               handleEditItem={(updatedItem, newRole) => {
                 if (newRole) {
                   setTableData((prevData) =>
