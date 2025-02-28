@@ -69,11 +69,11 @@ const ResourcesPage = () => {
     setOpenEditModal(true);
   };
 
-  const handleDeleteItem = (id) => {
-    const filteredTableData = tableData.filter((item) => id !== item.id);
-    setTableData(filteredTableData);
-    setOpenDeleteModal(false);
-  };
+  // const handleDeleteItem = (id) => {
+  //   const filteredTableData = tableData.filter((item) => id !== item.id);
+  //   setTableData(filteredTableData);
+  //   setOpenDeleteModal(false);
+  // };
 
   const handleEditItem = async (updatedItem, newRole) => {
     if (newRole) {
@@ -113,17 +113,11 @@ const ResourcesPage = () => {
       "http://nofifications.fctirs.gov.ng/api/Resources/GetAllResource"
     );
 
-    if (!apiResponse) {
-      toast.error("Could not fetch resources");
-      return;
-    }
-
     const { data } = apiResponse;
     const tableData = data.Data || data.resources || [];
 
     if (!tableData.length) {
       toast.warn("No resources found");
-      setTableData([]);
       return;
     }
 
@@ -144,9 +138,6 @@ const ResourcesPage = () => {
     setAuthenticatedUser(authenticateUser());
     fetchAllResources();
   }, []);
-  useEffect(() => {
-    fetchAllResources();
-  }, []);
 
   const handleDeleteItem = async (ResourceId) => {
     try {
@@ -154,19 +145,17 @@ const ResourcesPage = () => {
         `http://nofifications.fctirs.gov.ng/api/Resources/Delete/${ResourceId}`
       );
 
-      console.log("Delete Response:", deleteResponse);
-
-      if (deleteResponse?.data?.StatusCode === 200) {
-        toast.success("Resource deleted successfully");
-
-        setTableData((prevData) =>
-          prevData.filter((item) => item.ResourceId !== ResourceId)
-        );
-
-        setOpenDeleteModal(false);
-      } else {
+      if (deleteResponse?.data?.StatusCode !== 200) {
         toast.error("Could not delete resource");
+        return;
       }
+
+      setTableData((prevData) =>
+        prevData.filter((item) => item.ResourceId !== ResourceId)
+      );
+      toast.success("Resource deleted successfully");
+
+      setOpenDeleteModal(false);
     } catch (error) {
       console.error("Delete Error:", error.response?.data || error);
       toast.error("An error occurred while deleting the resource");
@@ -201,23 +190,8 @@ const ResourcesPage = () => {
               setOpenDeleteModal={setOpenDeleteModal}
               setOpenEditModal={setOpenEditModal}
               openEditModal={openEditModal}
-              handleDeleteItem={(id) => {
-                setTableData((prevData) =>
-                  prevData.filter((item) => item.id !== id)
-                );
-                setOpenDeleteModal(false);
-              }}
-              handleEditItem={(updatedItem, newRole) => {
-                if (newRole) {
-                  setTableData((prevData) =>
-                    prevData.map((item) =>
-                      item.id === updatedItem.id
-                        ? { ...updatedItem, name: newRole }
-                        : item
-                    )
-                  );
-                }
-              }}
+              handleDeleteItem={handleDeleteItem}
+              handleEditItem={handleEditItem}
               text="Are you sure you want to delete this resource?"
               label="Resource name"
               heading="Update Resource"
