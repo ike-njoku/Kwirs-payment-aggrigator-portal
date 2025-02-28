@@ -10,7 +10,7 @@ import { authenticateUser } from "../../services/auth-service";
 import { toast } from "react-toastify";
 
 const ResourcesPage = () => {
-  const tableHeadings = ["Name", "Resource URL", "Actions"];
+  const tableHeadings = ["Name", "Date Created", "Actions"];
   const [tableData, setTableData] = useState(resourcesTableData);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -60,176 +60,182 @@ const ResourcesPage = () => {
         }`
       );
     }
-    const handleDelete = () => {
-      setOpenDeleteModal(true);
-    };
-
-    const handleEdit = () => {
-      setOpenEditModal(true);
-    };
-
-    const handleDeleteItem = (id) => {
-      const filteredTableData = tableData.filter((item) => id !== item.id);
-      setTableData(filteredTableData);
-      setOpenDeleteModal(false);
-    };
-
-    const handleEditItem = async (updatedItem, newRole) => {
-      if (newRole) {
-        const updateResourceURL =
-          "http://nofifications.fctirs.gov.ng//api/Resources/Update";
-        updatedItem.ResourceName = newRole;
-        updatedItem.Username = authenticateUser.email;
-        updatedItem.URL = newRole;
-
-        const updateResourceResponse = await AxiosPost(
-          updateResourceURL,
-          updatedItem
-        );
-
-        if (!updateResourceResponse.StatusCode == 200) {
-          toast.error("Could not update Resource at this time");
-          return;
-        }
-
-        toast.success("Resource updated");
-        setTableData((prevData) =>
-          prevData.map((item) =>
-            item.id === updatedItem.id
-              ? { ...updatedItem, name: newRole }
-              : item
-          )
-        );
-      }
-    };
-
-    const handleCloseCreateRoleModal = () => {
-      setOpenResourceModal(false);
-    };
-
-    const fetchAllResources = async () => {
-      const apiResponse = await AxiosGet(
-        "http://nofifications.fctirs.gov.ng/api/Resources/GetAllResource"
-      );
-
-      if (!apiResponse) {
-        toast.error("Could not fetch resources");
-        return;
-      }
-
-      const { data } = apiResponse;
-      const tableData = data.Data || data.resources || [];
-
-      if (!tableData.length) {
-        toast.warn("No resources found");
-        setTableData([]);
-        return;
-      }
-
-      tableData.map((item) => (item.name = item.ResourceName));
-      tableData.map((item) => (item.id = item.ResourceId));
-
-      tableData.map(
-        (item) =>
-          (item.dateCreated = new Date(item.CreateDate)
-            .toISOString()
-            .split("T")[0])
-      );
-
-      setTableData(tableData);
-    };
-
-    useEffect(() => {
-      setAuthenticatedUser(authenticateUser());
-      fetchAllResources();
-    }, []);
-    useEffect(() => {
-      fetchAllResources();
-    }, []);
-
-    const handleDeleteItem = async (ResourceId) => {
-      try {
-        const deleteResponse = await AxiosGet(
-          `http://nofifications.fctirs.gov.ng/api/Resources/Delete/${ResourceId}`
-        );
-
-        console.log("Delete Response:", deleteResponse);
-
-        if (deleteResponse?.data?.StatusCode === 200) {
-          toast.success("Resource deleted successfully");
-
-          setTableData((prevData) =>
-            prevData.filter((item) => item.ResourceId !== ResourceId)
-          );
-
-          setOpenDeleteModal(false);
-        } else {
-          toast.error("Could not delete resource");
-        }
-      } catch (error) {
-        console.error("Delete Error:", error.response?.data || error);
-        toast.error("An error occurred while deleting the resource");
-      }
-    };
-
-    return (
-      <DashboardLayout page="Resources">
-        <section className="w-full">
-          <div className=" w-[90%] mx-auto py-5">
-            <div className=" w-full lg:mt-10">
-              {/* Search bar and filter options */}
-              <section className="w-full mb-3 flex justify-end items-center gap-5 lg:justify-start">
-                <button
-                  className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
-                  type="button"
-                  onClick={() => setOpenResourceModal(true)}
-                >
-                  Create Resource
-                  <FaPlus />
-                </button>
-              </section>
-
-              {/* Table */}
-              <CustomTable
-                tableHeadings={tableHeadings}
-                tableData={tableData}
-                isEllipseDropdwon={true}
-                handleDelete={() => setOpenDeleteModal(true)}
-                handleEdit={() => setOpenEditModal(true)}
-                openDeleteModal={openDeleteModal}
-                setOpenDeleteModal={setOpenDeleteModal}
-                setOpenEditModal={setOpenEditModal}
-                openEditModal={openEditModal}
-                handleDeleteItem={handleDeleteItem}
-                handleEditItem={(updatedItem, newRole) => {
-                  if (newRole) {
-                    setTableData((prevData) =>
-                      prevData.map((item) =>
-                        item.id === updatedItem.id
-                          ? { ...updatedItem, name: newRole }
-                          : item
-                      )
-                    );
-                  }
-                }}
-                text="Are you sure you want to delete this resource?"
-                label="Resource name"
-                heading="Update Resource"
-              />
-            </div>
-          </div>
-
-          {/* Modal */}
-          {openResourceModal && (
-            <CreateResourceModal
-              handleCloseModal={() => setOpenResourceModal(false)}
-              handleCreateModal={handleCreateResourceModal}
-            />
-          )}
-        </section>
-      </DashboardLayout>
-    );
   };
+  const handleDelete = () => {
+    setOpenDeleteModal(true);
+  };
+
+  const handleEdit = () => {
+    setOpenEditModal(true);
+  };
+
+  const handleDeleteItem = (id) => {
+    const filteredTableData = tableData.filter((item) => id !== item.id);
+    setTableData(filteredTableData);
+    setOpenDeleteModal(false);
+  };
+
+  const handleEditItem = async (updatedItem, newRole) => {
+    if (newRole) {
+      const updateResourceURL =
+        "http://nofifications.fctirs.gov.ng//api/Resources/Update";
+      updatedItem.ResourceName = newRole;
+      updatedItem.Username = authenticateUser?.email;
+      updatedItem.URL = newRole;
+
+      const updateResourceResponse = await AxiosPost(
+        updateResourceURL,
+        updatedItem
+      );
+
+      console.table(updatedItem);
+
+      if (updateResourceResponse?.StatusCode !== 200) {
+        toast.error("Could not update Resource at this time");
+        return;
+      }
+
+      toast.success("Resource updated");
+      setTableData((prevData) =>
+        prevData.map((item) =>
+          item.id === updatedItem.id ? { ...updatedItem, name: newRole } : item
+        )
+      );
+    }
+  };
+
+  const handleCloseCreateRoleModal = () => {
+    setOpenResourceModal(false);
+  };
+
+  const fetchAllResources = async () => {
+    const apiResponse = await AxiosGet(
+      "http://nofifications.fctirs.gov.ng/api/Resources/GetAllResource"
+    );
+
+    if (!apiResponse) {
+      toast.error("Could not fetch resources");
+      return;
+    }
+
+    const { data } = apiResponse;
+    const tableData = data.Data || data.resources || [];
+
+    if (!tableData.length) {
+      toast.warn("No resources found");
+      setTableData([]);
+      return;
+    }
+
+    tableData.map((item) => (item.name = item.ResourceName));
+    tableData.map((item) => (item.id = item.ResourceId));
+
+    tableData.map(
+      (item) =>
+        (item.dateCreated = new Date(item.CreateDate)
+          .toISOString()
+          .split("T")[0])
+    );
+
+    setTableData(tableData);
+  };
+
+  useEffect(() => {
+    setAuthenticatedUser(authenticateUser());
+    fetchAllResources();
+  }, []);
+  useEffect(() => {
+    fetchAllResources();
+  }, []);
+
+  const handleDeleteItem = async (ResourceId) => {
+    try {
+      const deleteResponse = await AxiosGet(
+        `http://nofifications.fctirs.gov.ng/api/Resources/Delete/${ResourceId}`
+      );
+
+      console.log("Delete Response:", deleteResponse);
+
+      if (deleteResponse?.data?.StatusCode === 200) {
+        toast.success("Resource deleted successfully");
+
+        setTableData((prevData) =>
+          prevData.filter((item) => item.ResourceId !== ResourceId)
+        );
+
+        setOpenDeleteModal(false);
+      } else {
+        toast.error("Could not delete resource");
+      }
+    } catch (error) {
+      console.error("Delete Error:", error.response?.data || error);
+      toast.error("An error occurred while deleting the resource");
+    }
+  };
+
+  return (
+    <DashboardLayout page="Resources">
+      <section className="w-full">
+        <div className=" w-[90%] mx-auto py-5">
+          <div className=" w-full lg:mt-10">
+            {/* Search bar and filter options */}
+            <section className="w-full mb-3 flex justify-end items-center gap-5 lg:justify-start">
+              <button
+                className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
+                type="button"
+                onClick={() => setOpenResourceModal(true)}
+              >
+                Create Resource
+                <FaPlus />
+              </button>
+            </section>
+
+            {/* Table */}
+            <CustomTable
+              tableHeadings={tableHeadings}
+              tableData={tableData}
+              isEllipseDropdwon={true}
+              handleDelete={() => setOpenDeleteModal(true)}
+              handleEdit={() => setOpenEditModal(true)}
+              openDeleteModal={openDeleteModal}
+              setOpenDeleteModal={setOpenDeleteModal}
+              setOpenEditModal={setOpenEditModal}
+              openEditModal={openEditModal}
+              handleDeleteItem={(id) => {
+                setTableData((prevData) =>
+                  prevData.filter((item) => item.id !== id)
+                );
+                setOpenDeleteModal(false);
+              }}
+              handleEditItem={(updatedItem, newRole) => {
+                if (newRole) {
+                  setTableData((prevData) =>
+                    prevData.map((item) =>
+                      item.id === updatedItem.id
+                        ? { ...updatedItem, name: newRole }
+                        : item
+                    )
+                  );
+                }
+              }}
+              text="Are you sure you want to delete this resource?"
+              label="Resource name"
+              heading="Update Resource"
+            />
+          </div>
+        </div>
+
+        {/* Modal */}
+        {openResourceModal && (
+          <CreateResourceModal
+            handleCloseModal={() => setOpenResourceModal(false)}
+            handleCreateModal={handleCreateResourceModal}
+          />
+        )}
+      </section>
+    </DashboardLayout>
+  );
+  // };
 };
 
 export default ResourcesPage;
