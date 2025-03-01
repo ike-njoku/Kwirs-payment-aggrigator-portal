@@ -36,7 +36,7 @@ const ResourcesPage = () => {
   }, []);
 
 
-  const handleCreateResourceModal = async ({ resourceName, resourceUrl }) => {
+  const handleCreateResourceModal = async ({ resourceName, resourceUrl, menuType, selectedParent }) => {
     const storedUser = localStorage.getItem("authDetails");
   
     if (!storedUser) {
@@ -56,7 +56,12 @@ const ResourcesPage = () => {
     }
   
     if (!resourceName.trim() || !resourceUrl.trim()) {
-      toast.error("Resource Name and URL are required.");
+      toast.error("Menu Name and URL are required.");
+      return;
+    }
+  
+    if (menuType === "2" && !selectedParent.trim()) {
+      toast.error("Parent Resource is required for Sub Menus.");
       return;
     }
   
@@ -64,8 +69,9 @@ const ResourcesPage = () => {
       ResourceName: resourceName,
       URL: resourceUrl,
       Username: authenticatedUser.email,
-      Type: 2,
-      ParentResourceId: 1,
+      Type: menuType,
+      ParentResourceId: menuType === "2" ? selectedParent : "", 
+      ResourceId: 1,
     };
   
     try {
@@ -87,13 +93,13 @@ const ResourcesPage = () => {
           ResourceId: createResourceResponse?.data?.ResourceId || prevData.length + 1,
           dateCreated: new Date().toISOString().split("T")[0],
         },
-        ...prevData, 
+        ...prevData,
       ]);
-  
     } catch (error) {
       toast.error(`An error occurred: ${error.response?.data?.message || "Request failed"}`);
     }
   };
+  
   
 
   const fetchAllResources = async () => {
@@ -125,8 +131,7 @@ const ResourcesPage = () => {
   
     setTableData(tableData);
   };
-  
-  
+    
 
   useEffect(() => {
     fetchAllResources();
@@ -220,3 +225,73 @@ const ResourcesPage = () => {
 
 export default ResourcesPage;
 
+
+// "use client"; 
+// import React, { useState } from "react";
+// import ModalLayout from "./ModalLayout";
+// import AuthButtons from "../buttons/AuthButtons";
+
+// const CreateResourceModal = ({ handleCloseModal, handleCreateModal }) => {
+//   const [resourceName, setResourceName] = useState("");
+//   const [resourceUrl, setResourceUrl] = useState("");
+
+//   const handleFormSubmit = (e) => {
+//     e.preventDefault(); 
+
+//     if (!resourceName.trim() || !resourceUrl.trim()) {
+//       alert("Both fields are required!");
+//       return;
+//     }
+
+//     handleCreateModal({ resourceName, resourceUrl });
+//     handleCloseModal();
+//   };
+
+//   return (
+//     <ModalLayout handleCloseModal={handleCloseModal}>
+//       <div className="w-full p-5">
+//         <h3 className="my-5 text-lg font-semibold pb-4 border-b border-b-gray-500 text-gray-700">
+//           Create Resource
+//         </h3>
+//         <form className="w-full" onSubmit={handleFormSubmit}>
+//           <div className="w-full">
+        
+//             <label className="text-base font-medium text-gray-700" htmlFor="resourceName">
+//               Resource Name
+//             </label>
+//             <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
+//               <input
+//                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
+//                 type="text"
+//                 value={resourceName}
+//                 onChange={(e) => setResourceName(e.target.value)}
+//                 placeholder="Enter resource name"
+//                 required
+//               />
+//             </div>
+
+    
+//             <label className="text-base font-medium text-gray-700" htmlFor="resourceUrl">
+//               Resource URL
+//             </label>
+//             <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
+//               <input
+//                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
+//                 type="url"
+//                 value={resourceUrl}
+//                 onChange={(e) => setResourceUrl(e.target.value)}
+//                 placeholder="Eg. https://url.com"
+//                 required
+//               />
+//             </div>
+
+    
+//             <AuthButtons label="Create" textColor="text-white" />
+//           </div>
+//         </form>
+//       </div>
+//     </ModalLayout>
+//   );
+// };
+
+// export default CreateResourceModal;
