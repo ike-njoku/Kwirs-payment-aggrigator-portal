@@ -35,11 +35,11 @@ const LoginPage = () => {
       "http://nofifications.fctirs.gov.ng/api/userManagement/Login";
     const authResponse = await AxiosPost(authURL, _authenticationDetails);
 
-    console.table(authResponse);
     if (authResponse && authResponse.Status === "Fail") {
       toast.error("Invalid Credentials");
       return;
     }
+    delete authResponse.password;
     storeAuthDetailsLocally(authResponse);
     window.location.href = "/dashboard";
   };
