@@ -133,9 +133,12 @@ const ResourcesPage = () => {
 
     tableData.map((item) => (item.name = item.ResourceName));
     tableData.map((item) => (item.id = item.ResourceId));
+
+    tableData.map((item) => (item.resourceType = item.ResourceTypeId));
     tableData.map(
       (item) => (item.resourceType = item.ResourceTypeId == 1 ? MENU : SUB_MENU)
     );
+
     tableData.map((item) => (item.resourceURL = item.URL));
 
     tableData.map(
