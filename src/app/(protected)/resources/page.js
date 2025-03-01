@@ -1,5 +1,5 @@
+import ResourcesPage from "@/components/resources";
 import React from "react";
-import ResourcesAllocation from "../../components/resources-allocation";
 
 const page = () => {
   return <ResourcesPage />;

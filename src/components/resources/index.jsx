@@ -8,8 +8,11 @@ import CreateResourceModal from "../shared-components/modals/CreateResourceModal
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { authenticateUser } from "../../services/auth-service";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const ResourcesPage = () => {
+  const router = useRouter();
+
   const tableHeadings = ["Name", "Date Created", "Actions"];
   const [tableData, setTableData] = useState(resourcesTableData);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -166,7 +169,9 @@ const ResourcesPage = () => {
   };
 
   useEffect(() => {
-    setAuthenticatedUser(authenticateUser());
+    const isUserAuthenticated = authenticateUser();
+
+    setAuthenticatedUser(isUserAuthenticated);
     fetchAllResources();
   }, []);
 

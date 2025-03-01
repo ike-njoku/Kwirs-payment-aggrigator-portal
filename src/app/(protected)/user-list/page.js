@@ -1,5 +1,5 @@
 import React from "react";
-import UserListPage from "../../components/user-list/inxex";
+import UserListPage from "../../../components/user-list/inxex";
 
 const page = () => {
   return <UserListPage />;
