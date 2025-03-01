@@ -39,7 +39,7 @@ const LoginPage = () => {
       toast.error("Invalid Credentials");
       return;
     }
-    delete authResponse.password;
+    authResponse.password = "";
     storeAuthDetailsLocally(authResponse);
     window.location.href = "/dashboard";
   };
