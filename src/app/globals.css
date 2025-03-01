@@ -21,3 +21,39 @@
 .customScroll::-webkit-scrollbar {
   background-color: transparent;
 }
+
+.custom-select .css-13cymwt-control {
+  background-color: transparent;
+  min-height: 48px;
+  box-shadow: none;
+  border-color: transparent;
+  border-radius: 10px;
+}
+
+.custom-select .css-13cymwt-control:hover {
+  border-color: transparent;
+}
+
+.custom-select .css-t3ipsp-control {
+  background-color: transparent;
+  min-height: 48px;
+  box-shadow: none;
+  border-color: transparent;
+  border-radius: 10px;
+}
+
+.custom-select .css-1u9des2-indicatorSeparator {
+  display: none;
+}
+
+.custom-select .css-b62m3t-container .css-1nmdiq5-menu {
+  background-color: white;
+}
+
+.css-v7duua {
+  color: black;
+}
+
+.role-hover:hover button {
+  opacity: 1;
+}

@@ -36,9 +36,9 @@ export const sidebarMenu = [
     url: "/resources",
   },
   {
-    path: "resources allocation",
+    path: "role allocation",
     icon: <FaTasks />,
-    url: "/resources-allocation",
+    url: "/role-allocation",
   },
   {
     path: "roles",

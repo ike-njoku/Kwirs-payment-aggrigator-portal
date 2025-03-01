@@ -7,7 +7,6 @@ import { FaPlus } from "react-icons/fa";
 import CreateRoleModel from "../shared-components/modals/CreateRoleModel";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
-import { AsyncCallbackSet } from "next/dist/server/lib/async-callback-set";
 
 const RolesPage = () => {
   const tableHeadings = ["Name", "Date Created", "Actions"];
@@ -46,8 +45,6 @@ const RolesPage = () => {
       toast.error("An error occurred while deleting the role");
     }
   };
-  
-
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("authDetails"));
@@ -65,7 +62,7 @@ const RolesPage = () => {
         "http://nofifications.fctirs.gov.ng/api/Roles/Update",
         selectedRole
       );
-      console.table(updateRoleResponse);
+
       if (updateRoleResponse.StatusCode == 200) toast.success("Role Updated");
       else toast.error("Could not update role");
     }

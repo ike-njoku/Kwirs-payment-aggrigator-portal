@@ -6,7 +6,7 @@ import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
 import UserDetailsModal from "../shared-components/modals/UserDetailsModal";
 
-const UsersTable = () => {
+const UsersTable = ({ isRoleAllocation = false }) => {
   const [userList, setUserList] = useState(usersList);
   const [selectedUser, setSelectedUser] = useState({});
   const [openModal, setOpenModal] = useState(false);
@@ -60,8 +60,6 @@ const UsersTable = () => {
     userList.map((user) => (user.phone = user.PrimaryPhone));
     userList.map((user) => (user.isActive = user.IsActive));
 
-    console.log(userList);
-
     setUserList(userList);
   };
 
@@ -91,35 +89,42 @@ const UsersTable = () => {
               Phone Number
             </th>
 
-            <th scope="col" class="px-6 py-3">
-              Status
-            </th>
+            {!isRoleAllocation ? (
+              <th scope="col" class="px-6 py-3">
+                Status
+              </th>
+            ) : (
+              <th scope="col" class="px-6 py-3">
+                Role(s)
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
           {userList.length > 0 &&
             userList.map((user, i) => (
               <tr
-                className="odd:bg-white even:bg-gray-100 border-b border-gray-200"
+                className="odd:bg-white even:bg-gray-100 border-b border-gray-200 cursor-pointer "
                 key={i}
+                onClick={() => openUserModal(user)}
               >
-                <td
-                  scope="row"
-                  class="px-6 py-4 font-medium text-gray-900 cursor-pointer hover:underline hover:text-pumpkin"
-                  onClick={() => openUserModal(user)}
-                >
+                <td scope="row" class="px-6 py-4 font-medium text-gray-900 ">
                   {user.userName}
                 </td>
                 <td class="px-6 py-4 text-gray-900 ">{user.email}</td>
                 <td class="px-6 py-4 text-gray-900">{user.phone}</td>
 
-                <td class="px-6 py-4 text-gray-900">
-                  <SwitchIcon
-                    isActive={user.isActive}
-                    onToggle={toggleUserStatus}
-                    index={user}
-                  />
-                </td>
+                {!isRoleAllocation ? (
+                  <td class="px-6 py-4 text-gray-900">
+                    <SwitchIcon
+                      isActive={user.isActive}
+                      onToggle={toggleUserStatus}
+                      index={user}
+                    />
+                  </td>
+                ) : (
+                  <td class="px-6 py-4 text-gray-900">...</td>
+                )}
               </tr>
             ))}
 
@@ -140,6 +145,7 @@ const UsersTable = () => {
           handleCloseModal={handleCloseDetailsModal}
           user={selectedUser}
           setUserList={setUserList}
+          isRoleAllocation={isRoleAllocation}
         />
       )}
     </div>
