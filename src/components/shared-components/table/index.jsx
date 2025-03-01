@@ -23,13 +23,14 @@ const CustomTable = ({
   text,
   heading,
   label,
+  isResource = false,
 }) => {
   const handleCloseDeleteModal = () => {
     setOpenDeleteModal(false);
   };
 
   const handleCloseEditResourceModal = () => {
-    setOpenEditResourceModal(true);
+    setOpenEditResourceModal(false);
   };
 
   const handleCloseEditModal = () => {
@@ -39,67 +40,140 @@ const CustomTable = ({
   const [selectedItem, setSelectedItem] = useState(0);
   return (
     <>
-      <div className="relative overflow-x-auto h-auto shadow-md sm:rounded-lg">
-        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 lg:table-fixed">
-          <thead className="text-xs text-white uppercase bg-pumpkin">
-            <tr>
-              {tableHeadings.map((heading, i) => (
-                <th scope="col" className="px-6 py-3" key={i}>
-                  {heading}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {tableData.length > 0 &&
-              tableData.map((tableInfo, i) => (
-                <tr
-                  className="odd:bg-white even:bg-gray-100 border-b border-gray-200"
-                  key={i}
-                >
-                  <td
-                    scope="row"
-                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
+      {isResource ? (
+        <div className="relative overflow-x-auto h-auto shadow-md sm:rounded-lg">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 xl:table-fixed">
+            <thead className="text-xs text-white uppercase bg-pumpkin">
+              <tr>
+                {tableHeadings.map((heading, i) => (
+                  <th scope="col" className="px-6 py-3" key={i}>
+                    {heading}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {tableData.length > 0 &&
+                tableData.map((tableInfo, i) => (
+                  <tr
+                    className="odd:bg-white even:bg-gray-100 border-b border-gray-200"
+                    key={i}
                   >
-                    {tableInfo.name}
-                  </td>
+                    <td
+                      scope="row"
+                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
+                    >
+                      {tableInfo.name}
+                    </td>
 
-                  <td className="px-6 py-4 text-gray-900 capitalize">
-                    {tableInfo.dateCreated}
-                  </td>
+                    <td className="px-6 py-4 text-gray-900 capitalize">
+                      {tableInfo.dateCreated}
+                    </td>
 
-                  <td className="px-6 py-4 text-gray-900">
-                    {isEllipseDropdwon ? (
-                      <EllipseDropdown
-                        handleDelete={handleDelete}
-                        handleEdit={handleEdit}
-                        setSelectedItem={setSelectedItem}
-                        id={tableInfo.id}
-                        item={tableInfo}
-                      />
-                    ) : (
-                      <SwitchIcon
-                        isActive={tableInfo.isActive}
-                        onToggle={toggleStatus}
-                        index={i}
-                      />
-                    )}
+                    <td className="px-6 py-4 text-gray-900 capitalize">
+                      {tableInfo.resourceType}
+                    </td>
+
+                    <td className="px-6 py-4 text-gray-900 capitalize">
+                      {tableInfo.resourceURL}
+                    </td>
+
+                    <td className="px-6 py-4 text-gray-900">
+                      {isEllipseDropdwon ? (
+                        <EllipseDropdown
+                          handleDelete={handleDelete}
+                          handleEdit={handleEdit}
+                          setSelectedItem={setSelectedItem}
+                          id={tableInfo.id}
+                          item={tableInfo}
+                        />
+                      ) : (
+                        <SwitchIcon
+                          isActive={tableInfo.isActive}
+                          onToggle={toggleStatus}
+                          index={i}
+                        />
+                      )}
+                    </td>
+                  </tr>
+                ))}
+
+              {tableData.length === 0 && (
+                <tr>
+                  <td colSpan={tableHeadings.length} className="bg-white">
+                    <h3 className="w-full font-semibold py-5 text-2xl text-center">
+                      No data available
+                    </h3>
                   </td>
                 </tr>
-              ))}
-
-            {tableData.length === 0 && (
+              )}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="relative overflow-x-auto h-auto shadow-md sm:rounded-lg">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 lg:table-fixed">
+            <thead className="text-xs text-white uppercase bg-pumpkin">
               <tr>
-                <td colSpan={tableHeadings.length} className="bg-white">
-                  <h3 className="w-full font-semibold py-5 text-2xl text-center">
-                    No data available
-                  </h3>
-                </td>
+                {tableHeadings.map((heading, i) => (
+                  <th scope="col" className="px-6 py-3" key={i}>
+                    {heading}
+                  </th>
+                ))}
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {tableData.length > 0 &&
+                tableData.map((tableInfo, i) => (
+                  <tr
+                    className="odd:bg-white even:bg-gray-100 border-b border-gray-200"
+                    key={i}
+                  >
+                    <td
+                      scope="row"
+                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
+                    >
+                      {tableInfo.name}
+                    </td>
+
+                    <td className="px-6 py-4 text-gray-900 capitalize">
+                      {tableInfo.dateCreated}
+                    </td>
+
+                    <td className="px-6 py-4 text-gray-900">
+                      {isEllipseDropdwon ? (
+                        <EllipseDropdown
+                          handleDelete={handleDelete}
+                          handleEdit={handleEdit}
+                          setSelectedItem={setSelectedItem}
+                          id={tableInfo.id}
+                          item={tableInfo}
+                        />
+                      ) : (
+                        <SwitchIcon
+                          isActive={tableInfo.isActive}
+                          onToggle={toggleStatus}
+                          index={i}
+                        />
+                      )}
+                    </td>
+                  </tr>
+                ))}
+
+              {tableData.length === 0 && (
+                <tr>
+                  <td colSpan={tableHeadings.length} className="bg-white">
+                    <h3 className="w-full font-semibold py-5 text-2xl text-center">
+                      No data available
+                    </h3>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
       {openDeleteModal && (
         <DeleteModal
           handleCloseModal={handleCloseDeleteModal}

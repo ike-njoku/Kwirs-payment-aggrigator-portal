@@ -10,7 +10,7 @@ const EditModal = ({
   label,
   heading,
 }) => {
-  const [roleInput, setRoleInput] = useState("");
+  const [roleInput, setRoleInput] = useState(index.name);
   const handleFormSubmit = () => {
     handleEditModal(index, roleInput);
     handleCloseModal();

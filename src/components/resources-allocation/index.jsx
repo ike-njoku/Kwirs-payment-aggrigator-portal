@@ -82,7 +82,7 @@ const ResourcesPage = () => {
     const isUserAuthenticated = authenticateUser();
 
     setAuthenticatedUser(isUserAuthenticated);
-    fetchAllResources();
+    // fetchAllResources();
   }, []);
 
   return (
@@ -104,7 +104,8 @@ const ResourcesPage = () => {
               </button>
             </section>
             {/* table */}
-            <CustomTable
+            {/* <CustomTable
+              isResource=
               tableHeadings={tableHeadings}
               tableData={tableData}
               isEllipseDropdwon={true}
@@ -119,7 +120,7 @@ const ResourcesPage = () => {
               text="Are you sure you want to delete this resource?"
               label="Resource name"
               heading="Update Resource"
-            />
+            /> */}
           </div>
         </div>
         {openResourceModal && (

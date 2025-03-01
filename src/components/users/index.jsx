@@ -12,7 +12,6 @@ const UsersTable = () => {
   const [openModal, setOpenModal] = useState(false);
 
   const toggleUserStatus = (index) => {
-    console.log(index);
     setUserList((prevUsers) =>
       prevUsers.map((user, i) =>
         i === index ? { ...user, isActive: !user.isActive } : user

@@ -13,7 +13,13 @@ import { useRouter } from "next/navigation";
 const ResourcesPage = () => {
   const router = useRouter();
 
-  const tableHeadings = ["Name", "Date Created", "Actions"];
+  const tableHeadings = [
+    "Name",
+    "Date Created",
+    "Resource type",
+    "Resource URL",
+    "Actions",
+  ];
   const [tableData, setTableData] = useState(resourcesTableData);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -24,11 +30,11 @@ const ResourcesPage = () => {
 
   const handleCreateResourceModal = async (newResourceURL) => {
     const newResourceData = {
-      ResourceName: "",
-      URL: newResourceURL,
+      ResourceName: newResourceURL.resourceName,
+      URL: newResourceURL.resourceUrl,
       Username: authenticatedUser.email,
-      Type: 2,
-      ParentResourceId: 1,
+      Type: 1,
+      ParentResourceId: 0,
     };
 
     try {
@@ -110,6 +116,7 @@ const ResourcesPage = () => {
     }
 
     const { data } = apiResponse;
+    console.log({ data });
     const tableData = data.Data || data.resources || [];
 
     if (!tableData.length) {
@@ -120,6 +127,8 @@ const ResourcesPage = () => {
 
     tableData.map((item) => (item.name = item.ResourceName));
     tableData.map((item) => (item.id = item.ResourceId));
+    tableData.map((item) => (item.resourceType = item.ResourceTypeId));
+    tableData.map((item) => (item.resourceURL = item.URL));
 
     tableData.map(
       (item) =>
@@ -160,12 +169,8 @@ const ResourcesPage = () => {
     }
   };
 
-  const handleCloseCreateRoleModal = () => {
-    setOpenResourceModal(false);
-  };
-
-  const handleOpenCreateResourceModal = () => {
-    setOpenResourceModal(true);
+  const handleOpenEditResourceModal = () => {
+    setOpenResourceEditModal(true);
   };
 
   useEffect(() => {
@@ -194,15 +199,17 @@ const ResourcesPage = () => {
 
             {/* Table */}
             <CustomTable
+              isResource={true}
               tableHeadings={tableHeadings}
               tableData={tableData}
               isEllipseDropdwon={true}
               handleDelete={() => setOpenDeleteModal(true)}
-              handleEdit={() => setOpenEditModal(true)}
+              handleEdit={handleOpenEditResourceModal}
               openDeleteModal={openDeleteModal}
               setOpenDeleteModal={setOpenDeleteModal}
-              setOpenEditModal={setOpenEditModal}
-              openEditModal={openEditModal}
+              // setOpenEditModal={setOpenEditModal}
+              // openEditModal={openEditModal}
+              setOpenEditResourceModal={setOpenResourceEditModal}
               openEditResourceModal={openEditResourceModal}
               handleDeleteItem={handleDeleteItem}
               handleEditItem={handleEditItem}
