@@ -6,6 +6,7 @@ import AuthButtons from "../buttons/AuthButtons";
 const CreateResourceModal = ({ handleCloseModal, handleCreateModal }) => {
   const [resourceName, setResourceName] = useState("");
   const [resourceUrl, setResourceUrl] = useState("");
+  const [resourceType, setResourceType] = useState("Select resource type");
 
   const handleFormSubmit = (e) => {
     e.preventDefault(); // Prevent page reload
@@ -15,7 +16,7 @@ const CreateResourceModal = ({ handleCloseModal, handleCreateModal }) => {
       return;
     }
 
-    handleCreateModal({ resourceName, resourceUrl });
+    handleCreateModal({ resourceName, resourceUrl, resourceType });
     handleCloseModal();
   };
 
@@ -28,39 +29,65 @@ const CreateResourceModal = ({ handleCloseModal, handleCreateModal }) => {
         <form className="w-full" onSubmit={handleFormSubmit}>
           <div className="w-full">
             {/* Resource Name Input */}
-            <label
-              className="text-base font-medium text-gray-700"
-              htmlFor="resourceName"
-            >
-              Resource Name
-            </label>
-            <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-              <input
-                className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="text"
-                value={resourceName}
-                onChange={(e) => setResourceName(e.target.value)}
-                placeholder="Enter resource name"
-                required
-              />
+
+            <div className="w-full">
+              <label
+                className="text-base font-medium text-gray-700"
+                htmlFor="resourceName"
+              >
+                Resource Name
+              </label>
+              <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
+                <input
+                  className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
+                  type="text"
+                  value={resourceName}
+                  onChange={(e) => setResourceName(e.target.value)}
+                  placeholder="Enter resource name"
+                  required
+                />
+              </div>
             </div>
 
             {/* Resource URL Input */}
-            <label
-              className="text-base font-medium text-gray-700"
-              htmlFor="resourceUrl"
-            >
-              Resource URL
-            </label>
-            <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-              <input
-                className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="url"
-                value={resourceUrl}
-                onChange={(e) => setResourceUrl(e.target.value)}
-                placeholder="Eg. https://url.com"
-                required
-              />
+            <div className="w-full">
+              <label
+                className="text-base font-medium text-gray-700"
+                htmlFor="resourceUrl"
+              >
+                Resource URL
+              </label>
+              <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
+                <input
+                  className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
+                  type="url"
+                  value={resourceUrl}
+                  onChange={(e) => setResourceUrl(e.target.value)}
+                  placeholder="Eg. https://url.com"
+                  required
+                />
+              </div>
+            </div>
+            <div className="w-full">
+              <label
+                className="text-base font-medium text-gray-700"
+                htmlFor="resourceUrl"
+              >
+                Resource Type
+              </label>
+              <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
+                <select
+                  className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
+                  type="url"
+                  value={resourceType}
+                  onChange={(e) => setResourceType(e.target.value)}
+                  placeholder="Eg. https://url.com"
+                  required
+                >
+                  <option value="1">Main menu</option>
+                  <option value="2">Sub menu</option>
+                </select>
+              </div>
             </div>
 
             {/* Submit Button */}

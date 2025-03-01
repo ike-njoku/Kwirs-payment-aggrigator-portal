@@ -10,7 +10,11 @@ const EditResourceModal = ({
   label,
   heading,
 }) => {
-  const [roleInput, setRoleInput] = useState("");
+  const [resourceName, setResourceName] = useState(index.name);
+  const [resourceUrl, setResourceUrl] = useState(index.resourceURL);
+  const [resourceType, setResourceType] = useState(
+    index.resourceType || "Select resource type"
+  );
   const handleFormSubmit = () => {
     handleEditModal(index, roleInput);
     handleCloseModal();
@@ -25,40 +29,63 @@ const EditResourceModal = ({
           <div className="w-full">
             <label
               className="text-base font-medium text-gray-700"
-              htmlFor="role"
+              htmlFor="resourceName"
             >
-              {label}
+              Resource Name
             </label>
-
             <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
               <input
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
                 type="text"
-                value={roleInput}
-                onChange={(e) => setRoleInput(e.target.value)}
-                placeholder="Enter role name"
+                value={resourceName}
+                onChange={(e) => setResourceName(e.target.value)}
+                placeholder="Enter resource name"
+                required
               />
             </div>
+          </div>
 
+          {/* Resource URL Input */}
+          <div className="w-full">
             <label
               className="text-base font-medium text-gray-700"
-              htmlFor="role"
+              htmlFor="resourceUrl"
             >
-              {label}
+              Resource URL
             </label>
-
             <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
               <input
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="text"
-                value={roleInput}
-                onChange={(e) => setRoleInput(e.target.value)}
-                placeholder="Enter resourse name"
+                type="url"
+                value={resourceUrl}
+                onChange={(e) => setResourceUrl(e.target.value)}
+                placeholder="Eg. https://url.com"
+                required
               />
             </div>
-
-            <AuthButtons label="Update" textColor="text-white" />
           </div>
+          <div className="w-full">
+            <label
+              className="text-base font-medium text-gray-700"
+              htmlFor="resourceUrl"
+            >
+              Resource Type
+            </label>
+            <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
+              <select
+                className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
+                type="url"
+                value={resourceType}
+                onChange={(e) => setResourceType(e.target.value)}
+                placeholder="Eg. https://url.com"
+                required
+              >
+                <option value="1">Main menu</option>
+                <option value="2">Sub menu</option>
+              </select>
+            </div>
+          </div>
+          <AuthButtons label="Update" textColor="text-white" />
         </form>
       </div>
     </ModalLayout>
