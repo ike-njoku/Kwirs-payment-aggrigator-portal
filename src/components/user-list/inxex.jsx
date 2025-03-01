@@ -15,7 +15,7 @@ const UserListPage = () => {
               <SearchBar />
             </section>
             {/* table */}
-            <UsersTable />
+            <UsersTable isRoleAllocation={false} />
           </div>
         </div>
       </section>

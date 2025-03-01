@@ -4,7 +4,8 @@ import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
 import Select from "react-select";
 import { FaTimes } from "react-icons/fa";
-import { AxiosGet } from "@/services/http-service";
+import { AxiosGet, AxiosPost } from "@/services/http-service";
+import { toast } from "react-toastify";
 
 const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
   const [options, setOptions] = useState([]);
@@ -13,7 +14,7 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
     email: user.email,
     phone: user.phone,
   });
-  const [userRoles, setRoles] = useState([]);
+  const [userRoles, setRoles] = useState({});
 
   const handleOnChange = (e) => {
     const name = e.target.name;
@@ -24,15 +25,74 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
     setRoles(values);
   };
 
+  const [allUserRoles, setAllUserRoles] = useState([]);
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
   };
 
-  const handleUpdateUserRole = (e) => {
-    e.preventDefault();
+  const handleGetUserRole = async () => {
+    try {
+      const apiUrl =
+        "http://nofifications.fctirs.gov.ng/api/Roles/GetUserRoles";
+
+      const payload = {
+        UserName: user.email,
+      };
+
+      const apiResponse = await AxiosPost(apiUrl, payload);
+
+      if (apiResponse && apiResponse.StatusCode !== 200) {
+        toast.error("Could not fetch user roles!");
+        return;
+      }
+
+      setAllUserRoles(apiResponse.Data);
+    } catch (error) {}
   };
 
-  const handleDeleteRole = (i) => {};
+  const handleUpdateUserRole = async (e) => {
+    try {
+      e.preventDefault();
+
+      const apiUrl =
+        "http://nofifications.fctirs.gov.ng/api/Roles/AddUserToRole";
+      const payload = {
+        UserName: user.userName,
+        LoginUsername: user.email,
+        RoleId: userRoles.value,
+      };
+
+      const apiResponse = await AxiosPost(apiUrl, payload);
+
+      if (apiResponse && apiResponse.StatusCode !== 200) {
+        toast.error("Could not update user role!");
+        return;
+      }
+
+      toast.success("User role updated successfully!");
+      handleGetUserRole();
+      handleCloseModal();
+    } catch (error) {}
+  };
+
+  const handleDeleteRole = async (id) => {
+    try {
+      const apiUrl =
+        "http://nofifications.fctirs.gov.ng/api/Roles/RemoveUserFromRole";
+
+      const payload = {
+        UserName: user.email,
+        RoleId: id,
+      };
+      const apiResponse = await AxiosPost(apiUrl, payload);
+      if (apiResponse && apiResponse.StatusCode !== 200) {
+        toast.error("Could not delete user role!");
+        return;
+      }
+      handleGetUserRole();
+    } catch (error) {}
+  };
 
   const getRoles = async () => {
     const apiResponse = await AxiosGet(
@@ -43,12 +103,12 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
     const { data } = apiResponse;
     const tableData = data.Data.map((role) => ({
       name: role.Name,
-      id: role.ID,
+      id: role.Id,
       dateCreated: new Date(role.UpdateDate).toISOString().split("T")[0],
     }));
 
     const roles = tableData.map((role) => ({
-      value: role.name,
+      value: role.id,
       label: role.name,
     }));
     setOptions(roles);
@@ -56,6 +116,7 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
 
   useEffect(() => {
     getRoles();
+    handleGetUserRole();
   }, []);
   return (
     <ModalLayout handleCloseModal={handleCloseModal}>
@@ -63,8 +124,8 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
         <article className="mt-5 w-full border-b border-b-gray-500 text-gray-700 flex items-center gap-3 justify-between">
           <h3 className="my-5 text-lg font-semibold ">User Details</h3>
 
-          <h3 className=" flex items-center text-base gap-1">
-            <span className={`flex items-center gap-2`}>
+          <h3 className="flex items-center text-base gap-1">
+            <span className="flex items-center gap-2">
               {user.isActive ? "Active" : "Inactive"}{" "}
             </span>
             <span
@@ -94,18 +155,18 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
                 <li className="flex items-center gap-2 text-base border-t border-t-gray-500 mt-2 pt-5">
                   <span className="font-semibold">Roles:</span>
                   <span className="flex w-full flex-wrap items-center gap-1">
-                    {userRoles.length > 0 ? (
+                    {allUserRoles.length > 0 ? (
                       <>
-                        {userRoles.map((roles, i) => (
+                        {allUserRoles.map((roles, i) => (
                           <span
                             key={i}
                             className="cursor-pointer text-base relative role-hover p-1 hover:bg-gray-100"
                           >
-                            {roles.label}
-                            {i !== userRoles.length - 1 && ","}
+                            {roles.Name}
+                            {i !== allUserRoles.length - 1 && ","}
                             <button
                               className="absolute -top-2 -right-2 text-red-500 text-sm opacity-0"
-                              onClick={() => handleDeleteRole(i)}
+                              onClick={() => handleDeleteRole(roles.Id)}
                             >
                               <FaTimes />
                             </button>
@@ -120,11 +181,7 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
               </ul>
 
               <div className="border-b-2 border-b-pumpkin w-full rounded-md my-4 custom-select">
-                <Select
-                  isMulti
-                  options={options}
-                  onChange={handleChangeRoles}
-                />
+                <Select options={options} onChange={handleChangeRoles} />
               </div>
 
               {/* undo the comment below to update user info */}
