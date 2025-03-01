@@ -74,6 +74,7 @@ const UserDetailsModal = ({ handleCloseModal, user, i }) => {
                   onChange={handleOnChange}
                   placeholder="Enter email"
                   name="email"
+                  disabled={true}
                 />
               </div>
             </div>
