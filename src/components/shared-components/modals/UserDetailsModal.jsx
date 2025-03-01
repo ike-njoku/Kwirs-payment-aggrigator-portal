@@ -15,8 +15,8 @@ const UserDetailsModal = ({ handleCloseModal, user, i }) => {
     const name = e.target.name;
     setFormValues((prev) => ({ ...prev, [name]: e.target.value }));
   };
-  const handleFormSubmit = () => {
-    console.log(i);
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
   };
   return (
     <ModalLayout handleCloseModal={handleCloseModal}>
@@ -54,6 +54,7 @@ const UserDetailsModal = ({ handleCloseModal, user, i }) => {
                   onChange={handleOnChange}
                   placeholder="Enter username"
                   name="userName"
+                  disabled={true}
                 />
               </div>
             </div>
@@ -95,11 +96,13 @@ const UserDetailsModal = ({ handleCloseModal, user, i }) => {
                   onChange={handleOnChange}
                   placeholder="Enter phone number"
                   name="phone"
+                  disabled={true}
                 />
               </div>
             </div>
 
-            <AuthButtons label="Update" textColor="text-white" />
+            {/* undo the comment below to update user info */}
+            {/* <AuthButtons label="Update" textColor="text-white" /> */}
           </div>
         </form>
       </div>
