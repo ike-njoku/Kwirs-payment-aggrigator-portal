@@ -6,18 +6,24 @@ import AuthButtons from "../buttons/AuthButtons";
 const CreateResourceModal = ({ handleCloseModal, handleCreateModal }) => {
   const [resourceName, setResourceName] = useState("");
   const [resourceUrl, setResourceUrl] = useState("");
-  const [resourceType, setResourceType] = useState("Select resource type");
+  const [resourceType, setResourceType] = useState(1);
 
   const handleFormSubmit = (e) => {
-    e.preventDefault(); // Prevent page reload
-
+    e.preventDefault();
     if (!resourceName.trim() || !resourceUrl.trim()) {
       alert("Both fields are required!");
       return;
     }
 
+    console.log("RESOURCE TYPE -------->>> ", resourceType);
+
     handleCreateModal({ resourceName, resourceUrl, resourceType });
     handleCloseModal();
+  };
+
+  const handleInputChange = (e) => {
+    console.log("CHANGING --------------->>> ");
+    setResourceType(e.target.value);
   };
 
   return (
@@ -60,7 +66,6 @@ const CreateResourceModal = ({ handleCloseModal, handleCreateModal }) => {
               <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
                 <input
                   className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                  type="url"
                   value={resourceUrl}
                   onChange={(e) => setResourceUrl(e.target.value)}
                   placeholder="Eg. https://url.com"
@@ -78,11 +83,8 @@ const CreateResourceModal = ({ handleCloseModal, handleCreateModal }) => {
               <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
                 <select
                   className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                  type="url"
                   value={resourceType}
-                  onChange={(e) => setResourceType(e.target.value)}
-                  placeholder="Eg. https://url.com"
-                  required
+                  onChange={handleInputChange}
                 >
                   <option value="1">Main menu</option>
                   <option value="2">Sub menu</option>
