@@ -17,7 +17,7 @@ const EditResourceModal = ({
   );
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    handleEditModal(index);
+    handleEditModal(index, { resourceName, resourceUrl, resourceType });
     handleCloseModal();
   };
   return (

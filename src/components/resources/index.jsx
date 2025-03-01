@@ -150,35 +150,39 @@ const ResourcesPage = () => {
     setTableData(tableData);
   };
 
-  const handleEditItem = async (updatedItem, newRole) => {
+  const handleEditItem = async (updatedItem, updateParameters) => {
     updatedItem.ResourceType = updatedItem.resourceType == "Main Menu" ? 1 : 2;
 
-    if (newRole) {
-      const updateResourceURL =
-        "http://nofifications.fctirs.gov.ng//api/Resources/Update";
-      updatedItem.ResourceName = newRole;
-      updatedItem.Username = authenticateUser?.email;
-      updatedItem.URL = newRole;
+    const { resourceName, resourceType, resourceUrl } = updateParameters;
 
-      console.table(updatedItem);
+    const updateResourceURL =
+      "http://nofifications.fctirs.gov.ng//api/Resources/Update";
+    const payLoad = {
+      ResourceName: resourceName,
+      URL: resourceUrl,
+      Username: authenticatedUser.email,
+      Type: resourceType == "Main menu" ? 1 : 2,
+      ResourceId: updatedItem.ResourceId,
+      ParentResourceId: updatedItem.ParentResourceId,
+    };
 
-      const updateResourceResponse = await AxiosPost(
-        updateResourceURL,
-        updatedItem
-      );
+    console.table(payLoad);
+    console.log("UpdTED ITEM -------->>> ", updatedItem);
 
-      if (updateResourceResponse?.StatusCode !== 200) {
-        toast.error("Could not update Resource at this time");
-        return;
-      }
+    const updateResourceResponse = await AxiosPost(updateResourceURL, payLoad);
 
-      toast.success("Resource updated");
-      setTableData((prevData) =>
-        prevData.map((item) =>
-          item.id === updatedItem.id ? { ...updatedItem, name: newRole } : item
-        )
-      );
+    if (updateResourceResponse?.StatusCode !== 200) {
+      toast.error("Could not update Resource at this time");
+      return;
     }
+
+    toast.success("Resource updated");
+    await fetchAllResources();
+    // setTableData((prevData) =>
+    //   prevData.map((item) =>
+    //     item.id === updatedItem.id ? { ...updatedItem, name: newRole } : item
+    //   )
+    // );
   };
 
   const handleOpenEditResourceModal = () => {
