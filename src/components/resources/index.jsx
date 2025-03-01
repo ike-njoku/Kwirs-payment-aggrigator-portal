@@ -29,12 +29,11 @@ const ResourcesPage = () => {
   const [authenticatedUser, setAuthenticatedUser] = useState({});
 
   const handleCreateResourceModal = async (newResourceURL) => {
-    console.table(newResourceURL);
     const newResourceData = {
       ResourceName: newResourceURL.resourceName,
       URL: newResourceURL.resourceUrl,
       Username: authenticatedUser.email,
-      Type: ewResourceURL.resourceType,
+      Type: newResourceURL.resourceType,
       ParentResourceId: 0,
     };
 
@@ -44,21 +43,28 @@ const ResourcesPage = () => {
         newResourceData
       );
 
+      console.log(createResourceResponse);
+
       if (createResourceResponse.StatusCode !== 200) {
         toast.error("Could not create resource.");
         return;
       }
       toast.success("Resource created successfully");
 
+      const createdDataRepresentation = {
+        name: newResourceURL.resourceName,
+        resourceURL: newResourceURL.resourceUrl,
+        Username: authenticatedUser.email,
+        Type: newResourceURL.resourceType,
+        ParentResourceId: 0,
+        resourceType:
+          newResourceURL.resourceType == 1 ? "Main Menu" : "Sub Menu",
+        dateCreated: new Date().toISOString().split("T")[0],
+        ResourceId: createResourceResponse.Data.ResourseId,
+      };
+
       setTableData((prevData) => [
-        {
-          ...newResourceData,
-          ResourceId:
-            createResourceResponse?.data?.ResourceId || prevData.length + 1,
-          ResourceId:
-            createResourceResponse?.data?.ResourceId || prevData.length + 1,
-          dateCreated: new Date().toISOString().split("T")[0],
-        },
+        { ...createdDataRepresentation },
         ...prevData,
       ]);
     } catch (error) {
@@ -117,7 +123,6 @@ const ResourcesPage = () => {
     }
 
     const { data } = apiResponse;
-    console.log({ data });
     const tableData = data.Data || data.resources || [];
 
     if (!tableData.length) {
@@ -128,7 +133,11 @@ const ResourcesPage = () => {
 
     tableData.map((item) => (item.name = item.ResourceName));
     tableData.map((item) => (item.id = item.ResourceId));
-    tableData.map((item) => (item.resourceType = item.ResourceTypeId));
+    tableData.map(
+      (item) =>
+        (item.resourceType =
+          item.ResourceTypeId == 1 ? "Main Menu" : "Sub Menu")
+    );
     tableData.map((item) => (item.resourceURL = item.URL));
 
     tableData.map(
@@ -153,8 +162,6 @@ const ResourcesPage = () => {
         updateResourceURL,
         updatedItem
       );
-
-      console.table(updatedItem);
 
       if (updateResourceResponse?.StatusCode !== 200) {
         toast.error("Could not update Resource at this time");
