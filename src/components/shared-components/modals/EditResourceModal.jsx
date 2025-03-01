@@ -15,8 +15,9 @@ const EditResourceModal = ({
   const [resourceType, setResourceType] = useState(
     index.resourceType || "Select resource type"
   );
-  const handleFormSubmit = () => {
-    handleEditModal(index, roleInput);
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    handleEditModal(index);
     handleCloseModal();
   };
   return (
@@ -56,7 +57,6 @@ const EditResourceModal = ({
             <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
               <input
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="url"
                 value={resourceUrl}
                 onChange={(e) => setResourceUrl(e.target.value)}
                 placeholder="Eg. https://url.com"

@@ -151,12 +151,16 @@ const ResourcesPage = () => {
   };
 
   const handleEditItem = async (updatedItem, newRole) => {
+    updatedItem.ResourceType = updatedItem.resourceType == "Main Menu" ? 1 : 2;
+
     if (newRole) {
       const updateResourceURL =
         "http://nofifications.fctirs.gov.ng//api/Resources/Update";
       updatedItem.ResourceName = newRole;
       updatedItem.Username = authenticateUser?.email;
       updatedItem.URL = newRole;
+
+      console.table(updatedItem);
 
       const updateResourceResponse = await AxiosPost(
         updateResourceURL,
@@ -183,7 +187,6 @@ const ResourcesPage = () => {
 
   useEffect(() => {
     const isUserAuthenticated = authenticateUser();
-
     setAuthenticatedUser(isUserAuthenticated);
     fetchAllResources();
   }, []);
