@@ -1,5 +1,5 @@
 import React from "react";
-import ResourcesAllocation from "@/components/resources-allocation";
+import ResourcesAllocation from "@/components/role-allocation";
 
 const page = () => {
   return <ResourcesAllocation />;

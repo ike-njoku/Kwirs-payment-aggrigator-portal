@@ -9,6 +9,7 @@ import { AxiosPost } from "../../services/http-service";
 import { authenticateUser } from "../../services/auth-service";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import UsersTable from "../users";
 
 const ResourcesPage = () => {
   const router = useRouter();
@@ -104,23 +105,7 @@ const ResourcesPage = () => {
               </button>
             </section>
             {/* table */}
-            {/* <CustomTable
-              isResource=
-              tableHeadings={tableHeadings}
-              tableData={tableData}
-              isEllipseDropdwon={true}
-              handleDelete={handleDelete}
-              handleEdit={handleEdit}
-              openDeleteModal={openDeleteModal}
-              setOpenDeleteModal={setOpenDeleteModal}
-              setOpenEditModal={setOpenEditModal}
-              openEditModal={openEditModal}
-              handleDeleteItem={handleDeleteItem}
-              handleEditItem={handleEditItem}
-              text="Are you sure you want to delete this resource?"
-              label="Resource name"
-              heading="Update Resource"
-            /> */}
+            <UsersTable isRoleAllocation={true} />
           </div>
         </div>
         {openResourceModal && (

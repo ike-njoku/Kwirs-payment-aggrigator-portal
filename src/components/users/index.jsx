@@ -6,7 +6,7 @@ import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
 import UserDetailsModal from "../shared-components/modals/UserDetailsModal";
 
-const UsersTable = () => {
+const UsersTable = ({ isRoleAllocation = false }) => {
   const [userList, setUserList] = useState(usersList);
   const [selectedUser, setSelectedUser] = useState({});
   const [openModal, setOpenModal] = useState(false);
@@ -60,8 +60,6 @@ const UsersTable = () => {
     userList.map((user) => (user.phone = user.PrimaryPhone));
     userList.map((user) => (user.isActive = user.IsActive));
 
-    console.log(userList);
-
     setUserList(userList);
   };
 
@@ -91,9 +89,11 @@ const UsersTable = () => {
               Phone Number
             </th>
 
-            <th scope="col" class="px-6 py-3">
-              Status
-            </th>
+            {!isRoleAllocation && (
+              <th scope="col" class="px-6 py-3">
+                Status
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -113,13 +113,15 @@ const UsersTable = () => {
                 <td class="px-6 py-4 text-gray-900 ">{user.email}</td>
                 <td class="px-6 py-4 text-gray-900">{user.phone}</td>
 
-                <td class="px-6 py-4 text-gray-900">
-                  <SwitchIcon
-                    isActive={user.isActive}
-                    onToggle={toggleUserStatus}
-                    index={user}
-                  />
-                </td>
+                {!isRoleAllocation && (
+                  <td class="px-6 py-4 text-gray-900">
+                    <SwitchIcon
+                      isActive={user.isActive}
+                      onToggle={toggleUserStatus}
+                      index={user}
+                    />
+                  </td>
+                )}
               </tr>
             ))}
 
@@ -140,6 +142,7 @@ const UsersTable = () => {
           handleCloseModal={handleCloseDetailsModal}
           user={selectedUser}
           setUserList={setUserList}
+          isRoleAllocation={isRoleAllocation}
         />
       )}
     </div>
