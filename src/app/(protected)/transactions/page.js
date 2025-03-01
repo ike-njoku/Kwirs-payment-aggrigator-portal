@@ -1,5 +1,5 @@
 import React from "react";
-import TransactionPage from "../../components/transactions";
+import TransactionPage from "../../../components/transactions";
 
 const page = () => {
   return <TransactionPage />;

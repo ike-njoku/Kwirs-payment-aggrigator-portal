@@ -26,8 +26,8 @@ const UserDashboard = () => {
     <DashboardLayout>
       <section className="w-full h-full mt-5">
         <div className="w-[90%] mx-auto xl:max-w-[1140px] lg:py-10">
-          <section className="flex flex-col gap-8 w-full lg:flex-row justify-between">
-            <div className="w-full flex overflow-x-auto flex-nowrap lg:max-w-[500px] border-2 border-gray-200 rounded-[28px] p-6 gap-8 lg:flex-col lg:flex-wrap">
+          <section className="flex flex-col gap-8 w-full xl:flex-row justify-between">
+            <div className="w-full flex overflow-x-auto flex-nowrap xl:max-w-[500px] border-2 border-gray-200 rounded-[28px] p-6 gap-8 xl:flex-col xl:flex-wrap">
               {/*  */}
               <div className="lg:mt-3 lg:w-full shrink-0 lg:shrink-[unset] w-fit">
                 <h3 className="font-semibold text-xl lg:text-2xl capitalize mb-3">
@@ -44,7 +44,7 @@ const UserDashboard = () => {
               </div>
             </div>
 
-            <div className="lg:max-w-[600px] w-full border-2 border-gray-200 rounded-[28px] p-6 gap-8">
+            <div className="xl:max-w-[600px] w-full border-2 border-gray-200 rounded-[28px] p-6 gap-8">
               {/* create transaction */}
               <section className="w-full mb-3 flex justify-end items-center gap-5">
                 <Link

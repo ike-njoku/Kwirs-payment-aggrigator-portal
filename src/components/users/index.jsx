@@ -4,9 +4,12 @@ import { usersList } from "../../utils/app_data";
 import SwitchIcon from "./SwitchIcon";
 import { AxiosGet } from "../../services/http-service";
 import { toast } from "react-toastify";
+import UserDetailsModal from "../shared-components/modals/UserDetailsModal";
 
 const UsersTable = () => {
   const [userList, setUserList] = useState(usersList);
+  const [selectedUser, setSelectedUser] = useState({});
+  const [openModal, setOpenModal] = useState(false);
 
   const toggleUserStatus = (index) => {
     console.log(index);
@@ -17,8 +20,14 @@ const UsersTable = () => {
     );
   };
 
-  const openUserModal = () => {
+  const openUserModal = (user) => {
+    setSelectedUser(user);
+    setOpenModal(true);
     console.log("openUserModal");
+  };
+
+  const handleCloseDetailsModal = () => {
+    setOpenModal(false);
   };
 
   const getAllUsers = async () => {
@@ -33,6 +42,7 @@ const UsersTable = () => {
     }
 
     const userList = data.Data;
+
     userList.map((user) => (user.userName = user.UserName));
     userList.map((user) => (user.email = user.Email));
     userList.map((user) => (user.phone = user.PrimaryPhone));
@@ -66,9 +76,7 @@ const UsersTable = () => {
             <th scope="col" class="px-6 py-3">
               Phone Number
             </th>
-            <th scope="col" class="px-6 py-3">
-              Role
-            </th>
+
             <th scope="col" class="px-6 py-3">
               Status
             </th>
@@ -80,15 +88,17 @@ const UsersTable = () => {
               <tr
                 className="odd:bg-white even:bg-gray-100 border-b border-gray-200"
                 key={i}
-                onClick={openUserModal}
-                style={{ cursor: "pointer" }}
               >
-                <td scope="row" class="px-6 py-4 font-medium text-gray-900 ">
+                <td
+                  scope="row"
+                  class="px-6 py-4 font-medium text-gray-900 cursor-pointer hover:underline hover:text-pumpkin"
+                  onClick={() => openUserModal(user)}
+                >
                   {user.userName}
                 </td>
                 <td class="px-6 py-4 text-gray-900 ">{user.email}</td>
                 <td class="px-6 py-4 text-gray-900">{user.phone}</td>
-                <td class="px-6 py-4 text-gray-900">{user.role}</td>
+
                 <td class="px-6 py-4 text-gray-900">
                   <SwitchIcon
                     isActive={user.isActive}
@@ -110,6 +120,14 @@ const UsersTable = () => {
           )}
         </tbody>
       </table>
+
+      {openModal && (
+        <UserDetailsModal
+          handleCloseModal={handleCloseDetailsModal}
+          user={selectedUser}
+          setUserList={setUserList}
+        />
+      )}
     </div>
   );
 };
