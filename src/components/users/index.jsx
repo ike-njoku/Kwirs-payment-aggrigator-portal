@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { usersList } from "../../utils/app_data";
 import SwitchIcon from "./SwitchIcon";
-import { AxiosGet } from "../../services/http-service";
+import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
 import UserDetailsModal from "../shared-components/modals/UserDetailsModal";
 
@@ -11,13 +11,25 @@ const UsersTable = () => {
   const [selectedUser, setSelectedUser] = useState({});
   const [openModal, setOpenModal] = useState(false);
 
-  const toggleUserStatus = (index) => {
-    console.log(index);
+  const toggleUserStatus = async (index) => {
+    const user = index;
+    user.Isactive = user.IsActive == false ? true : false;
+
+    user.isActive = user.Isactive;
+    user.remark = "";
+    const updateUserStatusURL =
+      "http://nofifications.fctirs.gov.ng/api/userManagement/updateAccountStatus";
+    const apiResponse = await AxiosPost(updateUserStatusURL, user);
+
+    if (apiResponse && apiResponse.StatusCode != 200) {
+      toast.error("Could not Update User Status");
+      return;
+    }
     setUserList((prevUsers) =>
-      prevUsers.map((user, i) =>
-        i === index ? { ...user, isActive: !user.isActive } : user
-      )
+      prevUsers.map((user, i) => user.isActive == user.Isactive)
     );
+
+    await getAllUsers();
   };
 
   const openUserModal = (user) => {
@@ -47,6 +59,8 @@ const UsersTable = () => {
     userList.map((user) => (user.email = user.Email));
     userList.map((user) => (user.phone = user.PrimaryPhone));
     userList.map((user) => (user.isActive = user.IsActive));
+
+    console.log(userList);
 
     setUserList(userList);
   };
@@ -103,7 +117,7 @@ const UsersTable = () => {
                   <SwitchIcon
                     isActive={user.isActive}
                     onToggle={toggleUserStatus}
-                    index={i}
+                    index={user}
                   />
                 </td>
               </tr>
