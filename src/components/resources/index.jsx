@@ -9,6 +9,7 @@ import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { authenticateUser } from "../../services/auth-service";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { MENU, SUB_MENU } from "../../utils/constants";
 
 const ResourcesPage = () => {
   const router = useRouter();
@@ -57,8 +58,7 @@ const ResourcesPage = () => {
         Username: authenticatedUser.email,
         Type: newResourceURL.resourceType,
         ParentResourceId: 0,
-        resourceType:
-          newResourceURL.resourceType == 1 ? "Main Menu" : "Sub Menu",
+        resourceType: newResourceURL.resourceType == 1 ? MENU : SUB_MENU,
         dateCreated: new Date().toISOString().split("T")[0],
         ResourceId: createResourceResponse.Data.ResourseId,
       };
@@ -134,9 +134,7 @@ const ResourcesPage = () => {
     tableData.map((item) => (item.name = item.ResourceName));
     tableData.map((item) => (item.id = item.ResourceId));
     tableData.map(
-      (item) =>
-        (item.resourceType =
-          item.ResourceTypeId == 1 ? "Main Menu" : "Sub Menu")
+      (item) => (item.resourceType = item.ResourceTypeId == 1 ? MENU : SUB_MENU)
     );
     tableData.map((item) => (item.resourceURL = item.URL));
 
@@ -151,7 +149,7 @@ const ResourcesPage = () => {
   };
 
   const handleEditItem = async (updatedItem, updateParameters) => {
-    updatedItem.ResourceType = updatedItem.resourceType == "Main Menu" ? 1 : 2;
+    updatedItem.ResourceType = updatedItem.resourceType == MENU ? 1 : 2;
 
     const { resourceName, resourceType, resourceUrl } = updateParameters;
 
@@ -161,7 +159,7 @@ const ResourcesPage = () => {
       ResourceName: resourceName,
       URL: resourceUrl,
       Username: authenticatedUser.email,
-      Type: resourceType == "Main menu" ? 1 : 2,
+      Type: resourceType == MENU ? 1 : 2,
       ResourceId: updatedItem.ResourceId,
       ParentResourceId: updatedItem.ParentResourceId,
     };

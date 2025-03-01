@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
+import { SUB_MENU, MENU } from "../../../utils/constants";
 
 const CreateResourceModal = ({ handleCloseModal, handleCreateModal }) => {
   const [resourceName, setResourceName] = useState("");
@@ -15,14 +16,11 @@ const CreateResourceModal = ({ handleCloseModal, handleCreateModal }) => {
       return;
     }
 
-    console.log("RESOURCE TYPE -------->>> ", resourceType);
-
     handleCreateModal({ resourceName, resourceUrl, resourceType });
     handleCloseModal();
   };
 
   const handleInputChange = (e) => {
-    console.log("CHANGING --------------->>> ");
     setResourceType(e.target.value);
   };
 
@@ -86,8 +84,8 @@ const CreateResourceModal = ({ handleCloseModal, handleCreateModal }) => {
                   value={resourceType}
                   onChange={handleInputChange}
                 >
-                  <option value="1">Main menu</option>
-                  <option value="2">Sub menu</option>
+                  <option value="1">{MENU}</option>
+                  <option value="2">{SUB_MENU}</option>
                 </select>
               </div>
             </div>
