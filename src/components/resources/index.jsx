@@ -29,11 +29,12 @@ const ResourcesPage = () => {
   const [authenticatedUser, setAuthenticatedUser] = useState({});
 
   const handleCreateResourceModal = async (newResourceURL) => {
+    console.table(newResourceURL);
     const newResourceData = {
       ResourceName: newResourceURL.resourceName,
       URL: newResourceURL.resourceUrl,
       Username: authenticatedUser.email,
-      Type: 1,
+      Type: ewResourceURL.resourceType,
       ParentResourceId: 0,
     };
 
