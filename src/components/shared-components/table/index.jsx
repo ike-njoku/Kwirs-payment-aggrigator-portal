@@ -3,6 +3,7 @@ import SwitchIcon from "../../users/SwitchIcon";
 import EllipseDropdown from "./EllipseDropdown";
 import DeleteModal from "../modals/DeleteModal";
 import EditModal from "../modals/EditModal";
+import EditResourceModal from "../modals/EditResourceModal";
 
 const CustomTable = ({
   tableData,
@@ -13,6 +14,8 @@ const CustomTable = ({
   handleEdit,
   openDeleteModal,
   setOpenDeleteModal,
+  setOpenEditResourceModal,
+  openEditResourceModal,
   openEditModal,
   setOpenEditModal,
   handleDeleteItem,
@@ -23,6 +26,10 @@ const CustomTable = ({
 }) => {
   const handleCloseDeleteModal = () => {
     setOpenDeleteModal(false);
+  };
+
+  const handleCloseEditResourceModal = () => {
+    setOpenEditResourceModal(true);
   };
 
   const handleCloseEditModal = () => {
@@ -104,6 +111,15 @@ const CustomTable = ({
       {openEditModal && (
         <EditModal
           handleCloseModal={handleCloseEditModal}
+          index={selectedItem}
+          handleEditModal={handleEditItem}
+          heading={heading}
+          label={label}
+        />
+      )}
+      {openEditResourceModal && (
+        <EditResourceModal
+          handleCloseModal={handleCloseEditResourceModal}
           index={selectedItem}
           handleEditModal={handleEditItem}
           heading={heading}

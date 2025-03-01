@@ -14,6 +14,8 @@ const ResourcesPage = () => {
   const [tableData, setTableData] = useState(resourcesTableData);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
+  const [openEditResourceModal, setOpenResourceEditModal] = useState(false);
+
   const [openResourceModal, setOpenResourceModal] = useState(false);
   const [authenticatedUser, setAuthenticatedUser] = useState({});
 
@@ -69,11 +71,62 @@ const ResourcesPage = () => {
     setOpenEditModal(true);
   };
 
-  // const handleDeleteItem = (id) => {
-  //   const filteredTableData = tableData.filter((item) => id !== item.id);
-  //   setTableData(filteredTableData);
-  //   setOpenDeleteModal(false);
-  // };
+  const handleDeleteItem = async (ResourceId) => {
+    try {
+      const deleteResponse = await AxiosGet(
+        `http://nofifications.fctirs.gov.ng/api/Resources/Delete/${ResourceId}`
+      );
+
+      console.log("Delete Response:", deleteResponse);
+
+      if (deleteResponse?.data?.StatusCode === 200) {
+        toast.success("Resource deleted successfully");
+
+        setTableData((prevData) =>
+          prevData.filter((item) => item.ResourceId !== ResourceId)
+        );
+
+        setOpenDeleteModal(false);
+      } else {
+        toast.error("Could not delete resource");
+      }
+    } catch (error) {
+      console.error("Delete Error:", error.response?.data || error);
+      toast.error("An error occurred while deleting the resource");
+    }
+  };
+
+  const fetchAllResources = async () => {
+    const apiResponse = await AxiosGet(
+      "http://nofifications.fctirs.gov.ng/api/Resources/GetAllResource"
+    );
+
+    if (!apiResponse) {
+      toast.error("Could not fetch resources");
+      return;
+    }
+
+    const { data } = apiResponse;
+    const tableData = data.Data || data.resources || [];
+
+    if (!tableData.length) {
+      toast.warn("No resources found");
+      setTableData([]);
+      return;
+    }
+
+    tableData.map((item) => (item.name = item.ResourceName));
+    tableData.map((item) => (item.id = item.ResourceId));
+
+    tableData.map(
+      (item) =>
+        (item.dateCreated = new Date(item.CreateDate)
+          .toISOString()
+          .split("T")[0])
+    );
+
+    setTableData(tableData);
+  };
 
   const handleEditItem = async (updatedItem, newRole) => {
     if (newRole) {
@@ -112,16 +165,10 @@ const ResourcesPage = () => {
     setOpenResourceModal(true);
   };
 
-  const handleCreateResourceModal = (newRole) => {
-    console.log("resources");
-    const newRoleData = {
-      name: newRole,
-      id: tableData.length + 1,
-      dateCreated: "Tomorrow",
-    };
-
-    setTableData([...tableData, newRoleData]);
-  };
+  useEffect(() => {
+    setAuthenticatedUser(authenticateUser());
+    fetchAllResources();
+  }, []);
 
   return (
     <DashboardLayout page="Resources">
@@ -151,6 +198,7 @@ const ResourcesPage = () => {
               setOpenDeleteModal={setOpenDeleteModal}
               setOpenEditModal={setOpenEditModal}
               openEditModal={openEditModal}
+              openEditResourceModal={openEditResourceModal}
               handleDeleteItem={handleDeleteItem}
               handleEditItem={handleEditItem}
               text="Are you sure you want to delete this resource?"

@@ -3,68 +3,61 @@ import React, { useState } from "react";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
 
-const CreateResourceModal = ({ handleCloseModal, handleCreateModal }) => {
-  const [resourceName, setResourceName] = useState("");
-  const [resourceUrl, setResourceUrl] = useState("");
-
-  const handleFormSubmit = (e) => {
-    e.preventDefault(); // Prevent page reload
-
-    if (!resourceName.trim() || !resourceUrl.trim()) {
-      alert("Both fields are required!");
-      return;
-    }
-
-    handleCreateModal({ resourceName, resourceUrl });
+const EditResourceModal = ({
+  handleCloseModal,
+  index,
+  handleEditModal,
+  label,
+  heading,
+}) => {
+  const [roleInput, setRoleInput] = useState("");
+  const handleFormSubmit = () => {
+    handleEditModal(index, roleInput);
     handleCloseModal();
   };
-
   return (
     <ModalLayout handleCloseModal={handleCloseModal}>
-      <div className="w-full p-5">
+      <div className="w-full p-5 ">
         <h3 className="my-5 text-lg font-semibold pb-4 border-b border-b-gray-500 text-gray-700">
-          Create Resource
+          {heading}
         </h3>
         <form className="w-full" onSubmit={handleFormSubmit}>
           <div className="w-full">
-            {/* Resource Name Input */}
             <label
               className="text-base font-medium text-gray-700"
-              htmlFor="resourceName"
+              htmlFor="role"
             >
-              Resource Name
+              {label}
             </label>
+
             <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
               <input
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
                 type="text"
-                value={resourceName}
-                onChange={(e) => setResourceName(e.target.value)}
-                placeholder="Enter resource name"
-                required
+                value={roleInput}
+                onChange={(e) => setRoleInput(e.target.value)}
+                placeholder="Enter role name"
               />
             </div>
 
-            {/* Resource URL Input */}
             <label
               className="text-base font-medium text-gray-700"
-              htmlFor="resourceUrl"
+              htmlFor="role"
             >
-              Resource URL
+              {label}
             </label>
+
             <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
               <input
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="url"
-                value={resourceUrl}
-                onChange={(e) => setResourceUrl(e.target.value)}
-                placeholder="Eg. https://url.com"
-                required
+                type="text"
+                value={roleInput}
+                onChange={(e) => setRoleInput(e.target.value)}
+                placeholder="Enter resourse name"
               />
             </div>
 
-            {/* Submit Button */}
-            <AuthButtons label="Create" textColor="text-white" />
+            <AuthButtons label="Update" textColor="text-white" />
           </div>
         </form>
       </div>
@@ -72,4 +65,4 @@ const CreateResourceModal = ({ handleCloseModal, handleCreateModal }) => {
   );
 };
 
-export default CreateResourceModal;
+export default EditResourceModal;
