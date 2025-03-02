@@ -1,9 +1,13 @@
- "use client";
+"use client";
 import React, { useState } from "react";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
 
-const CreateRoleModel = ({ handleCloseModal, handleCreateModal }) => {
+const CreateRoleModel = ({
+  handleCloseModal,
+  handleCreateModal,
+  isLoading,
+}) => {
   const [inputValue, setInputValue] = useState("");
 
   const handleFormSubmit = () => {
@@ -35,7 +39,11 @@ const CreateRoleModel = ({ handleCloseModal, handleCreateModal }) => {
               />
             </div>
 
-            <AuthButtons label="Create" textColor="text-white" />
+            <AuthButtons
+              label="Create"
+              textColor="text-white"
+              isLoading={isLoading}
+            />
           </div>
         </form>
       </div>

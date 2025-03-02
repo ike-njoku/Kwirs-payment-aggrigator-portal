@@ -15,6 +15,7 @@ const RolesPage = () => {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openRoleModal, setOpenRoleModal] = useState(false);
   const [authenticatedUser, setAuthenticatedUser] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleDelete = () => {
     setOpenDeleteModal(true);
@@ -77,6 +78,7 @@ const RolesPage = () => {
   };
 
   const handleCreateRoleModal = async (newRole) => {
+    setIsLoading(true);
     const newRoleData = {
       name: newRole,
       isActive: true,
@@ -94,6 +96,7 @@ const RolesPage = () => {
       toast.error("Could not create role");
       return;
     }
+    setIsLoading(false);
     toast.success("Role created successfully");
     newRoleData.dateCreated = new Date().toISOString().split("T")[0];
     setTableData([...tableData, newRoleData]);
@@ -164,6 +167,7 @@ const RolesPage = () => {
           <CreateRoleModel
             handleCloseModal={handleCloseCreateRoleModal}
             handleCreateModal={handleCreateRoleModal}
+            isLoading={isLoading}
           />
         )}
       </section>

@@ -15,6 +15,7 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
     phone: user.phone,
   });
   const [userRoles, setRoles] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleOnChange = (e) => {
     const name = e.target.name;
@@ -53,6 +54,7 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
 
   const handleUpdateUserRole = async (e) => {
     try {
+      setIsLoading(true);
       e.preventDefault();
 
       const apiUrl =
@@ -71,6 +73,7 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
       }
 
       toast.success("User role updated successfully!");
+      setIsLoading(false);
       handleGetUserRole();
       handleCloseModal();
     } catch (error) {}
@@ -185,7 +188,11 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
               </div>
 
               {/* undo the comment below to update user info */}
-              <AuthButtons label="Update User Roles" textColor="text-white" />
+              <AuthButtons
+                label="Update User Roles"
+                textColor="text-white"
+                isLoading={isLoading}
+              />
             </div>
           </form>
         ) : (
@@ -255,7 +262,11 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
               </div>
 
               {/* undo the comment below to update user info */}
-              <AuthButtons label="Update" textColor="text-white" />
+              <AuthButtons
+                label="Update"
+                textColor="text-white"
+                isLoading={isLoading}
+              />
             </div>
           </form>
         )}

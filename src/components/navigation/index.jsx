@@ -4,7 +4,7 @@ import React from "react";
 
 const HomeNavigation = () => {
   return (
-    <nav className="w-full bg-white w-full sm:max-w-[500px] md:max-w-[600px] lg:max-w-[800px] mx-auto rounded-[30px] sticky top-6 z-50 py-2  overflow-hidden">
+    <nav className="w-full bg-white sm:max-w-[500px] md:max-w-[600px] lg:max-w-[800px] mx-auto rounded-[30px] sticky top-6 z-50 py-2  overflow-hidden shadow-2xl">
       <div className="flex px-6 justify-between items-center gap-3 md:gap-6">
         <figure className="m-0 p-0 ">
           <Link href="/">

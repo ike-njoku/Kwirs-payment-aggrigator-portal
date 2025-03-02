@@ -12,6 +12,7 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const updateAuthenticationDetails = (e) => {
     const name = e.target.name;
@@ -27,6 +28,7 @@ const LoginPage = () => {
 
   const authenticateUser = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const _authenticationDetails = {
       Password: authenticationDetails.password,
       UserName: authenticationDetails.email,
@@ -40,6 +42,7 @@ const LoginPage = () => {
       return;
     }
     authResponse.password = "";
+    setIsLoading(false);
     storeAuthDetailsLocally(authResponse);
     window.location.href = "/dashboard";
   };
@@ -90,7 +93,7 @@ const LoginPage = () => {
                 </Link>
               </div>
 
-              <AuthButtons />
+              <AuthButtons isLoading={isLoading} />
             </form>
           </div>
         </section>

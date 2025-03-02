@@ -21,6 +21,7 @@ const RegisterPage = () => {
     useState(true);
 
   const verifyTin = async () => {
+    setIsLoading(true);
     if (
       registerationDetails.password !== registerationDetails.confirmPassword
     ) {
@@ -40,7 +41,7 @@ const RegisterPage = () => {
       toast.error(CLIENT_TIN_VALIDATION_ERROR);
       return;
     }
-
+    setIsLoading(false);
     setTinDetials({ ...data });
     setShowNextComponent(true);
   };
@@ -51,6 +52,7 @@ const RegisterPage = () => {
     password: "",
     confirmPassword: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const updateRegistrationDetails = (e) => {
     const name = e.target.name;
@@ -73,6 +75,7 @@ const RegisterPage = () => {
 
   const completeRegistration = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     const requestBody = {
       FirstName: tinDetails.firstname,
@@ -95,6 +98,7 @@ const RegisterPage = () => {
       toast.error("Could not complete registration");
       return;
     }
+    setIsLoading(false);
     storeAuthDetailsLocally(registrationResponse);
     toast.success("Registration successful");
     window.location.href = "/dashboard";
@@ -192,7 +196,11 @@ const RegisterPage = () => {
                   label="tax office"
                   value={tinDetails.TaxOffice}
                 />{" "}
-                <AuthButtons isDisabled={false} label="Confirm Registration" />
+                <AuthButtons
+                  isDisabled={false}
+                  label="Confirm Registration"
+                  isLoading={isLoading}
+                />
               </form>
             ) : (
               <form
@@ -233,6 +241,7 @@ const RegisterPage = () => {
                 <AuthButtons
                   isDisabled={registrationButtonIsDisabled}
                   label="register"
+                  isLoading={isLoading}
                 />
               </form>
             )}

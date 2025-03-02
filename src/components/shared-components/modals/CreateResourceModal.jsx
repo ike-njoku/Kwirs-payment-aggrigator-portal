@@ -8,8 +8,10 @@ const CreateResourceModal = ({ handleCloseModal, handleCreateModal }) => {
   const [resourceName, setResourceName] = useState("");
   const [resourceUrl, setResourceUrl] = useState("");
   const [resourceType, setResourceType] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleFormSubmit = (e) => {
+    setIsLoading(true);
     e.preventDefault();
     if (!resourceName.trim() || !resourceUrl.trim()) {
       alert("Both fields are required!");
@@ -17,6 +19,7 @@ const CreateResourceModal = ({ handleCloseModal, handleCreateModal }) => {
     }
 
     handleCreateModal({ resourceName, resourceUrl, resourceType });
+    setIsLoading(false);
     handleCloseModal();
   };
 
@@ -91,7 +94,11 @@ const CreateResourceModal = ({ handleCloseModal, handleCreateModal }) => {
             </div>
 
             {/* Submit Button */}
-            <AuthButtons label="Create" textColor="text-white" />
+            <AuthButtons
+              label="Create"
+              textColor="text-white"
+              isLoading={isLoading}
+            />
           </div>
         </form>
       </div>
