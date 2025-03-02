@@ -11,8 +11,11 @@ const EditModal = ({
   heading,
 }) => {
   const [roleInput, setRoleInput] = useState(index.name);
+  const [isLoading, setIsLoading] = useState(false);
   const handleFormSubmit = () => {
+    setIsLoading(true);
     handleEditModal(index, roleInput);
+    setIsLoading(false);
     handleCloseModal();
   };
   return (
@@ -40,7 +43,11 @@ const EditModal = ({
               />
             </div>
 
-            <AuthButtons label="Update" textColor="text-white" />
+            <AuthButtons
+              label="Update"
+              textColor="text-white"
+              isLoading={isLoading}
+            />
           </div>
         </form>
       </div>

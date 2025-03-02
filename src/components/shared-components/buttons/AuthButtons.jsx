@@ -1,6 +1,7 @@
 import React from "react";
+import Spinner from "../Spinner";
 
-const AuthButtons = ({ label = "login", textColor, isDisabled }) => {
+const AuthButtons = ({ label = "login", textColor, isDisabled, isLoading }) => {
   return (
     <div
       className={` w-full rounded-[30px] h-[48px] max-w-[250px] overflow-hidden mx-auto hover:bg-transparent border-2 border-pumpkin transition-all mt-5 ${
@@ -11,7 +12,7 @@ const AuthButtons = ({ label = "login", textColor, isDisabled }) => {
         disabled={isDisabled}
         className={`capitalize w-full h-full bg-transparent border-0 hover:text-pumpkin disabled:bg-[rgba(255,117,24,0.4)] ${textColor} `}
       >
-        {label}
+        {isLoading ? <Spinner /> : label}
       </button>
     </div>
   );

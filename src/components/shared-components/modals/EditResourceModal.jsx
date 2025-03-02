@@ -12,12 +12,15 @@ const EditResourceModal = ({
 }) => {
   const [resourceName, setResourceName] = useState(index.name);
   const [resourceUrl, setResourceUrl] = useState(index.resourceURL);
+  const [isLoading, setIsLoading] = useState(false);
   const [resourceType, setResourceType] = useState(
     index.resourceType || "Select resource type"
   );
   const handleFormSubmit = (e) => {
+    setIsLoading(true);
     e.preventDefault();
     handleEditModal(index, { resourceName, resourceUrl, resourceType });
+    setIsLoading(false);
     handleCloseModal();
   };
   return (
@@ -85,7 +88,11 @@ const EditResourceModal = ({
               </select>
             </div>
           </div>
-          <AuthButtons label="Update" textColor="text-white" />
+          <AuthButtons
+            label="Update"
+            textColor="text-white"
+            isLoading={isLoading}
+          />
         </form>
       </div>
     </ModalLayout>
