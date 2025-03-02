@@ -5,7 +5,6 @@ import ModalLayout from "./ModalLayout";
 import { IoTimeSharp } from "react-icons/io5";
 
 const TransactionDetails = ({ details, handleCloseModal }) => {
-  console.log({ details });
   return (
     <ModalLayout handleCloseModal={handleCloseModal}>
       <div className="w-full p-6">

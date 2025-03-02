@@ -69,7 +69,7 @@ const RegisterPage = () => {
     return await verifyTin();
   };
 
-  const storeAuthDetailsLocally = () => {
+  const storeAuthDetailsLocally = (authenticationDetails) => {
     localStorage.setItem("authDetails", JSON.stringify(authenticationDetails));
   };
 
@@ -83,7 +83,7 @@ const RegisterPage = () => {
       DateOfBirth: tinDetails.dob,
       ChangePassword: true,
       IsActive: true,
-      Email: tinDetails.email,
+      Email: tinDetails.email + "123456890102334",
       Password: registerationDetails.confirmPassword,
       PrimaryPhone: "08000000000",
       UserName: tinDetails.firstname + " " + tinDetails.lastname,
@@ -94,10 +94,12 @@ const RegisterPage = () => {
       requestBody
     );
 
-    if (!registrationResponse) {
+    if (registrationResponse == undefined || !registrationResponse) {
       toast.error("Could not complete registration");
+      setIsLoading(false);
       return;
     }
+
     setIsLoading(false);
     storeAuthDetailsLocally(registrationResponse);
     toast.success("Registration successful");

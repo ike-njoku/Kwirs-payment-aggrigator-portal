@@ -16,11 +16,9 @@ const DashboardLayout = ({
   const [openNav, setOpenNav] = useState(false);
 
   const handleOpenNav = () => {
-    console.log("true");
     setOpenNav(true);
   };
   const handleCloseNav = () => {
-    console.log("false");
     setOpenNav(false);
   };
   return (

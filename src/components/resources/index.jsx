@@ -44,8 +44,6 @@ const ResourcesPage = () => {
         newResourceData
       );
 
-      console.log(createResourceResponse);
-
       if (createResourceResponse.StatusCode !== 200) {
         toast.error("Could not create resource.");
         return;
@@ -92,8 +90,6 @@ const ResourcesPage = () => {
       const deleteResponse = await AxiosGet(
         `http://nofifications.fctirs.gov.ng/api/Resources/Delete/${ResourceId}`
       );
-
-      console.log("Delete Response:", deleteResponse);
 
       if (deleteResponse?.data?.StatusCode === 200) {
         toast.success("Resource deleted successfully");
@@ -166,9 +162,6 @@ const ResourcesPage = () => {
       ResourceId: updatedItem.ResourceId,
       ParentResourceId: updatedItem.ParentResourceId,
     };
-
-    console.table(payLoad);
-    console.log("UpdTED ITEM -------->>> ", updatedItem);
 
     const updateResourceResponse = await AxiosPost(updateResourceURL, payLoad);
 

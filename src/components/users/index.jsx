@@ -35,7 +35,6 @@ const UsersTable = ({ isRoleAllocation = false }) => {
   const openUserModal = (user) => {
     setSelectedUser(user);
     setOpenModal(true);
-    console.log("openUserModal");
   };
 
   const handleCloseDetailsModal = () => {
@@ -64,7 +63,6 @@ const UsersTable = ({ isRoleAllocation = false }) => {
   };
 
   const updateUserRole = async (index, role) => {
-    console.log(index, role);
     setUserList((prevUsers) =>
       prevUsers.map((user, i) => (i === index ? { ...user, role } : user))
     );

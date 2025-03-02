@@ -12,6 +12,7 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
+
   const [isLoading, setIsLoading] = useState(false);
 
   const updateAuthenticationDetails = (e) => {
@@ -22,7 +23,7 @@ const LoginPage = () => {
     }));
   };
 
-  const storeAuthDetailsLocally = () => {
+  const storeAuthDetailsLocally = (authenticationDetails) => {
     localStorage.setItem("authDetails", JSON.stringify(authenticationDetails));
   };
 
@@ -33,19 +34,29 @@ const LoginPage = () => {
       Password: authenticationDetails.password,
       UserName: authenticationDetails.email,
     };
+
     const authURL =
       "http://nofifications.fctirs.gov.ng/api/userManagement/Login";
     const authResponse = await AxiosPost(authURL, _authenticationDetails);
 
     if (authResponse && authResponse.Status === "Fail") {
       toast.error("Invalid Credentials");
+      setIsLoading(false);
       return;
     }
-    authResponse.password = "";
+
+    const _authResponse = authResponse[0];
+    _authResponse.UserName = authenticationDetails.email;
+    _authResponse.email = authenticationDetails.email;
+    _authResponse.Username = authenticationDetails.email;
+
+    if (authResponse && authResponse.password) authResponse.password = "";
+
     setIsLoading(false);
-    storeAuthDetailsLocally(authResponse);
+    storeAuthDetailsLocally(_authResponse);
     window.location.href = "/dashboard";
   };
+
   return (
     <AuthLayout>
       <div className="w-full">

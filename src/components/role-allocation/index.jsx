@@ -69,7 +69,6 @@ const ResourcesPage = () => {
   };
 
   const handleCreateResourceModal = (newRole) => {
-    console.log("resources");
     const newRoleData = {
       name: newRole,
       id: tableData.length + 1,

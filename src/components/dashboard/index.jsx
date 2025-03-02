@@ -15,9 +15,6 @@ const UserDashboard = () => {
       "https://fcttaxportal.fctirs.gov.ng/api/TIN",
       { body: requestParamaters }
     );
-
-    console.log(" R E S P O N S E ----------------->>> ");
-    console.log(httpResponse);
   };
 
   getTaxIdentificationDetails();
