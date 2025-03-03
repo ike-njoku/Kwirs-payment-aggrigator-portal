@@ -15,6 +15,11 @@ const DashboardLayout = ({
   const pathname = usePathname();
   const [openNav, setOpenNav] = useState(false);
 
+  const getUserMenuItems = async () => {
+    const requestURL = `${process.env.NEXT_PUBLIC_BASE_UR}/api/Menue/GetUserMenueItems`;
+    // const apiResponse = await AxiosGet(requestURL, { UserName:  });
+  };
+
   const handleOpenNav = () => {
     setOpenNav(true);
   };

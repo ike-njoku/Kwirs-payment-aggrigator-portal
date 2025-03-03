@@ -3,6 +3,7 @@ import { FaUser, FaUsers, FaTasks, FaUserTie } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
 import { IoNotifications } from "react-icons/io5";
 import { MdPayment } from "react-icons/md";
+import { AxiosGet } from "../services/http-service";
 
 export const sidebarMenu = [
   {
