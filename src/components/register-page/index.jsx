@@ -33,7 +33,7 @@ const RegisterPage = () => {
     const dob = registerationDetails.dateOfBirth;
     const requestBody = { TIN, dob, bvn: "" };
 
-    const validationURL = "http://nofifications.fctirs.gov.ng/api/utility/TIN";
+    const validationURL = "https://nofifications.fctirs.gov.ng/api/utility/TIN";
     const taxIDValidationResponse = await AxiosPost(validationURL, requestBody);
     const data = JSON.parse(taxIDValidationResponse);
 
