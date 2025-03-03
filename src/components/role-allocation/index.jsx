@@ -35,8 +35,7 @@ const ResourcesPage = () => {
 
   const handleEditItem = async (updatedItem, newRole) => {
     if (newRole) {
-      const updateResourceURL =
-        "http://nofifications.fctirs.gov.ng//api/Resources/Update";
+      const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/Update`;
       updatedItem.ResourceName = newRole;
       updatedItem.Username = authenticateUser.email;
       updatedItem.URL = newRole;

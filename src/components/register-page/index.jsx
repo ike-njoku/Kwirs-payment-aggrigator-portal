@@ -13,7 +13,6 @@ import VerifyInput from "../shared-components/inputs/VerifyInput";
 import { toast } from "react-toastify";
 import { FaAngleLeft } from "react-icons/fa";
 import { useRouter } from "next/router";
-
 const RegisterPage = () => {
   const [tinDetails, setTinDetials] = useState({});
   const [showNextComponent, setShowNextComponent] = useState(false);
@@ -26,6 +25,7 @@ const RegisterPage = () => {
       registerationDetails.password !== registerationDetails.confirmPassword
     ) {
       toast.error("Passwords do not match");
+      setIsLoading(false);
       return;
     }
 
@@ -33,12 +33,13 @@ const RegisterPage = () => {
     const dob = registerationDetails.dateOfBirth;
     const requestBody = { TIN, dob, bvn: "" };
 
-    const validationURL = "https://nofifications.fctirs.gov.ng/api/utility/TIN";
+    const validationURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/utility/TIN`;
     const taxIDValidationResponse = await AxiosPost(validationURL, requestBody);
     const data = JSON.parse(taxIDValidationResponse);
 
     if (data.status == TIN_VALIDATION_ERROR) {
       toast.error(CLIENT_TIN_VALIDATION_ERROR);
+      setIsLoading(false);
       return;
     }
     setIsLoading(false);
@@ -90,7 +91,7 @@ const RegisterPage = () => {
     };
 
     const registrationResponse = await AxiosPost(
-      "http://nofifications.fctirs.gov.ng/api/userManagement/Create",
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/userManagement/Create`,
       requestBody
     );
 

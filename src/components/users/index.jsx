@@ -17,8 +17,7 @@ const UsersTable = ({ isRoleAllocation = false }) => {
 
     user.isActive = user.Isactive;
     user.remark = "";
-    const updateUserStatusURL =
-      "http://nofifications.fctirs.gov.ng/api/userManagement/updateAccountStatus";
+    const updateUserStatusURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/userManagement/updateAccountStatus`;
     const apiResponse = await AxiosPost(updateUserStatusURL, user);
 
     if (apiResponse && apiResponse.StatusCode != 200) {
@@ -43,7 +42,7 @@ const UsersTable = ({ isRoleAllocation = false }) => {
 
   const getAllUsers = async () => {
     const response = await AxiosGet(
-      "http://nofifications.fctirs.gov.ng/api/userManagement/GetAllUser"
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/userManagement/GetAllUser`
     );
 
     const { data } = response;

@@ -40,7 +40,7 @@ const ResourcesPage = () => {
 
     try {
       const createResourceResponse = await AxiosPost(
-        "http://nofifications.fctirs.gov.ng/api/Resources/Create",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/Create`,
         newResourceData
       );
 
@@ -88,7 +88,7 @@ const ResourcesPage = () => {
   const handleDeleteItem = async (ResourceId) => {
     try {
       const deleteResponse = await AxiosGet(
-        `http://nofifications.fctirs.gov.ng/api/Resources/Delete/${ResourceId}`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/Delete/${ResourceId}`
       );
 
       if (deleteResponse?.data?.StatusCode === 200) {
@@ -110,7 +110,7 @@ const ResourcesPage = () => {
 
   const fetchAllResources = async () => {
     const apiResponse = await AxiosGet(
-      "http://nofifications.fctirs.gov.ng/api/Resources/GetAllResource"
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/GetAllResource`
     );
 
     if (!apiResponse) {
@@ -152,8 +152,7 @@ const ResourcesPage = () => {
 
     const { resourceName, resourceType, resourceUrl } = updateParameters;
 
-    const updateResourceURL =
-      "http://nofifications.fctirs.gov.ng//api/Resources/Update";
+    const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/Update`;
     const payLoad = {
       ResourceName: resourceName,
       URL: resourceUrl,

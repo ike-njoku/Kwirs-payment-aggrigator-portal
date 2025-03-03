@@ -35,8 +35,7 @@ const LoginPage = () => {
       UserName: authenticationDetails.email,
     };
 
-    const authURL =
-      "http://nofifications.fctirs.gov.ng/api/userManagement/Login";
+    const authURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/userManagement/Login`;
     const authResponse = await AxiosPost(authURL, _authenticationDetails);
 
     if (authResponse && authResponse.Status === "Fail") {

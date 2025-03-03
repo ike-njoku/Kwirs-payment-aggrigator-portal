@@ -28,7 +28,7 @@ const RolesPage = () => {
   const handleDeleteItem = async (RoleId) => {
     try {
       const deleteResponse = await AxiosPost(
-        `http://nofifications.fctirs.gov.ng/api/Roles/Remove/${RoleId}`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/Remove/${RoleId}`
       );
 
       if (deleteResponse?.StatusCode === 200) {
@@ -60,7 +60,7 @@ const RolesPage = () => {
       selectedRole.UserName = authenticatedUser.email;
 
       const updateRoleResponse = await AxiosPost(
-        "http://nofifications.fctirs.gov.ng/api/Roles/Update",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/Update`,
         selectedRole
       );
 
@@ -88,7 +88,7 @@ const RolesPage = () => {
     newRoleData.UserName = authenticatedUser.email;
 
     const createRoleResponse = await AxiosPost(
-      "http://nofifications.fctirs.gov.ng/api/Roles/Create",
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/Create`,
       newRoleData
     );
 
@@ -108,7 +108,7 @@ const RolesPage = () => {
 
   const getRoles = async () => {
     const apiResponse = await AxiosGet(
-      "http://nofifications.fctirs.gov.ng/api/Roles/GetAllRoles"
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/GetAllRoles`
     );
     if (!apiResponse) toast.error("Could not fetch roles");
 

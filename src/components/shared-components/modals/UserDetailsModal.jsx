@@ -34,8 +34,7 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
 
   const handleGetUserRole = async () => {
     try {
-      const apiUrl =
-        "http://nofifications.fctirs.gov.ng/api/Roles/GetUserRoles";
+      const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/GetUserRoles`;
 
       const payload = {
         UserName: user.email,
@@ -57,8 +56,7 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
       setIsLoading(true);
       e.preventDefault();
 
-      const apiUrl =
-        "http://nofifications.fctirs.gov.ng/api/Roles/AddUserToRole";
+      const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/AddUserToRole`;
       const payload = {
         UserName: user.userName,
         LoginUsername: user.email,
@@ -81,8 +79,7 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
 
   const handleDeleteRole = async (id) => {
     try {
-      const apiUrl =
-        "http://nofifications.fctirs.gov.ng/api/Roles/RemoveUserFromRole";
+      const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/RemoveUserFromRole`;
 
       const payload = {
         UserName: user.email,
@@ -99,7 +96,7 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
 
   const getRoles = async () => {
     const apiResponse = await AxiosGet(
-      "http://nofifications.fctirs.gov.ng/api/Roles/GetAllRoles"
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/GetAllRoles`
     );
     if (!apiResponse) toast.error("Could not fetch roles");
 
