@@ -1,11 +1,13 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { sidebarMenu } from "../../../utils/app_data";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { FaBars } from "react-icons/fa6";
 import MobileNavbar from "../MobileNavbar";
+import { authenticateUser } from "../../../services/auth-service";
+import { AxiosPost } from "../../../services/http-service";
 
 const DashboardLayout = ({
   page = "Dashboard",
@@ -14,11 +16,21 @@ const DashboardLayout = ({
 }) => {
   const pathname = usePathname();
   const [openNav, setOpenNav] = useState(false);
+  const [authenticatedUser, setAuthenticatedUser] = useState({});
 
   const getUserMenuItems = async () => {
     const requestURL = `${process.env.NEXT_PUBLIC_BASE_UR}/api/Menue/GetUserMenueItems`;
-    // const apiResponse = await AxiosGet(requestURL, { UserName:  });
+    const apiResponse = await AxiosPost(requestURL, {
+      UserName: authenticateUser?.email,
+    });
+
+    console.log("--------------->> ", apiResponse);
   };
+
+  useEffect(() => {
+    setAuthenticatedUser(authenticateUser);
+    getUserMenuItems();
+  }, []);
 
   const handleOpenNav = () => {
     setOpenNav(true);
