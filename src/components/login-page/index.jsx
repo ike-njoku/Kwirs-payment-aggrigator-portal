@@ -13,8 +13,6 @@ const LoginPage = () => {
     password: "",
   });
 
-  const [isLoading, setIsLoading] = useState(false);
-
   const updateAuthenticationDetails = (e) => {
     const name = e.target.name;
     setAuthenticationDetails((previousValue) => ({
@@ -23,7 +21,7 @@ const LoginPage = () => {
     }));
   };
 
-  const storeAuthDetailsLocally = (authenticationDetails) => {
+  const storeAuthDetailsLocally = () => {
     localStorage.setItem("authDetails", JSON.stringify(authenticationDetails));
   };
 
@@ -105,7 +103,7 @@ const LoginPage = () => {
                 </Link>
               </div>
 
-              <AuthButtons isLoading={isLoading} />
+              <AuthButtons />
             </form>
           </div>
         </section>
