@@ -13,8 +13,6 @@ const LoginPage = () => {
     password: "",
   });
 
-  const [isLoading, setIsLoading] = useState(false);
-
   const updateAuthenticationDetails = (e) => {
     const name = e.target.name;
     setAuthenticationDetails((previousValue) => ({
@@ -23,38 +21,10 @@ const LoginPage = () => {
     }));
   };
 
-  const storeAuthDetailsLocally = (authenticationDetails) => {
+  const storeAuthDetailsLocally = () => {
     localStorage.setItem("authDetails", JSON.stringify(authenticationDetails));
   };
 
-  const authenticateUser = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    const _authenticationDetails = {
-      Password: authenticationDetails.password,
-      UserName: authenticationDetails.email,
-    };
-
-    const authURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/userManagement/Login`;
-    const authResponse = await AxiosPost(authURL, _authenticationDetails);
-
-    if (authResponse && authResponse.Status === "Fail") {
-      toast.error("Invalid Credentials");
-      setIsLoading(false);
-      return;
-    }
-
-    const _authResponse = authResponse[0];
-    _authResponse.UserName = authenticationDetails.email;
-    _authResponse.email = authenticationDetails.email;
-    _authResponse.Username = authenticationDetails.email;
-
-    if (authResponse && authResponse.password) authResponse.password = "";
-
-    setIsLoading(false);
-    storeAuthDetailsLocally(_authResponse);
-    window.location.href = "/dashboard";
-  };
 
   return (
     <AuthLayout>
@@ -103,7 +73,7 @@ const LoginPage = () => {
                 </Link>
               </div>
 
-              <AuthButtons isLoading={isLoading} />
+              <AuthButtons />
             </form>
           </div>
         </section>
