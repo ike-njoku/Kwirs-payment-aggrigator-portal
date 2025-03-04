@@ -24,7 +24,7 @@ const DashboardLayout = ({
     const requestURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Menue/GetUserMenueItems`;
 
     const apiResponse = await AxiosPost(requestURL, {
-      UserName: authenticateUser?.email,
+      UserName: authenticatedUser?.tin,
     });
 
     if (!apiResponse || apiResponse.StatusCode !== 200) {
