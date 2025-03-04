@@ -1,13 +1,40 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { IoMdClose } from "react-icons/io";
 import { sidebarMenu } from "../../utils/app_data";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { authenticateUser } from "../../services/auth-service";
+import { AxiosPost } from "../../services/http-service";
 
 const MobileNavbar = ({ openNav, handleCloseNav }) => {
   const pathname = usePathname();
+  const [_sidebarMenu, setSideBarMenu] = useState(sidebarMenu);
+  const [authenticatedUser, setAuthenticatedUser] = useState({});
+
+  const getUserMenuItems = async () => {
+    const requestURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Menue/GetUserMenueItems`;
+
+    const apiResponse = await AxiosPost(requestURL, {
+      UserName: authenticateUser?.email,
+    });
+
+    if (!apiResponse || apiResponse.StatusCode !== 200) {
+      toast.error("Could not fetch Menu Items. Please reload the page");
+      return;
+    }
+
+    const { Data } = apiResponse;
+    setSideBarMenu(Data);
+    return;
+  };
+
+  useEffect(() => {
+    setAuthenticatedUser(authenticateUser);
+    getUserMenuItems();
+  }, []);
+
   return (
     <section
       className={`${
@@ -39,6 +66,7 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
 
         <div className="w-full py-5 mt-10">
           <ul className="w-full flex flex-col gap-6">
+            {/* use _sidebarMenu to get menus from the backend */}
             {sidebarMenu.map((menu, i) => (
               <li
                 className={`w-full px-6 flex gap-2 items-center text-lg text-black capitalize py-2 ${

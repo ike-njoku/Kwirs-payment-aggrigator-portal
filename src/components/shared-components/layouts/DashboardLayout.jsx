@@ -8,6 +8,7 @@ import { FaBars } from "react-icons/fa6";
 import MobileNavbar from "../MobileNavbar";
 import { authenticateUser } from "../../../services/auth-service";
 import { AxiosPost } from "../../../services/http-service";
+import { toast } from "react-toastify";
 
 const DashboardLayout = ({
   page = "Dashboard",
@@ -17,14 +18,23 @@ const DashboardLayout = ({
   const pathname = usePathname();
   const [openNav, setOpenNav] = useState(false);
   const [authenticatedUser, setAuthenticatedUser] = useState({});
+  const [_sidebarMenu, setSideBarMenu] = useState(sidebarMenu);
 
   const getUserMenuItems = async () => {
-    const requestURL = `${process.env.NEXT_PUBLIC_BASE_UR}/api/Menue/GetUserMenueItems`;
+    const requestURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Menue/GetUserMenueItems`;
+
     const apiResponse = await AxiosPost(requestURL, {
       UserName: authenticateUser?.email,
     });
 
-    console.log("--------------->> ", apiResponse);
+    if (!apiResponse || apiResponse.StatusCode !== 200) {
+      toast.error("Could not fetch Menu Items. Please reload the page");
+      return;
+    }
+
+    const { Data } = apiResponse;
+    setSideBarMenu(Data);
+    return;
   };
 
   useEffect(() => {
@@ -48,6 +58,7 @@ const DashboardLayout = ({
 
           <div className="w-full py-5 mt-10">
             <ul className="w-full flex flex-col gap-6">
+              {/* use _sidebarMenu to get menus from the backend */}
               {sidebarMenu.map((menu, i) => (
                 <li
                   className={`w-full px-8 flex gap-2 items-center text-xl text-white capitalize py-2 ${
