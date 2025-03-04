@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
-import { SUB_MENU, MENU } from "../../../utils/constants";
+import { SUB_MENU, MAIN_MENU } from "../../../utils/constants";
 
 const CreateResourceModal = ({ handleCloseModal, handleCreateModal }) => {
   const [resourceName, setResourceName] = useState("");
@@ -87,7 +87,7 @@ const CreateResourceModal = ({ handleCloseModal, handleCreateModal }) => {
                   value={resourceType}
                   onChange={handleInputChange}
                 >
-                  <option value="1">{MENU}</option>
+                  <option value="1">{MAIN_MENU}</option>
                   <option value="2">{SUB_MENU}</option>
                 </select>
               </div>
