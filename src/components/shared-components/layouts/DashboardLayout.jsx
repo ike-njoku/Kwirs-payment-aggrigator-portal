@@ -21,20 +21,12 @@ const DashboardLayout = ({
   const [_sidebarMenu, setSideBarMenu] = useState(sidebarMenu);
 
   const getUserMenuItems = async () => {
-    const requestURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Menue/GetUserMenueItems`;
-
+    const requestURL = `${process.env.NEXT_PUBLIC_BASE_UR}/api/Menue/GetUserMenueItems`;
     const apiResponse = await AxiosPost(requestURL, {
       UserName: authenticatedUser?.tin,
     });
 
-    if (!apiResponse || apiResponse.StatusCode !== 200) {
-      toast.error("Could not fetch Menu Items. Please reload the page");
-      return;
-    }
-
-    const { Data } = apiResponse;
-    setSideBarMenu(Data);
-    return;
+    console.log("--------------->> ", apiResponse);
   };
 
   useEffect(() => {
