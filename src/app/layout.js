@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import Head from "next/head";
+import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,10 +30,12 @@ export default function RootLayout({ children }) {
           sizes="16x16"
         />
       </Head>
+      <Script src="https://pay-service.icadpay.com/host/new-inline-stage-pay.js" strategy="lazyOnload" />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ToastContainer />
+        <Script src="https://pay-service.icadpay.com/host/new-inline-stage-pay.js" strategy="lazyOnload" />
         {children}
       </body>
     </html>
