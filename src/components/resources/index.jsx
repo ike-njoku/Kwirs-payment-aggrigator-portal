@@ -36,6 +36,7 @@ const ResourcesPage = () => {
       Username: authenticatedUser.email,
       Type: newResourceURL.resourceType,
       ParentResourceId: 0,
+      UserName: authenticatedUser.UserName,
     };
 
     try {
@@ -160,6 +161,7 @@ const ResourcesPage = () => {
       Type: resourceType == MENU ? 1 : 2,
       ResourceId: updatedItem.ResourceId,
       ParentResourceId: updatedItem.ParentResourceId,
+      UserName: authenticatedUser.UserName,
     };
 
     const updateResourceResponse = await AxiosPost(updateResourceURL, payLoad);
@@ -185,6 +187,7 @@ const ResourcesPage = () => {
   useEffect(() => {
     const isUserAuthenticated = authenticateUser();
     setAuthenticatedUser(isUserAuthenticated);
+    console.table(authenticatedUser);
     fetchAllResources();
   }, []);
 

@@ -80,7 +80,7 @@ const RegisterPage = () => {
 
     const requestBody = {
       FirstName: tinDetails.firstname,
-      LastName: tinDetails.lastname,
+      LastName: tinDetails.lastname ?? "",
       DateOfBirth: tinDetails.dob,
       ChangePassword: true,
       IsActive: true,
