@@ -71,6 +71,10 @@ const RegisterPage = () => {
   };
 
   const storeAuthDetailsLocally = (authenticationDetails) => {
+    authenticationDetails.Username = authenticationDetails.UserName;
+    authenticationDetails.tin = authenticationDetails.UserName;
+    authenticationDetails.UserName = authenticationDetails.UserName;
+
     localStorage.setItem("authDetails", JSON.stringify(authenticationDetails));
   };
 
