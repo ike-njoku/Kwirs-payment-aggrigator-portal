@@ -12,6 +12,7 @@ const LoginPage = () => {
     tin: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const updateAuthenticationDetails = (e) => {
     const name = e.target.name;
@@ -45,9 +46,9 @@ const LoginPage = () => {
     }
 
     const _authResponse = authResponse[0];
-    _authResponse.UserName = authenticationDetails.email;
-    _authResponse.email = authenticationDetails.email;
-    _authResponse.Username = authenticationDetails.email;
+    _authResponse.UserName = authenticationDetails.tin;
+    _authResponse.email = authenticationDetails.tin;
+    _authResponse.Username = authenticationDetails.tin;
 
     if (authResponse && authResponse.password) authResponse.password = "";
 

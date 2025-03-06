@@ -30,14 +30,17 @@ const ResourcesPage = () => {
   const [authenticatedUser, setAuthenticatedUser] = useState({});
 
   const handleCreateResourceModal = async (newResourceURL) => {
+    console.table(authenticatedUser);
     const newResourceData = {
       ResourceName: newResourceURL.resourceName,
       URL: newResourceURL.resourceUrl,
       Username: authenticatedUser.email,
       Type: newResourceURL.resourceType,
       ParentResourceId: 0,
-      UserName: authenticatedUser.UserName,
+      UserName: authenticatedUser.tin,
     };
+
+    console.table(newResourceData);
 
     try {
       const createResourceResponse = await AxiosPost(
@@ -162,7 +165,7 @@ const ResourcesPage = () => {
       Type: resourceType == MAIN_MENU ? 1 : 2,
       ResourceId: updatedItem.ResourceId,
       ParentResourceId: updatedItem.ParentResourceId,
-      UserName: authenticatedUser.UserName,
+      UserName: authenticatedUser.tin,
     };
 
     const updateResourceResponse = await AxiosPost(updateResourceURL, payLoad);
