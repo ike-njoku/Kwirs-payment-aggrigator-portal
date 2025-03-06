@@ -49,7 +49,7 @@ const RolesPage = () => {
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("authDetails"));
-    if (user && user.email) setAuthenticatedUser(user);
+    setAuthenticatedUser(user);
   }, []);
 
   const handleEditItem = async (updatedItem, newRole) => {
@@ -57,7 +57,10 @@ const RolesPage = () => {
       const selectedRole = tableData.find((item) => item.id === updatedItem.id);
       selectedRole.name = newRole;
       selectedRole.RoleId = selectedRole.Id;
-      selectedRole.UserName = authenticatedUser.email;
+      selectedRole.UserName = authenticatedUser.tin;
+
+      console.table(authenticatedUser);
+      console.table(selectedRole);
 
       const updateRoleResponse = await AxiosPost(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/Update`,
@@ -85,7 +88,7 @@ const RolesPage = () => {
     };
 
     newRoleData.Name = newRole;
-    newRoleData.UserName = authenticatedUser.email;
+    newRoleData.UserName = authenticatedUser.tin;
 
     const createRoleResponse = await AxiosPost(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/Create`,
