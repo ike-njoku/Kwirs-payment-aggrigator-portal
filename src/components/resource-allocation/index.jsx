@@ -102,17 +102,17 @@ const ResourcesAllocationPage = () => {
     };
 
  
-  const handleDeleteResource = async (permissionId) => {
+  const handleDeleteResource = async (RoleResourceId) => {
     try {
       const deleteResponse = await AxiosGet(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/RoleResources/RemoveResourcesFromRole/${permissionId}`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/RoleResources/RemoveResourcesFromRole/${RoleResourceId}`
       );
 
       if (deleteResponse?.data?.StatusCode === 200) {
         toast.success("Delete Complete");
 
         setRoleResources((prevData) =>
-          prevData.filter((item) => item.PermissionId !== permissionId)
+          prevData.filter((item) => item.RoleResourceId !== RoleResourceId)
         );
       } else {
         toast.error("Failed to delete resource");

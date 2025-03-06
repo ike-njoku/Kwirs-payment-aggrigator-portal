@@ -37,7 +37,7 @@ const CustomTable = ({ tableHeadings, tableData, handleEdit, handleDelete, loadi
             <button onClick={() => handleEdit(row)}>
               <FaEdit />
             </button>
-            <button onClick={() => handleDelete(row.PermissionId)}>
+            <button onClick={() => handleDelete(row.RoleResourceId)}>
               <FaTrashAlt className="text-red-500" />
             </button>
           </td>
