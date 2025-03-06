@@ -80,14 +80,14 @@ const RegisterPage = () => {
 
     const requestBody = {
       FirstName: tinDetails.firstname,
-      LastName: tinDetails.lastname,
+      LastName: tinDetails.lastname ?? "",
       DateOfBirth: tinDetails.dob,
       ChangePassword: true,
       IsActive: true,
-      Email: tinDetails.email + "123456890102334",
+      Email: tinDetails.email + "fake-account",
       Password: registerationDetails.confirmPassword,
       PrimaryPhone: "08000000000",
-      UserName: tinDetails.firstname + " " + tinDetails.lastname,
+      UserName: tinDetails.TIN,
     };
 
     const registrationResponse = await AxiosPost(

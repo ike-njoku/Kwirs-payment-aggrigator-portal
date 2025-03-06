@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const [authenticationDetails, setAuthenticationDetails] = useState({
-    email: "",
+    tin: "",
     password: "",
   });
 
@@ -32,8 +32,10 @@ const LoginPage = () => {
     setIsLoading(true);
     const _authenticationDetails = {
       Password: authenticationDetails.password,
-      UserName: authenticationDetails.email,
+      UserName: authenticationDetails.tin,
     };
+
+    console.table(authenticationDetails);
 
     const authURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/userManagement/Login`;
     const authResponse = await AxiosPost(authURL, _authenticationDetails);
@@ -83,10 +85,10 @@ const LoginPage = () => {
             <h3 className="font-bold text-4xl capitalize text-center">login</h3>
             <form onSubmit={authenticateUser} className="w-full my-5">
               <PrimaryInput
-                label="email"
-                name="email"
-                type="email"
-                placeholder="abc@example.com"
+                label="Tax ID"
+                name="tin"
+                // type="email"
+                placeholder="N1234567"
                 handleChange={updateAuthenticationDetails}
               />
               <PrimaryInput
