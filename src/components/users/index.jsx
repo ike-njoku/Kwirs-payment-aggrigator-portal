@@ -44,7 +44,10 @@ const UsersTable = ({ isRoleAllocation = false }) => {
     const response = await AxiosGet(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/userManagement/GetAllUser`
     );
-
+ if(!response){
+  toast.error("Could not fetch users")
+  return;
+ }
     const { data } = response;
     if (!data.StatusCode) {
       toast.error("Failed to fetch Users");

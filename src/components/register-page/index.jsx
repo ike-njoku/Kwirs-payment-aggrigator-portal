@@ -84,7 +84,7 @@ const RegisterPage = () => {
       DateOfBirth: tinDetails.dob,
       ChangePassword: true,
       IsActive: true,
-      Email: tinDetails.email + "fake-account",
+      Email: tinDetails.email,
       Password: registerationDetails.confirmPassword,
       PrimaryPhone: "08000000000",
       UserName: tinDetails.TIN,

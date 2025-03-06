@@ -3,6 +3,7 @@ import { FaUser, FaUsers, FaTasks, FaUserTie } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
 import { IoNotifications } from "react-icons/io5";
 import { MdPayment } from "react-icons/md";
+import { AxiosGet } from "../services/http-service";
 
 export const sidebarMenu = [
   {
@@ -29,6 +30,11 @@ export const sidebarMenu = [
     path: "users",
     icon: <FaUsers />,
     url: "/user-list",
+  },
+  {
+    path: "resource allocation",
+    icon: <FaTasks />,
+    url: "/resource-allocation",
   },
   {
     path: "resources",
