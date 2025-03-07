@@ -39,7 +39,7 @@ const DashboardLayout = ({
 
   useEffect(() => {
     setAuthenticatedUser(authenticateUser);
-    getUserMenuItems();
+    // getUserMenuItems(); undo this comment when the time comes
   }, []);
 
   const handleOpenNav = () => {
