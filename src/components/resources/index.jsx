@@ -39,10 +39,6 @@ const ResourcesPage = () => {
       UserName: authenticatedUser.tin,
     };
 
-    console.log("-----------------");
-    console.table(newResourceData);
-    console.log("-----------------");
-
     try {
       const createResourceResponse = await AxiosPost(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/Create`,
