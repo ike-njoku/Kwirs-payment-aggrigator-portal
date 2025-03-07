@@ -13,7 +13,7 @@ const RoleResourceModal = ({ isOpen, onClose }) => {
   const [resources, setResources] = useState([]);
   const [selectedRoleId, setSelectedRoleId] = useState("");
   const [selectedResourceId, setSelectedResourceId] = useState("");
-  const [userEmail, setUserEmail] = useState(""); 
+  const [userEmail, setUserEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -37,7 +37,7 @@ const RoleResourceModal = ({ isOpen, onClose }) => {
   const fetchRoles = async () => {
     try {
       const response = await AxiosGet(`${API_BASE_URL}/api/Roles/GetAllRoles`);
-console.log(response);
+      console.log(response);
       if (!response || response.data.StatusCode !== 200) {
         toast.error("Could not fetch roles");
         return;
@@ -51,7 +51,9 @@ console.log(response);
 
   const fetchResources = async () => {
     try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/Resources/GetAllResource`);
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/Resources/GetAllResource`
+      );
 
       if (!response || response.data.StatusCode !== 200) {
         toast.error("Could not fetch resources");
@@ -69,68 +71,83 @@ console.log(response);
       toast.error("API base URL is missing.");
       return;
     }
-  
+
     try {
       const storedUser = JSON.parse(localStorage.getItem("authDetails"));
-      const userEmail = storedUser?.email;
-  
+      const userEmail = storedUser?.tin;
+
       if (!userEmail) {
         toast.error("User email is required.");
         return;
       }
-  
+
       if (!selectedRoleId || !selectedResourceId) {
         toast.error("Please select a role and a resource before adding.");
         return;
       }
-  
-      const rolesResponse = await axios.get(`${API_BASE_URL}/api/Roles/GetAllRoles`);
-      const resourcesResponse = await axios.get(`${API_BASE_URL}/api/Resources/GetAllResource`);
-  
-      const roleExists = rolesResponse.data.Data?.some((role) => role.Id == selectedRoleId);
-      const resourceExists = resourcesResponse.data.Data?.some((res) => res.ResourceId == selectedResourceId);
-  
+
+      const rolesResponse = await axios.get(
+        `${API_BASE_URL}/api/Roles/GetAllRoles`
+      );
+      const resourcesResponse = await axios.get(
+        `${API_BASE_URL}/api/Resources/GetAllResource`
+      );
+
+      const roleExists = rolesResponse.data.Data?.some(
+        (role) => role.Id == selectedRoleId
+      );
+      const resourceExists = resourcesResponse.data.Data?.some(
+        (res) => res.ResourceId == selectedResourceId
+      );
+
       if (!roleExists) {
         toast.error("Selected role does not exist.");
         return;
       }
-  
+
       if (!resourceExists) {
         toast.error("Selected resource does not exist.");
         return;
       }
-  
+
       const payload = {
         UserName: userEmail,
         RoleId: parseInt(selectedRoleId, 10),
         ResourcesId: parseInt(selectedResourceId, 10),
       };
-  
-      const response = await axios.post(`${API_BASE_URL}/api/RoleResources/Create`, payload, {
-        headers: { "Content-Type": "application/json" },
-      });
-  
+
+      const response = await axios.post(
+        `${API_BASE_URL}/api/RoleResources/Create`,
+        payload,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
       if (response.data.StatusCode === 200) {
         toast.success("Role resource created successfully!");
         setTimeout(() => {
           setSelectedRoleId("");
           setSelectedResourceId("");
-          onClose(); 
-        }, 2000); 
+          onClose();
+        }, 2000);
       } else {
-        toast.error(response.data.StatusMessage || "Failed to create role resource.");
+        toast.error(
+          response.data.StatusMessage || "Failed to create role resource."
+        );
         setTimeout(() => {
-            setSelectedRoleId("");
-            setSelectedResourceId("");
-            onClose(); 
-          }, 2000); 
+          setSelectedRoleId("");
+          setSelectedResourceId("");
+          onClose();
+        }, 2000);
       }
     } catch (error) {
-      toast.error(error.response?.data?.StatusMessage || "Error creating role resource.");
+      toast.error(
+        error.response?.data?.StatusMessage || "Error creating role resource."
+      );
     }
   };
-  
- 
+
   useEffect(() => {
     if (isOpen) {
       fetchRoles();
@@ -153,7 +170,9 @@ console.log(response);
           }}
         >
           <div className="w-full mb-4">
-            <label className="text-base font-medium text-gray-700">Select Role</label>
+            <label className="text-base font-medium text-gray-700">
+              Select Role
+            </label>
             <div className="border-b-2 border-gray-300 h-[45px] w-full rounded-md my-2">
               <select
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
@@ -176,7 +195,9 @@ console.log(response);
           </div>
 
           <div className="w-full mb-4">
-            <label className="text-base font-medium text-gray-700">Select Resource</label>
+            <label className="text-base font-medium text-gray-700">
+              Select Resource
+            </label>
             <div className="border-b-2 border-gray-300 h-[45px] w-full rounded-md my-2">
               <select
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
@@ -187,7 +208,10 @@ console.log(response);
                 <option value="">-- Select a Resource --</option>
                 {resources.length > 0 ? (
                   resources.map((resource) => (
-                    <option key={resource.ResourceId} value={resource.ResourceId}>
+                    <option
+                      key={resource.ResourceId}
+                      value={resource.ResourceId}
+                    >
                       {resource.ResourceName}
                     </option>
                   ))

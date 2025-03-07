@@ -7,17 +7,19 @@ import { toast } from "react-toastify";
 import RoleResourceModal from "../shared-components/modals/RoleResourceModal";
 import EditRoleResourceModal from "../shared-components/modals/EditRoleResourceModal";
 import { FaPlus, FaFilter } from "react-icons/fa";
+import { MAIN_MENU, SUB_MENU } from "../../utils/constants";
 
 const ResourcesAllocationPage = () => {
   const tableHeadings = ["Resource Name", "Actions"];
   const [roleResources, setRoleResources] = useState([]);
-  const [roles, setRoles] = useState([]); 
+  const [roles, setRoles] = useState([]);
   const [selectedRoleId, setSelectedRoleId] = useState(null);
   const [openRoleResourceModal, setOpenRoleResourceModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [selectedRoleResource, setSelectedRoleResource] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [tableData, setTableData] = useState([]);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -34,7 +36,6 @@ const ResourcesAllocationPage = () => {
     }
   };
 
- 
   const fetchRoleResources = async () => {
     try {
       setLoading(true);
@@ -61,47 +62,46 @@ const ResourcesAllocationPage = () => {
     }
   };
 
-   const fetchAllResources = async () => {
-      const apiResponse = await AxiosGet(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/GetAllResource`
-      );
-  
-      if (!apiResponse) {
-        toast.error("Could not fetch resources");
-        return;
-      }
-  
-      const { data } = apiResponse;
-      const tableData = data.Data || data.resources || [];
-  
-      if (!tableData.length) {
-        toast.warn("No resources found");
-        setTableData([]);
-        return;
-      }
-  
-      tableData.map((item) => (item.name = item.ResourceName));
-      tableData.map((item) => (item.id = item.ResourceId));
-  
-      tableData.map((item) => (item.resourceType = item.ResourceTypeId));
-      tableData.map(
-        (item) =>
-          (item.resourceType = item.ResourceTypeId == 1 ? MAIN_MENU : SUB_MENU)
-      );
-  
-      tableData.map((item) => (item.resourceURL = item.URL));
-  
-      tableData.map(
-        (item) =>
-          (item.dateCreated = new Date(item.CreateDate)
-            .toISOString()
-            .split("T")[0])
-      );
-  
-      setTableData(tableData);
-    };
+  const fetchAllResources = async () => {
+    const apiResponse = await AxiosGet(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/GetAllResource`
+    );
 
- 
+    if (!apiResponse) {
+      toast.error("Could not fetch resources");
+      return;
+    }
+
+    const { data } = apiResponse;
+    const tableData = data.Data || data.resources || [];
+
+    if (!tableData.length) {
+      toast.warn("No resources found");
+      setTableData([]);
+      return;
+    }
+
+    tableData.map((item) => (item.name = item.ResourceName));
+    tableData.map((item) => (item.id = item.ResourceId));
+
+    tableData.map((item) => (item.resourceType = item.ResourceTypeId));
+    tableData.map(
+      (item) =>
+        (item.resourceType = item.ResourceTypeId == 1 ? MAIN_MENU : SUB_MENU)
+    );
+
+    tableData.map((item) => (item.resourceURL = item.URL));
+
+    tableData.map(
+      (item) =>
+        (item.dateCreated = new Date(item.CreateDate)
+          .toISOString()
+          .split("T")[0])
+    );
+
+    setTableData(tableData);
+  };
+
   const handleDeleteResource = async (RoleResourceId) => {
     try {
       const deleteResponse = await AxiosGet(
@@ -122,24 +122,20 @@ const ResourcesAllocationPage = () => {
     }
   };
 
-
   const handleUpdateRoleResource = (resource) => {
     setSelectedRoleResource(resource);
     setOpenEditModal(true);
   };
 
-
   useEffect(() => {
-    fetchRoles(); 
+    fetchRoles();
     fetchAllResources();
-  }, []);
 
-  useEffect(() => {
     if (selectedRoleId) {
       fetchRoleResources();
     } else {
       setRoleResources([]);
-     }
+    }
   }, [selectedRoleId]);
 
   return (
@@ -147,7 +143,6 @@ const ResourcesAllocationPage = () => {
       <section className="w-full">
         <div className="w-[90%] mx-auto py-5">
           <div className="mt-4 flex gap-4 justify-between items-center">
-      
             <button
               onClick={() => setOpenRoleResourceModal(true)}
               className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
@@ -157,9 +152,9 @@ const ResourcesAllocationPage = () => {
               <FaPlus />
             </button>
 
-                  <div className="relative">
+            <div className="relative">
               <select
-                             className="text-gray focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
+                className="text-gray focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
                 onChange={(e) => setSelectedRoleId(e.target.value)}
                 value={selectedRoleId || ""}
               >
@@ -172,7 +167,6 @@ const ResourcesAllocationPage = () => {
               </select>
               {/* <FaFilter className="absolute right-3 top-2 text-gray-500" /> */}
             </div>
-
           </div>
         </div>
 
