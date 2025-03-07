@@ -37,7 +37,7 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
       const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/GetUserRoles`;
 
       const payload = {
-        UserName: user.email,
+        UserName: user.UserName,
       };
 
       const apiResponse = await AxiosPost(apiUrl, payload);
