@@ -20,6 +20,7 @@ const ResourcesAllocationPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [tableData, setTableData] = useState([]);
+  const [selectedRole, setSelectedRole] = useState({});
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -122,8 +123,15 @@ const ResourcesAllocationPage = () => {
     }
   };
 
+  const handleSetSelectedRole = (e) => {
+    setSelectedRoleId(e.target.value);
+    setSelectedRole(roles.filter((role) => role.Id == e.target.value)[0]);
+  };
+
   const handleUpdateRoleResource = (resource) => {
     setSelectedRoleResource(resource);
+    console.log("SeLECTING ");
+    console.table(resource);
     setOpenEditModal(true);
   };
 
@@ -155,7 +163,7 @@ const ResourcesAllocationPage = () => {
             <div className="relative">
               <select
                 className="text-gray focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
-                onChange={(e) => setSelectedRoleId(e.target.value)}
+                onChange={handleSetSelectedRole}
                 value={selectedRoleId || ""}
               >
                 <option value="">Select Role</option>
@@ -202,6 +210,7 @@ const ResourcesAllocationPage = () => {
               fetchRoleResources();
             }}
             selectedRoleResource={selectedRoleResource}
+            selectedRole={selectedRole}
           />
         )}
       </section>

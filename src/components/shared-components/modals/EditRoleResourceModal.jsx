@@ -6,7 +6,13 @@ import { toast } from "react-toastify";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
 
-const EditRoleResourceModal = ({ isOpen, onClose, roleResourceId }) => {
+const EditRoleResourceModal = ({
+  isOpen,
+  onClose,
+  roleResourceId,
+  selectedRoleResource,
+  selectedRole,
+}) => {
   const [roleDetails, setRoleDetails] = useState("");
   const [ResourcesId, setResourcesId] = useState("");
   const [RoleId, setRoleId] = useState("");
@@ -15,21 +21,24 @@ const EditRoleResourceModal = ({ isOpen, onClose, roleResourceId }) => {
   const [loading, setLoading] = useState(false);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
   const fetchRoleResourceDetails = async () => {
     if (!roleResourceId) return;
 
     try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/RoleResources/GetAllRoleResources/${roleResourceId}`);
-      
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/RoleResources/GetAllRoleResources/${roleResourceId}`
+      );
+
       if (response?.data?.StatusCode === 200 && response.data.Data) {
-        const roleResource = response.data.Data.find((item) => item.RoleResourceId === roleResourceId);
-        
+        const roleResource = response.data.Data.find(
+          (item) => item.RoleResourceId === roleResourceId
+        );
+
         if (roleResource) {
-          setRoleDetails(roleResource.RoleName || "");   
-          setResourcesId(roleResource.ResourceName || "");  
-          setRoleId(roleResource.RoleId || "");  
-          setRoleResourceId(roleResource.RoleResourceId || "");  
+          setRoleDetails(roleResource.RoleName || "");
+          setResourcesId(roleResource.ResourceName || "");
+          setRoleId(roleResource.RoleId || "");
+          setRoleResourceId(roleResource.RoleResourceId || "");
         } else {
           toast.error("Role-Resource not found.");
         }
@@ -53,12 +62,15 @@ const EditRoleResourceModal = ({ isOpen, onClose, roleResourceId }) => {
     try {
       const payload = {
         UserName: userEmail,
-        RoleId: RoleId,  
-        ResourcesId: ResourcesId,  
-        RoleResourceId: RoleResourceId,  
+        RoleId: RoleId,
+        ResourcesId: ResourcesId,
+        RoleResourceId: RoleResourceId,
       };
 
-      const response = await AxiosPost(`${API_BASE_URL}/api/RoleResources/Update`, payload);
+      const response = await AxiosPost(
+        `${API_BASE_URL}/api/RoleResources/Update`,
+        payload
+      );
 
       if (response?.StatusCode !== 200) {
         toast.error("Could not update role-resource at this time.");
@@ -71,7 +83,9 @@ const EditRoleResourceModal = ({ isOpen, onClose, roleResourceId }) => {
         onClose();
       }, 2000);
     } catch (error) {
-      toast.error(error.response?.data?.StatusMessage || "Error updating role-resource.");
+      toast.error(
+        error.response?.data?.StatusMessage || "Error updating role-resource."
+      );
     } finally {
       setLoading(false);
     }
@@ -103,7 +117,7 @@ const EditRoleResourceModal = ({ isOpen, onClose, roleResourceId }) => {
     <ModalLayout handleCloseModal={onClose}>
       <div className="w-full p-5">
         <h3 className="text-lg font-semibold pb-4 border-b border-gray-300 text-gray-700">
-          Edit Role Resource
+          Role Resource
         </h3>
 
         <form
@@ -120,18 +134,20 @@ const EditRoleResourceModal = ({ isOpen, onClose, roleResourceId }) => {
             <input
               type="text"
               className="w-full border-b-2 border-gray-300 h-[45px] rounded-md my-2 bg-gray-100 px-3 text-gray-700"
-              value={roleDetails}
+              value={selectedRole.Name}
               onChange={(e) => setRoleDetails(e.target.value)}
               readOnly
             />
           </div>
 
           <div className="w-full mb-4">
-            <label className="text-base font-medium text-gray-700">Resource</label>
+            <label className="text-base font-medium text-gray-700">
+              Resource
+            </label>
             <input
               type="text"
               className="w-full border-b-2 border-gray-300 h-[45px] rounded-md my-2 bg-gray-100 px-3 text-gray-700"
-              value={ResourcesId}
+              value={selectedRoleResource.Name}
               onChange={(e) => setResourcesId(e.target.value)}
               readOnly
             />
@@ -139,12 +155,12 @@ const EditRoleResourceModal = ({ isOpen, onClose, roleResourceId }) => {
 
           <input type="hidden" value={RoleResourceId} />
 
-          <AuthButtons
+          {/* <AuthButtons
             label={loading ? "Updating..." : "Update Role Resource"}
             textColor="text-white"
             isLoading={loading}
             onClick={handleUpdateRoleResource}
-          />
+          /> */}
         </form>
       </div>
     </ModalLayout>
