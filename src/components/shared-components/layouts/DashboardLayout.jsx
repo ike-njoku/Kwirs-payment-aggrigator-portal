@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 
 const DashboardLayout = ({
   page = "Dashboard",
-  subheading = "Have a brief overview of your finances.",
+  subheading = "",
   children,
 }) => {
   const pathname = usePathname();
