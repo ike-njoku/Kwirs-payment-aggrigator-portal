@@ -53,6 +53,7 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
 
   const handleUpdateUserRole = async (e) => {
     try {
+      console.log("THIS WAS CALLEE");
       setIsLoading(true);
       e.preventDefault();
 
@@ -65,8 +66,9 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
 
       const apiResponse = await AxiosPost(apiUrl, payload);
 
-      if (apiResponse && apiResponse.StatusCode !== 200) {
+      if (!apiResponse || apiResponse.StatusCode !== 200) {
         toast.error("Could not update user role!");
+        setIsLoading(false);
         return;
       }
 
@@ -78,20 +80,31 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
   };
 
   const handleDeleteRole = async (id) => {
+    console.log("CALLED TOO");
     try {
+      setIsLoading(true);
       const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/RemoveUserFromRole`;
 
       const payload = {
-        UserName: user.email,
+        UserName: user.UserName,
         RoleId: id,
       };
       const apiResponse = await AxiosPost(apiUrl, payload);
-      if (apiResponse && apiResponse.StatusCode !== 200) {
+
+      if (apiResponse && apiResponse.StatusCode == 200) {
+        toast.success(apiResponse.StatusMessage);
+        handleGetUserRole();
+        setIsLoading(false);
+      } else {
         toast.error("Could not delete user role!");
+        setIsLoading(false);
         return;
       }
-      handleGetUserRole();
-    } catch (error) {}
+    } catch (error) {
+      toast.error("An error occoured");
+      console.log("error----->>", error);
+      setIsLoading(false);
+    }
   };
 
   const getRoles = async () => {
