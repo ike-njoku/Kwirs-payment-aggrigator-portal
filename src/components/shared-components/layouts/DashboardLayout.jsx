@@ -8,7 +8,6 @@ import { FaBars } from "react-icons/fa6";
 import MobileNavbar from "../MobileNavbar";
 import { authenticateUser } from "../../../services/auth-service";
 import { AxiosPost } from "../../../services/http-service";
-import { toast } from "react-toastify";
 
 const DashboardLayout = ({
   page = "Dashboard",
@@ -21,12 +20,12 @@ const DashboardLayout = ({
   const [_sidebarMenu, setSideBarMenu] = useState(sidebarMenu);
 
   const getUserMenuItems = async () => {
-    const requestURL = `${process.env.NEXT_PUBLIC_BASE_UR}/api/Menue/GetUserMenueItems`;
+    const requestURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Menue/GetUserMenueItems`;
     const apiResponse = await AxiosPost(requestURL, {
       UserName: authenticatedUser?.tin,
     });
 
-    console.log("--------------->> ", apiResponse);
+    console.log("USER MENU -------->>> ", apiResponse);
   };
 
   useEffect(() => {
