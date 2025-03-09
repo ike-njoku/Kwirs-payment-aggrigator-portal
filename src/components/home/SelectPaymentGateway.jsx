@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import GatewayRadio from "../shared-components/inputs/GatewayRadio";
 import PaymentButtons from "../shared-components/buttons/PaymentButtons";
+ // Import modal component
 
 import icadpay from "../../../public/images/icad-logo.png";
 import remita from "../../../public/images/remita.png";
@@ -58,8 +59,6 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
 
       {/* iCadPay Modal */}
       <IcadPayModal isOpen={showModal} onClose={closeModal} />
-
-      
       
     </section>
   );
