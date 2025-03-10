@@ -69,6 +69,14 @@ const HomePage = () => {
                   showNextComponent={handleShowPayerDetails}
                 />
               )}
+              {/* 
+              
+              - accessNumber  
+              - paymentDetails
+              - paymentPeriod
+              - taxPayerDetails
+              - invoice
+              */}
 
               {nextComponent === 1 && (
                 <PaymentDetails

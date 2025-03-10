@@ -4,12 +4,14 @@ import AuthButtons from "../shared-components/buttons/AuthButtons";
 import HomeRadio from "../shared-components/inputs/HomeRadio";
 import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 
+
 const AssessmentNumberComponent = ({ showNextComponent }) => {
   const [selectedOption, setSelectedOption] = useState("");
   const [assessmentNumber, setAssessmentNumber] = useState("");
   const handleOptionChange = (e) => {
     setSelectedOption(e.target.value);
   };
+
 
   const handleChangeassessmentNumber = (e) => {
     setAssessmentNumber(e.target.value);
