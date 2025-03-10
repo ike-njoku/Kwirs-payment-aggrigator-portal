@@ -71,6 +71,10 @@ const RegisterPage = () => {
   };
 
   const storeAuthDetailsLocally = (authenticationDetails) => {
+    authenticationDetails.Username = authenticationDetails.UserName;
+    authenticationDetails.tin = authenticationDetails.UserName;
+    authenticationDetails.UserName = authenticationDetails.UserName;
+
     localStorage.setItem("authDetails", JSON.stringify(authenticationDetails));
   };
 
@@ -80,14 +84,14 @@ const RegisterPage = () => {
 
     const requestBody = {
       FirstName: tinDetails.firstname,
-      LastName: tinDetails.lastname,
+      LastName: tinDetails.lastname ?? "",
       DateOfBirth: tinDetails.dob,
       ChangePassword: true,
       IsActive: true,
       Email: tinDetails.email,
       Password: registerationDetails.confirmPassword,
       PrimaryPhone: "08000000000",
-      UserName: tinDetails.firstname + " " + tinDetails.lastname,
+      UserName: tinDetails.TIN,
     };
 
     const registrationResponse = await AxiosPost(

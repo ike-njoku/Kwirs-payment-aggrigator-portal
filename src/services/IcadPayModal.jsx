@@ -33,7 +33,7 @@ const IcadPayModal = ({ isOpen, onClose }) => {
       customerId: document.getElementById("email").value,
       ref: `${Math.floor(Math.random() * 1000000000) + 1}`,
       narration: document.getElementById("narration").value,
-      callback_url: "http://localhost:3000/",
+      callback_url: "https://icadpay.com",
       meta: {
         consumer_id: "data.customer_id",
         item_ref: "payment.res",
@@ -55,9 +55,6 @@ const IcadPayModal = ({ isOpen, onClose }) => {
     });
 
     handler.openIframe();
-
-    // Close the modal after opening the payment
-    onClose();
   };
 
   return (

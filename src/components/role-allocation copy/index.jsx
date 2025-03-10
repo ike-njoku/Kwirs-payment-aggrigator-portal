@@ -37,10 +37,8 @@ const ResourcesPage = () => {
     if (newRole) {
       const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/Update`;
       updatedItem.ResourceName = newRole;
-      updatedItem.Username;
+      updatedItem.Username = authenticateUser.email;
       updatedItem.URL = newRole;
-
-      console.table(updatedItem);
 
       const updateResourceResponse = await AxiosPost(
         updateResourceURL,

@@ -9,7 +9,7 @@ import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { authenticateUser } from "../../services/auth-service";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { MENU, SUB_MENU } from "../../utils/constants";
+import { MAIN_MENU, SUB_MENU } from "../../utils/constants";
 
 const ResourcesPage = () => {
   const router = useRouter();
@@ -35,7 +35,8 @@ const ResourcesPage = () => {
       URL: newResourceURL.resourceUrl,
       Username: authenticatedUser.email,
       Type: newResourceURL.resourceType,
-      ParentResourceId: 0,
+      ParentResourceId: newResourceURL.parentResourceId,
+      UserName: authenticatedUser.tin,
     };
 
     try {
@@ -56,7 +57,7 @@ const ResourcesPage = () => {
         Username: authenticatedUser.email,
         Type: newResourceURL.resourceType,
         ParentResourceId: 0,
-        resourceType: newResourceURL.resourceType == 1 ? MENU : SUB_MENU,
+        resourceType: newResourceURL.resourceType == 1 ? MAIN_MENU : SUB_MENU,
         dateCreated: new Date().toISOString().split("T")[0],
         ResourceId: createResourceResponse.Data.ResourseId,
       };
@@ -132,7 +133,8 @@ const ResourcesPage = () => {
 
     tableData.map((item) => (item.resourceType = item.ResourceTypeId));
     tableData.map(
-      (item) => (item.resourceType = item.ResourceTypeId == 1 ? MENU : SUB_MENU)
+      (item) =>
+        (item.resourceType = item.ResourceTypeId == 1 ? MAIN_MENU : SUB_MENU)
     );
 
     tableData.map((item) => (item.resourceURL = item.URL));
@@ -148,18 +150,20 @@ const ResourcesPage = () => {
   };
 
   const handleEditItem = async (updatedItem, updateParameters) => {
-    updatedItem.ResourceType = updatedItem.resourceType == MENU ? 1 : 2;
+    updatedItem.ResourceType = updatedItem.resourceType == MAIN_MENU ? 1 : 2;
 
-    const { resourceName, resourceType, resourceUrl } = updateParameters;
+    const { resourceName, resourceType, resourceUrl, parentResourceId } =
+      updateParameters;
 
     const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/Update`;
     const payLoad = {
       ResourceName: resourceName,
       URL: resourceUrl,
       Username: authenticatedUser.email,
-      Type: resourceType == MENU ? 1 : 2,
+      Type: resourceType == MAIN_MENU ? 1 : 2,
       ResourceId: updatedItem.ResourceId,
       ParentResourceId: updatedItem.ParentResourceId,
+      UserName: authenticatedUser.tin,
     };
 
     const updateResourceResponse = await AxiosPost(updateResourceURL, payLoad);
@@ -185,6 +189,7 @@ const ResourcesPage = () => {
   useEffect(() => {
     const isUserAuthenticated = authenticateUser();
     setAuthenticatedUser(isUserAuthenticated);
+    console.table(authenticatedUser);
     fetchAllResources();
   }, []);
 
