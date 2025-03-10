@@ -35,7 +35,8 @@ const ResourcesPage = () => {
       URL: newResourceURL.resourceUrl,
       Username: authenticatedUser.email,
       Type: newResourceURL.resourceType,
-      ParentResourceId: 0,
+      ParentResourceId: newResourceURL.parentResourceId,
+      UserName: authenticatedUser.tin,
     };
 
     try {
@@ -151,7 +152,8 @@ const ResourcesPage = () => {
   const handleEditItem = async (updatedItem, updateParameters) => {
     updatedItem.ResourceType = updatedItem.resourceType == MAIN_MENU ? 1 : 2;
 
-    const { resourceName, resourceType, resourceUrl } = updateParameters;
+    const { resourceName, resourceType, resourceUrl, parentResourceId } =
+      updateParameters;
 
     const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/Update`;
     const payLoad = {
@@ -161,6 +163,7 @@ const ResourcesPage = () => {
       Type: resourceType == MAIN_MENU ? 1 : 2,
       ResourceId: updatedItem.ResourceId,
       ParentResourceId: updatedItem.ParentResourceId,
+      UserName: authenticatedUser.tin,
     };
 
     const updateResourceResponse = await AxiosPost(updateResourceURL, payLoad);
@@ -186,6 +189,7 @@ const ResourcesPage = () => {
   useEffect(() => {
     const isUserAuthenticated = authenticateUser();
     setAuthenticatedUser(isUserAuthenticated);
+    console.table(authenticatedUser);
     fetchAllResources();
   }, []);
 
