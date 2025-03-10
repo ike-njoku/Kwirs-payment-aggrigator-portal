@@ -32,7 +32,7 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
 
   useEffect(() => {
     setAuthenticatedUser(authenticateUser);
-    getUserMenuItems();
+    // getUserMenuItems();
   }, []);
 
   return (
