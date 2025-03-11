@@ -4,6 +4,7 @@ import PaymentButtons from "../shared-components/buttons/PaymentButtons";
 import { AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
 import Spinner from "../shared-components/Spinner";
+import VerifyInput from "../shared-components/inputs/VerifyInput";
 
 const TaxPayerDetails = ({ showNextComponent, showPreviousComponent }) => {
   const [taxIdentificationNumber, setTaxIdentificationNumber] = useState("");
@@ -24,11 +25,12 @@ const TaxPayerDetails = ({ showNextComponent, showPreviousComponent }) => {
       requestBody
     );
 
-    const taxDetails = JSON.parse(JSON.stringify(_taxIDValidationResponse));
-
-    setIsLoading(false);
+    const taxDetails = JSON.parse(_taxIDValidationResponse);
     setTinDetails(taxDetails);
+    setIsLoading(false);
   };
+
+  console.log("TIN DETILS --------->>> ", tinDetails);
 
   const updateTin = (e) => {
     setTaxIdentificationNumber(e.target.value);
@@ -57,7 +59,6 @@ const TaxPayerDetails = ({ showNextComponent, showPreviousComponent }) => {
           handleChange={updateTin}
           value={taxIdentificationNumber}
         />
-
         <PrimaryInput
           label="Date of Birth"
           placeholder="Date of Birth / Date of Reg"
@@ -67,7 +68,6 @@ const TaxPayerDetails = ({ showNextComponent, showPreviousComponent }) => {
           handleChange={updateDOB}
           value={dob}
         />
-
         {isLoading && <Spinner></Spinner>}
         {tinDetails && Object.keys(tinDetails).length > 0 && (
           <PrimaryInput
@@ -81,17 +81,6 @@ const TaxPayerDetails = ({ showNextComponent, showPreviousComponent }) => {
           />
         )}
 
-        {/* {tinDetails && Object.keys(tinDetails).length && (
-          <PrimaryInput
-            label="phone number"
-            placeholder="Enter phone number"
-            name="phoneNumber"
-            type="text"
-            labelStyle="capitalize"
-            disabled={true}
-          />
-        )} */}
-
         {tinDetails && Object.keys(tinDetails).length > 0 && (
           <PrimaryInput
             label="email"
@@ -100,10 +89,10 @@ const TaxPayerDetails = ({ showNextComponent, showPreviousComponent }) => {
             type="email"
             labelStyle="capitalize"
             disabled={true}
+            readOnly={true}
             value={tinDetails?.email}
           />
         )}
-
         <div className="w-full flex justify-between gap-4 items-center">
           <PaymentButtons label="Back" onClick={showPreviousComponent} />
           {tinDetails && Object.keys(tinDetails).length > 0 && (
