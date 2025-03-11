@@ -3,6 +3,7 @@ import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 import PrimarySelect from "../shared-components/inputs/PrimarySelect";
 import PaymentButtons from "../shared-components/buttons/PaymentButtons";
 import { AxiosGet } from "../../services/http-service";
+import { toast } from "react-toastify";
 
 const TaxPayerDetails = ({ showNextComponent, showPreviousComponent }) => {
   const [taxIdentificationNumber, setTaxIdentificationNumber] = useState("");
@@ -12,6 +13,9 @@ const TaxPayerDetails = ({ showNextComponent, showPreviousComponent }) => {
     const url = `https://fcttaxportal.fctirs.gov.ng/api/etranzact/validation/${tin}/some-value`;
 
     const apiResponse = await AxiosGet(url);
+    if (!apiResponse) {
+      toast.error("Could not validate your Tax Identification Number");
+    }
   };
 
   const updateTin = (e) => {
