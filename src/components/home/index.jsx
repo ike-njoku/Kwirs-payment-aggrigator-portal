@@ -10,6 +10,27 @@ import SelectPaymentGateway from "./SelectPaymentGateway";
 
 const HomePage = () => {
   const [nextComponent, showNextComponent] = useState(0);
+  const [paymentRequestDetails, setPaymentRequestDetails] = useState({
+    paymentAssessmentNumber: "",
+    amount: "",
+  });
+
+  const handleSetPaymentAssessmentNumber = (paymentNumber) => {
+    paymentRequestDetails.paymentAssessmentNumber = paymentNumber;
+    setPaymentRequestDetails({ ...paymentRequestDetails });
+  };
+
+  console.log(
+    "PAYMENT REQUEST DETAILS ----------->>>> ",
+    paymentRequestDetails
+  );
+
+  const handleSetPaymtDetails = (paymentDetailsObject) => {
+    setPaymentRequestDetails({
+      ...paymentRequestDetails,
+      ...paymentDetailsObject,
+    });
+  };
 
   const handleShowPayerDetails = (e) => {
     e.preventDefault();
@@ -66,6 +87,7 @@ const HomePage = () => {
             <div className="w-full my-10 max-h-[600px] overflow-y-auto customScroll">
               {nextComponent === 0 && (
                 <AssessmentNumberComponent
+                  paymentAssessmentNumberment={handleSetPaymentAssessmentNumber}
                   showNextComponent={handleShowPayerDetails}
                 />
               )}
@@ -82,6 +104,7 @@ const HomePage = () => {
                 <PaymentDetails
                   showNextComponent={handleShowPaymentPeriod}
                   showPreviousComponent={() => showNextComponent(0)}
+                  paymentDetails={handleSetPaymtDetails}
                 />
               )}
 

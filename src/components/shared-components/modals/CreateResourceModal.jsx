@@ -48,12 +48,6 @@ const CreateResourceModal = ({ handleCloseModal, handleCreateModal }) => {
   const handleSelectParentResource = (e) => {
     setParentResourceId(e.target.value);
   };
-
-  console.table({
-    PARENT_RESOURCE_ID: parentResourceId,
-    RESOURCE_TYPE: resourceType,
-  });
-
   const fetchAllResources = async () => {
     const apiResponse = await AxiosGet(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/GetAllResource`

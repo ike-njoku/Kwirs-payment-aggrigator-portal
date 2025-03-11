@@ -189,7 +189,6 @@ const ResourcesPage = () => {
   useEffect(() => {
     const isUserAuthenticated = authenticateUser();
     setAuthenticatedUser(isUserAuthenticated);
-    console.table(authenticatedUser);
     fetchAllResources();
   }, []);
 

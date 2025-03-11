@@ -4,18 +4,21 @@ import AuthButtons from "../shared-components/buttons/AuthButtons";
 import HomeRadio from "../shared-components/inputs/HomeRadio";
 import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 
-
-const AssessmentNumberComponent = ({ showNextComponent }) => {
+const AssessmentNumberComponent = ({
+  showNextComponent,
+  paymentAssessmentNumberment,
+}) => {
   const [selectedOption, setSelectedOption] = useState("");
   const [assessmentNumber, setAssessmentNumber] = useState("");
   const handleOptionChange = (e) => {
     setSelectedOption(e.target.value);
   };
 
-
   const handleChangeassessmentNumber = (e) => {
     setAssessmentNumber(e.target.value);
+    paymentAssessmentNumberment(e.target.value);
   };
+
   return (
     <div className="w-full sm:max-w-[450px] sm:mx-auto md:mx-0 md:ml-auto py-8 px-10 rounded-[28px] bg-[rgba(255,255,255,0.7)] mt-16 md:mt-26">
       <h3 className="font-bold text-3xl capitalize text-center text-white">

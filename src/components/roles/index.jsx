@@ -59,9 +59,6 @@ const RolesPage = () => {
       selectedRole.RoleId = selectedRole.Id;
       selectedRole.UserName = authenticatedUser.tin;
 
-      console.table(authenticatedUser);
-      console.table(selectedRole);
-
       const updateRoleResponse = await AxiosPost(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/Update`,
         selectedRole
