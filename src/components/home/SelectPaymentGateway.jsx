@@ -56,8 +56,7 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
             <PayWithFlutterWave />
           </>
         )}
-      </div>
-      
+      </div>     
 
       {/* Render IcadPayModal conditionally */}
       {showModal && <IcadPayModal isOpen={showModal} onClose={closeModal} />}
