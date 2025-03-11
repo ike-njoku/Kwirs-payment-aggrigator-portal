@@ -1,9 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 import PrimarySelect from "../shared-components/inputs/PrimarySelect";
 import PaymentButtons from "../shared-components/buttons/PaymentButtons";
+import { AxiosGet } from "../../services/http-service";
 
 const TaxPayerDetails = ({ showNextComponent, showPreviousComponent }) => {
+  const [taxIdentificationNumber, setTaxIdentificationNumber] = useState("");
+  const [tinIsValid, setTinIsValid] = useState(false);
+
+  const validateTin = async (tin) => {
+    const url = `https://fcttaxportal.fctirs.gov.ng/api/etranzact/validation/${tin}/some-value`;
+
+    const apiResponse = await AxiosGet(url);
+  };
+
+  const updateTin = (e) => {
+    setTaxIdentificationNumber(e.target.value);
+    if (taxIdentificationNumber && taxIdentificationNumber.length >= 10) {
+      validateTin(e.target.value);
+    }
+  };
+
   return (
     <div className="w-full sm:max-w-[450px] sm:mx-auto md:mx-0 md:ml-auto py-8 px-10 rounded-[28px] bg-[rgba(255,255,255,0.7)] mt-16 md:mt-24">
       <h3
@@ -18,7 +35,7 @@ const TaxPayerDetails = ({ showNextComponent, showPreviousComponent }) => {
           name="taxIdentificationNumber"
           type="text"
           labelStyle="capitalize"
-          //   handleChange={updateRegistrationDetails}
+          handleChange={updateTin}
         />
 
         <PrimaryInput
