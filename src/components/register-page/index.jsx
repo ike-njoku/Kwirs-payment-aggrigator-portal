@@ -53,6 +53,7 @@ const RegisterPage = () => {
     password: "",
     confirmPassword: "",
   });
+
   const [isLoading, setIsLoading] = useState(false);
 
   const updateRegistrationDetails = (e) => {

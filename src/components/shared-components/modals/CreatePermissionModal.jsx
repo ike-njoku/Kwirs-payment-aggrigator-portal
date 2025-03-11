@@ -10,7 +10,7 @@ const CreatePermissionModal = ({ isOpen, onClose }) => {
   const [selectedResourceId, setSelectedResourceId] = useState(""); // ✅ Corrected
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(false);
-  
+
   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
   // const [
   //   showSelectParentResourceDropdown,
@@ -45,15 +45,17 @@ const CreatePermissionModal = ({ isOpen, onClose }) => {
     }
   };
 
-   // ✅ Handle Permission Assignment
-   const handleAddRolePermission = async () => {
+  // ✅ Handle Permission Assignment
+  const handleAddRolePermission = async () => {
     if (!API_BASE_URL) {
       toast.error("API base URL is missing.");
       return;
     }
 
     try {
-      const selectedResource = resources.find((res) => res.ResourceId == selectedResourceId);
+      const selectedResource = resources.find(
+        (res) => res.ResourceId == selectedResourceId
+      );
       if (!selectedResource) {
         toast.error("Invalid Resource Name. Please select a valid resource.");
         return;
@@ -86,71 +88,72 @@ const CreatePermissionModal = ({ isOpen, onClose }) => {
           onClose();
         }, 2000);
       } else {
-        toast.error(response.data.StatusMessage || "Failed to create permission.");
+        toast.error(
+          response.data.StatusMessage || "Failed to create permission."
+        );
       }
     } catch (error) {
-      toast.error(error.response?.data?.StatusMessage || "Error creating permission.");
+      toast.error(
+        error.response?.data?.StatusMessage || "Error creating permission."
+      );
       console.error("Error creating permission:", error);
     }
   };
 
-   // ✅ Fetch Permissions
-   const fetchPermissions = async () => {
-     setLoading(true);
-     try {
-       console.log("Fetching permissions...");
-       const response = await AxiosGet(`/api/Permissions/GetAllPermissions`);
- 
-       if (response?.data?.StatusCode === 200) {
-         console.log("Permissions Data:", response.data.Data);
-       } else {
-         toast.error("Could not fetch permissions");
-       }
-     } catch (error) {
-       console.error("Error fetching permissions:", error);
-       toast.error("Error fetching permissions");
-     }
-     setLoading(false);
-   };
+  // ✅ Fetch Permissions
+  const fetchPermissions = async () => {
+    setLoading(true);
+    try {
+      console.log("Fetching permissions...");
+      const response = await AxiosGet(`/api/Permissions/GetAllPermissions`);
 
-  console.table({
-    PARENT_RESOURCE_ID: parentResourceId,
-    RESOURCE_TYPE: resourceType,
-  });
+      if (response?.data?.StatusCode === 200) {
+        console.log("Permissions Data:", response.data.Data);
+      } else {
+        toast.error("Could not fetch permissions");
+      }
+    } catch (error) {
+      console.error("Error fetching permissions:", error);
+      toast.error("Error fetching permissions");
+    }
+    setLoading(false);
+  };
 
   // ✅ Fetch Resources
-   const fetchResources = async () => {
-     try {
-       const response = await AxiosGet(`${API_BASE_URL}/api/Resources/GetAllResource`);
-       console.log("Resources Response:", response.data);
- 
-       if (response?.data?.StatusCode === 200) {
-         setResources(response.data.Data || []);
-       } else {
-         toast.error("Could not fetch resources");
-       }
-     } catch (error) {
-       toast.error("Error fetching resources");
-       console.error("❌ Resource fetch error:", error);
-     }
-   };
+  const fetchResources = async () => {
+    try {
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/Resources/GetAllResource`
+      );
+      console.log("Resources Response:", response.data);
 
-    useEffect(() => {
-      fetchPermissions();
-      fetchResources();
-    }, []);
-  
-    useEffect(() => {
-      if (selectedPermissionId) {
-        getPermissionById(selectedPermissionId);
+      if (response?.data?.StatusCode === 200) {
+        setResources(response.data.Data || []);
+      } else {
+        toast.error("Could not fetch resources");
       }
-    }, [selectedPermissionId]);
+    } catch (error) {
+      toast.error("Error fetching resources");
+      console.error("❌ Resource fetch error:", error);
+    }
+  };
 
-    useEffect(() => {
-        if (isOpen) {
-          fetchResources();
-        }
-      }, [isOpen]);
+  useEffect(() => {
+    fetchPermissions();
+    fetchResources();
+  }, []);
+
+  useEffect(() => {
+    if (selectedPermissionId) {
+      getPermissionById(selectedPermissionId);
+    }
+  }, [selectedPermissionId]);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchResources();
+    }
+  }, [isOpen]);
 
   return (
     <ModalLayout handleCloseModal={onClose}>
@@ -168,7 +171,9 @@ const CreatePermissionModal = ({ isOpen, onClose }) => {
         >
           {/* Permission Code */}
           <div className="w-full mb-4">
-            <label className="text-base font-medium text-gray-700">Permission Code</label>
+            <label className="text-base font-medium text-gray-700">
+              Permission Code
+            </label>
             <input
               type="text"
               className="w-full border-b-2 border-gray-300 h-[45px] rounded-md my-2 bg-gray-100 px-3 text-gray-700 focus:outline-none"
@@ -181,7 +186,9 @@ const CreatePermissionModal = ({ isOpen, onClose }) => {
 
           {/* Description */}
           <div className="w-full mb-4">
-            <label className="text-base font-medium text-gray-700">Description</label>
+            <label className="text-base font-medium text-gray-700">
+              Description
+            </label>
             <input
               className="w-full border-b-2 border-gray-300 h-[60px] rounded-md my-2 bg-gray-100 px-3 text-gray-700 focus:outline-none"
               value={description}
@@ -193,7 +200,9 @@ const CreatePermissionModal = ({ isOpen, onClose }) => {
 
           {/* ✅ Resource Selection Dropdown */}
           <div className="w-full mb-4">
-            <label className="text-base font-medium text-gray-700">Select Resource</label>
+            <label className="text-base font-medium text-gray-700">
+              Select Resource
+            </label>
             <select
               className="w-full border-b-2 border-gray-300 h-[45px] rounded-md my-2 bg-gray-100 px-3 text-gray-700 focus:outline-none"
               value={selectedResourceId}

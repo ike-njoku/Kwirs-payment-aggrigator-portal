@@ -34,8 +34,6 @@ const LoginPage = () => {
       UserName: authenticationDetails.tin,
     };
 
-    console.table(authenticationDetails);
-
     const authURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/userManagement/Login`;
     const authResponse = await AxiosPost(authURL, _authenticationDetails);
 
