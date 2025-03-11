@@ -31,6 +31,7 @@ const PaymentDetails = ({
     setTaxTypes(Data);
   };
 
+  //select an agency and then use agency Id to select tax
   const handleSelectAgency = (e) => {};
 
   const getAgencies = async () => {
