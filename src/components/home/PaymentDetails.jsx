@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+"use client";
+import React, { useState, useEffect, useContext } from "react";
 import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 import PrimarySelect from "../shared-components/inputs/PrimarySelect";
 import PaymentButtons from "../shared-components/buttons/PaymentButtons";
+import { PaymentRequest } from "@/context/PaymentRequestDetails";
 
-const PaymentDetails = ({
-  showNextComponent,
-  showPreviousComponent,
-  paymentDetails,
-}) => {
+const PaymentDetails = ({ showNextComponent, showPreviousComponent }) => {
+  const { setPaymentRequestDetails } = useContext(PaymentRequest);
+
   const [paymentDetailsObject, setPaymentDetailsObject] = useState({});
 
   const updatePaymentDetailsObject = (e) => {
@@ -17,7 +17,10 @@ const PaymentDetails = ({
       [name]: e.target.value,
     }));
 
-    paymentDetails(paymentDetailsObject);
+    setPaymentRequestDetails((previousValue) => ({
+      ...previousValue,
+      [name]: e.target.value,
+    }));
   };
 
   return (

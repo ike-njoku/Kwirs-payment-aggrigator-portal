@@ -7,6 +7,7 @@ const PrimarySelect = ({
   handleChange,
   value,
   labelStyle = "uppercase",
+  optionData,
 }) => {
   return (
     <div className="w-full mb-5">
@@ -25,10 +26,8 @@ const PrimarySelect = ({
           name={name}
           value={value}
         >
-          <option>{placeholder}</option>
-          <option value="1" className="text-white bg-white">
-            One
-          </option>
+          <option className="text-black">{placeholder}</option>
+          {optionData}
         </select>
       </div>
     </div>
