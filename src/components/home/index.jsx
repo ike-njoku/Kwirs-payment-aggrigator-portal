@@ -10,14 +10,15 @@ import SelectPaymentGateway from "./SelectPaymentGateway";
 
 const HomePage = () => {
   const [nextComponent, showNextComponent] = useState(0);
-  const [paymentRequestDetails, setPaymentRequestDetails] = useState({
-    paymentAssessmentNumber: "",
-    amount: "",
-  });
+  const [paymentRequestDetails, setPaymentRequestDetails] = useState({});
 
   const handleSetPaymentAssessmentNumber = (paymentNumber) => {
     paymentRequestDetails.paymentAssessmentNumber = paymentNumber;
     setPaymentRequestDetails({ ...paymentRequestDetails });
+    localStorage.setItem(
+      "paymentDetails",
+      JSON.stringify(paymentRequestDetails)
+    );
   };
 
   console.log(
