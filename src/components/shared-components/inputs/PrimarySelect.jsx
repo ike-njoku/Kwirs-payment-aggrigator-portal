@@ -7,39 +7,32 @@ const PrimarySelect = ({
   handleChange,
   value,
   labelStyle = "uppercase",
-  options,
-  selectOption,
+  optionData,
 }) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
   return (
-    options && (
-      <div className="w-full mb-5">
-        <label
-          className={`${labelStyle} text-base font-medium text-white`}
-          htmlFor={name}
-        >
-          {label}
-        </label>
+    <div className="w-full mb-5">
+      <label
+        className={`${labelStyle} text-base font-medium text-white`}
+        htmlFor={name}
+      >
+        {label}
+      </label>
 
-        <div className="w-full h-[48px] rounded-[30px] overflow-hidden bg-[rgba(255,255,255,0.5)] shadow-sm mt-3 px-4">
-          <select
-            onChange={handleChange}
-            className="w-full h-full outline-none border-none bg-transparent py-3 placeholder:text-white text-base font-light text-white"
-            placeholder={placeholder}
-            name={name}
-            value={value}
-          >
-            <option>{placeholder}</option>
-            {options?.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.name}
-              </option>
-            ))}
-          </select>
-        </div>
+      <div className="w-full h-[48px] rounded-[30px] overflow-hidden bg-[rgba(255,255,255,0.5)] shadow-sm mt-3 px-4">
+        <select
+          onChange={handleChange}
+          className="w-full h-full outline-none border-none bg-transparent py-3 placeholder:text-white text-base font-light text-white"
+          placeholder={placeholder}
+          name={name}
+          value={value}
+        >
+          <option className="text-black">{placeholder}</option>
+          {optionData}
+        </select>
       </div>
-    )
+    </div>
   );
 };
 

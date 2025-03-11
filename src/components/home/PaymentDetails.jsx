@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+"use client";
+import React, { useState, useEffect, useContext } from "react";
 import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 import PrimarySelect from "../shared-components/inputs/PrimarySelect";
 import PaymentButtons from "../shared-components/buttons/PaymentButtons";
+import { PaymentRequest } from "@/context/PaymentRequestDetails";
 import { AxiosGet } from "../../services/http-service";
 import { toast } from "react-toastify";
 
-const PaymentDetails = ({
-  showNextComponent,
-  showPreviousComponent,
-  paymentDetails,
-}) => {
+const PaymentDetails = ({ showNextComponent, showPreviousComponent }) => {
+  const { setPaymentRequestDetails } = useContext(PaymentRequest);
+
   const [paymentDetailsObject, setPaymentDetailsObject] = useState({});
   const [taxTypes, setTaxTypes] = useState([]);
   const [agencies, setAgencies] = useState([]);
@@ -54,7 +54,10 @@ const PaymentDetails = ({
       [name]: e.target.value,
     }));
 
-    paymentDetails(paymentDetailsObject);
+    setPaymentRequestDetails((previousValue) => ({
+      ...previousValue,
+      [name]: e.target.value,
+    }));
   };
 
   useEffect(() => {
@@ -84,7 +87,14 @@ const PaymentDetails = ({
           placeholder="Select agency"
           name="agency"
           labelStyle="capitalize"
-          options={agencies}
+          optionData={
+            agencies &&
+            agencies?.map((option) => (
+              <option key={option.id} value={option.id} className="text-black">
+                {option.name}
+              </option>
+            ))
+          }
           handleChange={handleSelectAgency}
         />
         <PrimarySelect
@@ -92,7 +102,14 @@ const PaymentDetails = ({
           placeholder="Select tax type"
           name="taxType"
           labelStyle="capitalize"
-          options={taxTypes}
+          optionData={
+            taxTypes &&
+            taxTypes?.map((option) => (
+              <option key={option.id} value={option.id} className="text-black">
+                {option.name}
+              </option>
+            ))
+          }
         />
         <PrimaryInput
           label="amount"
