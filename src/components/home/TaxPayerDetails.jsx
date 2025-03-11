@@ -1,24 +1,45 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PrimaryInput from "../shared-components/inputs/PrimaryInput";
-import PrimarySelect from "../shared-components/inputs/PrimarySelect";
 import PaymentButtons from "../shared-components/buttons/PaymentButtons";
-import { AxiosGet } from "../../services/http-service";
+import { AxiosPost } from "../../services/http-service";
+import { toast } from "react-toastify";
+import Spinner from "../shared-components/Spinner";
+import VerifyInput from "../shared-components/inputs/VerifyInput";
 
 const TaxPayerDetails = ({ showNextComponent, showPreviousComponent }) => {
   const [taxIdentificationNumber, setTaxIdentificationNumber] = useState("");
-  const [tinIsValid, setTinIsValid] = useState(false);
+  const [dob, setDob] = useState("");
+  const [tinDetails, setTinDetails] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
-  const validateTin = async (tin) => {
-    const url = `https://fcttaxportal.fctirs.gov.ng/api/etranzact/validation/${tin}/some-value`;
+  const validateTin = async () => {
+    if (!taxIdentificationNumber || taxIdentificationNumber.length < 10) return;
+    if (!dob || !dob.length) return;
 
-    const apiResponse = await AxiosGet(url);
+    setIsLoading(true);
+
+    const requestBody = { TIN: taxIdentificationNumber, dob: dob, bvn: "" };
+    const validationURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/utility/TIN`;
+    const _taxIDValidationResponse = await AxiosPost(
+      validationURL,
+      requestBody
+    );
+
+    const taxDetails = JSON.parse(_taxIDValidationResponse);
+    setTinDetails(taxDetails);
+    setIsLoading(false);
   };
+
+  console.log("TIN DETILS --------->>> ", tinDetails);
 
   const updateTin = (e) => {
     setTaxIdentificationNumber(e.target.value);
-    if (taxIdentificationNumber && taxIdentificationNumber.length >= 10) {
-      validateTin(e.target.value);
-    }
+    validateTin();
+  };
+
+  const updateDOB = (e) => {
+    setDob(e.target.value);
+    validateTin();
   };
 
   return (
@@ -26,47 +47,57 @@ const TaxPayerDetails = ({ showNextComponent, showPreviousComponent }) => {
       <h3
         className={`font-bold sm:text-3xl capitalize text-center text-2xl text-white `}
       >
-        Tax Payer Details
+        Verify Tax Payer Details
       </h3>
       <div className="w-full my-5  customScroll">
         <PrimaryInput
           label="TIN"
-          placeholder="Enter TIIN"
+          placeholder="Enter TIN"
           name="taxIdentificationNumber"
           type="text"
           labelStyle="capitalize"
           handleChange={updateTin}
-        />
-
-        <PrimaryInput
-          label="Fullname"
-          placeholder="Enter fullname"
-          name="fullName"
-          type="text"
-          labelStyle="capitalize"
-          //   handleChange={updateRegistrationDetails}
+          value={taxIdentificationNumber}
         />
         <PrimaryInput
-          label="phone number"
-          placeholder="Enter phone number"
-          name="phoneNumber"
-          type="text"
+          label="Date of Birth"
+          placeholder="Date of Birth / Date of Reg"
+          name="dob"
+          type="date"
           labelStyle="capitalize"
-          //   handleChange={updateRegistrationDetails}
+          handleChange={updateDOB}
+          value={dob}
         />
+        {isLoading && <Spinner></Spinner>}
+        {tinDetails && Object.keys(tinDetails).length > 0 && (
+          <PrimaryInput
+            label="Fullname"
+            placeholder="Enter fullname"
+            name="fullName"
+            type="text"
+            disabled={true}
+            labelStyle="capitalize"
+            value={tinDetails?.firstname ?? "" + tinDetails?.lastname ?? ""}
+          />
+        )}
 
-        <PrimaryInput
-          label="email"
-          placeholder="Enter email"
-          name="taxPayerEmail"
-          type="email"
-          labelStyle="capitalize"
-          //   handleChange={updateRegistrationDetails}
-        />
-
+        {tinDetails && Object.keys(tinDetails).length > 0 && (
+          <PrimaryInput
+            label="email"
+            placeholder="Enter email"
+            name="taxPayerEmail"
+            type="email"
+            labelStyle="capitalize"
+            disabled={true}
+            readOnly={true}
+            value={tinDetails?.email}
+          />
+        )}
         <div className="w-full flex justify-between gap-4 items-center">
           <PaymentButtons label="Back" onClick={showPreviousComponent} />
-          <PaymentButtons onClick={showNextComponent} />
+          {tinDetails && Object.keys(tinDetails).length > 0 && (
+            <PaymentButtons onClick={showNextComponent} />
+          )}
         </div>
       </div>
     </div>
