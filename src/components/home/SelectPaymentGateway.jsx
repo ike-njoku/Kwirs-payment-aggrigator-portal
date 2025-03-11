@@ -1,24 +1,30 @@
 "use client";
 import React, { useState } from "react";
 import GatewayRadio from "../shared-components/inputs/GatewayRadio";
-import visa from "../../../public/images/icad-logo.png";
+import icadpay from "../../../public/images/icad-logo.png";
 import remita from "../../../public/images/remita.png";
 import interswitch from "../../../public/images/interswitch.png";
 import etranzact from "../../../public/images/etranzact.jpg";
 import flutterWave from "../../../public/images/Flutterwave-Logo.jpg";
+
 import PaymentButtons from "../shared-components/buttons/PaymentButtons";
-import PayWithFlutterWave from "../../utils/flutterwavePayment"; // Import Flutterwave function
+import PayWithFlutterWave from "../../utils/flutterwavePayment";
+import IcadPayModal from "./IcadPayModal";
 
 const SelectPaymentGateway = ({ showPreviousComponent }) => {
   const [selectedOption, setSelectedOption] = useState("nil");
+  const [showModal, setShowModal] = useState(false);
 
   const handleSelectGateway = (e) => {
-    const { value } = e.target;
-    setSelectedOption(value);
+    setSelectedOption(e.target.value);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
   };
 
   const paymentGateways = [
-    { name: "visa", img: visa },
+    { name: "icadpay", img: icadpay },
     { name: "remita", img: remita },
     { name: "interswitch", img: interswitch },
     { name: "etranzact", img: etranzact },
@@ -43,6 +49,7 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
 
       <div className="w-full flex justify-between gap-4 items-center mt-6">
         <PaymentButtons label="Back" onClick={showPreviousComponent} />
+
         {selectedOption === "flutterWave" && (
           <>
             {" "}
@@ -50,6 +57,10 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
           </>
         )}
       </div>
+      
+
+      {/* Render IcadPayModal conditionally */}
+      {showModal && <IcadPayModal isOpen={showModal} onClose={closeModal} />}
     </section>
   );
 };

@@ -34,9 +34,9 @@ const CustomTable = ({ tableHeadings, tableData, handleEdit, handleDelete, loadi
           <td className="px-5 py-3 text-sm text-gray-700">{row.PermissionId}</td> */}
 
           <td className="px-5 py-3 text-sm text-gray-700 flex gap-2">
-            <button onClick={() => handleEdit(row)}>
+            {/* <button onClick={() => handleEdit(row)}>
               <FaEdit />
-            </button>
+            </button> */}
             <button onClick={() => handleDelete(row.RoleResourceId)}>
               <FaTrashAlt className="text-red-500" />
             </button>

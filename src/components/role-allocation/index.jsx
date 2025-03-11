@@ -40,8 +40,6 @@ const ResourcesPage = () => {
       updatedItem.Username;
       updatedItem.URL = newRole;
 
-      console.table(updatedItem);
-
       const updateResourceResponse = await AxiosPost(
         updateResourceURL,
         updatedItem

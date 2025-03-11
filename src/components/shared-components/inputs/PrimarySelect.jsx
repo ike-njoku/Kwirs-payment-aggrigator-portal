@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 const PrimarySelect = ({
   label,
@@ -7,7 +7,10 @@ const PrimarySelect = ({
   handleChange,
   value,
   labelStyle = "uppercase",
+  optionData,
 }) => {
+  const [selectedOption, setSelectedOption] = useState(null);
+
   return (
     <div className="w-full mb-5">
       <label
@@ -25,10 +28,8 @@ const PrimarySelect = ({
           name={name}
           value={value}
         >
-          <option>{placeholder}</option>
-          <option value="1" className="text-white bg-white">
-            One
-          </option>
+          <option className="text-black">{placeholder}</option>
+          {optionData}
         </select>
       </div>
     </div>
