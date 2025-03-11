@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 const PrimarySelect = ({
   label,
@@ -9,6 +9,8 @@ const PrimarySelect = ({
   labelStyle = "uppercase",
   optionData,
 }) => {
+  const [selectedOption, setSelectedOption] = useState(null);
+
   return (
     <div className="w-full mb-5">
       <label

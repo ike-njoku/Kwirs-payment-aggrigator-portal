@@ -6,9 +6,10 @@ import remita from "../../../public/images/remita.png";
 import interswitch from "../../../public/images/interswitch.png";
 import etranzact from "../../../public/images/etranzact.jpg";
 import flutterWave from "../../../public/images/Flutterwave-Logo.jpg";
-import IcadPayModal from "@/services/IcadPayModal";
+
 import PaymentButtons from "../shared-components/buttons/PaymentButtons";
 import { initiateFlutterwavePayment } from "../../utils/flutterwavePayment";
+import IcadPayModal from "./IcadPayModal";
 
 const SelectPaymentGateway = ({ showPreviousComponent }) => {
   const [selectedOption, setSelectedOption] = useState("nil");
@@ -72,6 +73,7 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
           <PaymentButtons label="Pay with IcadPay" onClick={() => setShowModal(true)} />
         )}
       </div>
+      
 
       {/* Render IcadPayModal conditionally */}
       {showModal && <IcadPayModal isOpen={showModal} onClose={closeModal} />}
