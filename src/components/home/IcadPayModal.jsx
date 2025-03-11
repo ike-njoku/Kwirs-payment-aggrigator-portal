@@ -23,7 +23,7 @@ const IcadPayModal = ({ isOpen, onClose }) => {
     const form = document.getElementById("payment-form");
 
     const handler = IcadPay.setup({
-      key: "test_YzA1MmNmYzE0OTc1Y2QyM2ViNWUwNTIxOGMzZjA2MjI5N2M4ZDU3YmY5ZDg1ZmU1OWIwNWE1NDU0YjkzYTZkOQ", // Demo key
+      key: "test_NGE2MzBkOWY0NmU0OGI3NzVmMTY2NzI2YTAyMWFjYTBhMDhmYWYxZGE4ZmFiNmExYWQxYjVkOWJmNmYxYzIzYg", // Demo key
       email: document.getElementById("email").value,
       amount: document.getElementById("amount").value,
       currency: "NGN",
