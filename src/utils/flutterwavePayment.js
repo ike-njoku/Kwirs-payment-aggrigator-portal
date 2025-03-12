@@ -106,4 +106,5 @@ const PayWithFlutterWave = () => {
   );
 };
 
+
 export default PayWithFlutterWave;
