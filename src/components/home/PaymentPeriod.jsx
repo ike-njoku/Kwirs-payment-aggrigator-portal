@@ -1,11 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PrimarySelect from "../shared-components/inputs/PrimarySelect";
 import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 import PaymentPeriodTable from "../shared-components/table/PaymentPeriodTable";
 import PaymentButtons from "../shared-components/buttons/PaymentButtons";
 import { selectInputMonths } from "@/utils/functions";
 import { toast } from "react-toastify";
+import { AxiosPost } from "../../services/http-service";
 
 const PaymentPeriod = ({ showNextComponent, showPreviousComponent }) => {
   const [tableDetails, setTableDetails] = useState({
@@ -61,7 +62,36 @@ const PaymentPeriod = ({ showNextComponent, showPreviousComponent }) => {
     setTableDetails((prev) => ({ ...prev, [name]: e.target.value }));
   };
 
-  const createPaymentInvoice = () => {};
+  const createPaymentInvoice = async () => {
+    const paymentRequestDetails = localStorage.getItem("aymentDetails");
+    // if (!paymentRequestDetails) {
+    //   toast.error("Please fill out the form leading here");
+    //   return;
+    // }
+
+    const requestObject = {
+      TIN: paymentRequestDetails.tin ?? "N/A",
+      taxPayerName: paymentRequestDetails.payerName,
+      taxtypeId: "PAYE",
+      amount: paymentRequestDetails.amount,
+      payerName: paymentRequestDetails.payerName,
+      payerAddress: paymentRequestDetails.address,
+      payerPhone: paymentRequestDetails.payerPhone,
+      payerEmail: paymentRequestDetails.payerEmail,
+      taxOffice: paymentRequestDetails.TaxOffice,
+      narration: "sample string 11",
+      createdBy: paymentRequestDetails.tin,
+      assessmentId: paymentRequestDetails.paymentAssessmentNumber ?? "",
+    };
+
+    const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/invoice/Create`;
+    const apiResponse = await AxiosPost(apiUrl, requestObject);
+    console.log(" PRN RESPONSE ------------>>> ", apiResponse);
+  };
+
+  useEffect(() => {
+    createPaymentInvoice();
+  }, []);
 
   return (
     <section className="w-full md:max-w-[700px] sm:mx-auto md:mx-0 md:ml-auto pt-8 pb-5 px-8 md:px-10 rounded-[28px] border border-pumpkin mt-10">
