@@ -31,11 +31,11 @@ const HomePage = () => {
 
   const handleShowPaymentPeriod = (e) => {
     e.preventDefault();
-    showNextComponent(2);
+    showNextComponent(3);
   };
   const handleShowTaxPayerDetails = (e) => {
     e.preventDefault();
-    showNextComponent(3);
+    showNextComponent(2);
   };
 
   const handleShowInvoice = (e) => {
@@ -94,24 +94,27 @@ const HomePage = () => {
 
               {nextComponent === 1 && (
                 <PaymentDetails
-                  showNextComponent={handleShowPaymentPeriod}
+                  // showNextComponent={handleShowPaymentPeriod}
+                  showNextComponent={handleShowTaxPayerDetails}
                   showPreviousComponent={() => showNextComponent(0)}
                 />
               )}
-
               {nextComponent === 2 && (
-                <PaymentPeriod
+                <TaxPayerDetails
                   showPreviousComponent={() => showNextComponent(1)}
-                  showNextComponent={handleShowTaxPayerDetails}
+                  // showNextComponent={handleShowInvoice}
+                  showNextComponent={handleShowPaymentPeriod}
                 />
               )}
 
               {nextComponent === 3 && (
-                <TaxPayerDetails
+                <PaymentPeriod
                   showPreviousComponent={() => showNextComponent(2)}
+                  // showNextComponent={handleShowTaxPayerDetails}
                   showNextComponent={handleShowInvoice}
                 />
               )}
+
               {nextComponent === 4 && (
                 <Invoice
                   showNextComponent={handleShowPaymentGateway}
