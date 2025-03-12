@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
 
-const RolePermissionModal = ({ isOpen, onClose, refreshPermissions }) => {
+const PermissionModal = ({ isOpen, onClose, refreshPermissions }) => {
   const [permissionCode, setPermissionCode] = useState("");
   const [description, setDescription] = useState("");
   const [selectedResourceId, setSelectedResourceId] = useState(""); 
@@ -171,7 +171,7 @@ const RolePermissionModal = ({ isOpen, onClose, refreshPermissions }) => {
   );
 };
 
-export default RolePermissionModal;
+export default PermissionModal;
 
 
 

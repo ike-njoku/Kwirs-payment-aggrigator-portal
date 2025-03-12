@@ -42,6 +42,11 @@ export const sidebarMenu = [
     url: "/resources",
   },
   {
+    path: "permission",
+    icon: <FaTasks />,
+    url: "/permission",
+  },
+  {
     path: "role permission",
     icon: <FaTasks />,
     url: "/role-permission",

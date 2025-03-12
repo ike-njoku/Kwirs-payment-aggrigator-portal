@@ -11,17 +11,16 @@ import { PaymentRequest } from "@/context/PaymentRequestDetails";
 
 const HomePage = () => {
   const [nextComponent, showNextComponent] = useState(0);
-  // const [paymentRequestDetails, setPaymentRequestDetails] = useState({});
   const { paymentRequestDetails, setPaymentRequestDetails } =
     useContext(PaymentRequest);
 
   const handleSetPaymentAssessmentNumber = (paymentNumber) => {
     paymentRequestDetails.paymentAssessmentNumber = paymentNumber;
     setPaymentRequestDetails({ ...paymentRequestDetails });
-    // localStorage.setItem(
-    //   "paymentDetails",
-    //   JSON.stringify(paymentRequestDetails)
-    // );
+  };
+
+  const handleSetTaxPayerDetails = (taxPayerDetails) => {
+    setPaymentRequestDetails({ ...paymentRequestDetails, ...taxPayerDetails });
   };
 
   const handleShowPayerDetails = (e) => {
@@ -112,6 +111,7 @@ const HomePage = () => {
                   showPreviousComponent={() => showNextComponent(2)}
                   // showNextComponent={handleShowTaxPayerDetails}
                   showNextComponent={handleShowInvoice}
+                  handleSetTaxPayerDetails={handleSetTaxPayerDetails}
                 />
               )}
 
