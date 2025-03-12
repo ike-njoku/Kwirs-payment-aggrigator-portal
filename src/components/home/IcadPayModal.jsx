@@ -29,7 +29,7 @@ const IcadPayModal = ({ isOpen, onClose, invoiceData }) => {
       customerId: invoiceData.payerEmail,
       ref: invoiceData.PRN,
       narration: invoiceData.narration,
-      callback_url: "https://icadpay.com",
+      callback_url: "",
       callback: (response) => {
         console.log("Payment Response:", response);
       },
@@ -46,7 +46,6 @@ const IcadPayModal = ({ isOpen, onClose, invoiceData }) => {
       },
     });
 
-    handler.openIframe();
   };
 
   return (

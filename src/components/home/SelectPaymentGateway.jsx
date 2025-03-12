@@ -20,12 +20,13 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
     const fetchInvoice = async () => {
       try {
         const response = await fetch(
-          "http://nofifications.fctirs.gov.ng/api/invoice/GetSingleInvoice/6318-2159-9048"
+          "http://nofifications.fctirs.gov.ng/api/invoice/GetSingleInvoice/6344-2172-9104"
         );
         const result = await response.json();
         if (result.StatusCode === 200 && result.Data.length > 0) {
           setInvoiceData(result.Data[0]); // Store the first invoice object
-        } else {
+          console.log("Invoice Data:", result.Data[0]);
+         } else {
           console.error("Invoice not found");
         }
       } catch (error) {
@@ -44,8 +45,9 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
     setShowModal(false);
   };
 
-  // payment options to display
 
+
+  // payment options to display
   const paymentGateways = [
     { name: "icadpay", img: icadpay },
     { name: "remita", img: remita },
