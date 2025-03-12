@@ -1,8 +1,8 @@
 import React from "react";
-import RolePermissons from "@/components/role-permisson";
+import PermissionAllocation from "@/components/permission-allocation";
 
 const page = () => {
-  return <RolePermissons />;
+  return <PermissionAllocation />;
 };
 
 export default page;
