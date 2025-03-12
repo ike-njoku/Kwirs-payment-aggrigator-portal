@@ -1,10 +1,98 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import PrimarySelect from "../shared-components/inputs/PrimarySelect";
 import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 import PaymentPeriodTable from "../shared-components/table/PaymentPeriodTable";
 import PaymentButtons from "../shared-components/buttons/PaymentButtons";
+import { selectInputMonths } from "@/utils/functions";
+import { toast } from "react-toastify";
+import { AxiosPost } from "../../services/http-service";
 
 const PaymentPeriod = ({ showNextComponent, showPreviousComponent }) => {
+  const [tableDetails, setTableDetails] = useState({
+    year: "",
+    amount: "",
+    month: "",
+  });
+  const [tableData, setTableData] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const paymentDetails =
+    JSON.parse(localStorage.getItem("paymentDetails")) || [];
+
+  console.log({ paymentDetails });
+
+  const handleAddItemToTable = () => {
+    const period = `${
+      Number(tableDetails.month) + 1 < 10
+        ? `0${Number(tableDetails.month) + 1}`
+        : Number(tableDetails.month) + 1
+    }/${tableDetails.year.slice(2)}`;
+
+    const newData = {
+      period,
+      amount: tableDetails.amount,
+    };
+
+    const sum = Number(tableDetails.amount) + totalAmount;
+    if (paymentDetails && sum > Number(paymentDetails?.amount)) {
+      toast.error(
+        `Total amount cannot be greater than ${paymentDetails?.amount}`
+      );
+      return;
+    }
+    setTableData((prev) => [...prev, newData]);
+    setTotalAmount((prevAmount) => prevAmount + Number(tableDetails.amount));
+
+    setTableDetails({
+      year: "",
+      amount: "",
+      month: "",
+    });
+  };
+  const startYear = 1980;
+  const currentYear = new Date().getFullYear();
+
+  const years = Array.from(
+    { length: currentYear - startYear + 1 },
+    (_, index) => startYear + index
+  ).reverse();
+
+  const handleOnchange = (e) => {
+    const name = e.target.name;
+    setTableDetails((prev) => ({ ...prev, [name]: e.target.value }));
+  };
+
+  const createPaymentInvoice = async () => {
+    const paymentRequestDetails = localStorage.getItem("aymentDetails");
+    // if (!paymentRequestDetails) {
+    //   toast.error("Please fill out the form leading here");
+    //   return;
+    // }
+
+    const requestObject = {
+      TIN: paymentRequestDetails.tin ?? "N/A",
+      taxPayerName: paymentRequestDetails.payerName,
+      taxtypeId: "PAYE",
+      amount: paymentRequestDetails.amount,
+      payerName: paymentRequestDetails.payerName,
+      payerAddress: paymentRequestDetails.address,
+      payerPhone: paymentRequestDetails.payerPhone,
+      payerEmail: paymentRequestDetails.payerEmail,
+      taxOffice: paymentRequestDetails.TaxOffice,
+      narration: "sample string 11",
+      createdBy: paymentRequestDetails.tin,
+      assessmentId: paymentRequestDetails.paymentAssessmentNumber ?? "",
+    };
+
+    const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/invoice/Create`;
+    const apiResponse = await AxiosPost(apiUrl, requestObject);
+    console.log(" PRN RESPONSE ------------>>> ", apiResponse);
+  };
+
+  useEffect(() => {
+    createPaymentInvoice();
+  }, []);
+
   return (
     <section className="w-full md:max-w-[700px] sm:mx-auto md:mx-0 md:ml-auto pt-8 pb-5 px-8 md:px-10 rounded-[28px] border border-pumpkin mt-10">
       <h3
@@ -19,16 +107,35 @@ const PaymentPeriod = ({ showNextComponent, showPreviousComponent }) => {
             labelStyle="capitalize"
             placeholder="Select month"
             label="month"
+            optionData={selectInputMonths.map((period, i) => (
+              <option value={period.value} className="text-black" key={i}>
+                {period.month}
+              </option>
+            ))}
+            handleChange={handleOnchange}
+            value={tableDetails.month}
+            name="month"
           />
           <PrimarySelect
             labelStyle="capitalize"
             placeholder="Select year"
             label="year"
+            optionData={years.map((year, i) => (
+              <option value={year} className="text-black" key={i}>
+                {year}
+              </option>
+            ))}
+            handleChange={handleOnchange}
+            value={tableDetails.year}
+            name="year"
           />
           <PrimaryInput
             labelStyle="capitalize"
             label="amount"
             placeholder="Enter amount"
+            value={tableDetails.amount}
+            handleChange={handleOnchange}
+            name="amount"
           />
         </div>
 
@@ -37,15 +144,19 @@ const PaymentPeriod = ({ showNextComponent, showPreviousComponent }) => {
         >
           <button
             className={`capitalize w-full h-full bg-transparent border-0 hover:text-pumpkin disabled:bg-[rgba(255,117,24,0.4)] text-white `}
+            onClick={handleAddItemToTable}
           >
             Add
           </button>
         </div>
 
-        <PaymentPeriodTable />
+        <PaymentPeriodTable tableData={tableData} />
 
         <div className="flex justify-end items-center mt-5">
-          <h3 className="text-white font-semibold"> Total Amount: 0</h3>
+          <h3 className="text-white font-semibold">
+            {" "}
+            Total Amount: {totalAmount}
+          </h3>
         </div>
 
         <div className="w-full flex justify-between gap-4 items-center mt-6">

@@ -2,8 +2,34 @@ import Image from "next/image";
 import React from "react";
 import InvoiceTable from "../shared-components/table/InvoiceTable";
 import PaymentButtons from "../shared-components/buttons/PaymentButtons";
+import { toast } from "react-toastify";
 
 const Invoice = ({ showPreviousComponent, showNextComponent }) => {
+  const createInvoice = async () => {
+    const paymentRequestDetails = localStorage.getItem("paymentDetails");
+    if (!paymentRequestDetails) {
+      toast.error("Please fill out the entire form");
+      return;
+    }
+
+    const something = {
+      TIN: paymentRequestDetails.tin,
+      taxPayerName: "sample string 3",
+      taxtypeId: "PAYE",
+      amount: 1000,
+      payerName: "David",
+      payerAddress: "sample string 7",
+      payerPhone: "09077003490",
+      payerEmail: "sample@gmail.com",
+      taxOffice: "Asokoro",
+      narration: "sample string 11",
+      createdBy: "1000000826",
+      assessmentId: "",
+    };
+
+    paymentRequestDetails;
+  };
+
   return (
     <section className="w-full md:max-w-[550px] sm:mx-auto md:mx-0 md:ml-auto py-8 px-6 md:px-10 rounded-[28px] border border-pumpkin mt-16 bg-[rgba(255,255,255,0.7)]">
       <article className="w-full flex justify-between items-center">

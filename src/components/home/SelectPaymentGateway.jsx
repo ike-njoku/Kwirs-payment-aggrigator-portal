@@ -97,11 +97,10 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
         <PaymentButtons label="Back" onClick={showPreviousComponent} />
 
         {selectedOption === "flutterWave" && (
-          <PaymentButtons label="Pay with Flutterwave" onClick={handlePayment} />
-        )}
-
-        {selectedOption === "icadpay" && (
-          <PaymentButtons label="Pay with IcadPay" onClick={() => setShowModal(true)} />
+          <>
+            {" "}
+            <PayWithFlutterWave />
+          </>
         )}
       </div> */}
 

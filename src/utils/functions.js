@@ -99,3 +99,18 @@ export const displayDate = () => {
 
   return `${dayOfTheWeek} ${month} ${day}, ${year}`;
 };
+
+export const selectInputMonths = [
+  { month: "January", value: 0 },
+  { month: "February", value: 1 },
+  { month: "March", value: 2 },
+  { month: "April", value: 3 },
+  { month: "May", value: 4 },
+  { month: "June", value: 5 },
+  { month: "July", value: 6 },
+  { month: "August", value: 7 },
+  { month: "September", value: 8 },
+  { month: "October", value: 9 },
+  { month: "November", value: 10 },
+  { month: "December", value: 11 },
+];
