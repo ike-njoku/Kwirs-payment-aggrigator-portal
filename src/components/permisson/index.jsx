@@ -2,15 +2,15 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import RolePermissionTable from "../shared-components/table/RolePermissionTable";
+import RolePermissionTable from "../shared-components/table/PermissionTable";
 import DashboardLayout from "../shared-components/layouts/DashboardLayout";
 import { toast } from "react-toastify";
 import { AxiosGet } from "../../services/http-service";
 import { FaPlus } from "react-icons/fa";
-import RolePermissionModal from "../shared-components/modals/RolePermissionModal";
+import PermissionModal from "../shared-components/modals/PermissionModal";
 
-const RolePermissionPage = () => {
-  const tableHeadings = ["Permission", "Description", "Resource Name", "Actions"];
+const PermissionPage = () => {
+  const tableHeadings = ["Permission Name","Description", "Resources Name", "Action"];
   const [selectedResourceId, setSelectedResourceId] = useState("");
   const [openPermissionModal, setOpenPermissionModal] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -182,19 +182,19 @@ const RolePermissionPage = () => {
   
 
   return (
-    <DashboardLayout page="Role Permission">
+    <DashboardLayout page="Permission">
       <section className="w-full">
         <div className="w-[90%] mx-auto py-5">
           <div className="w-full lg:mt-10">
             <div className="mt-4 flex gap-4 justify-between items-center">
               
-              {/* Assign Permission Button */}
+              {/* Create Permission Button */}
               <button
                 onClick={() => setOpenPermissionModal(true)}
                 className="text-pumpkin font-medium rounded-lg text-sm px-5 py-2.5 border border-pumpkin flex items-center gap-2"
                 disabled={loading}
               >
-                {loading ? "Processing..." : "Assign Permission"} <FaPlus />
+                {loading ? "Processing..." : "Create Permission"} <FaPlus />
               </button>
 
               {/* Resource Filter Dropdown */}
@@ -253,7 +253,7 @@ const RolePermissionPage = () => {
 
         {/* Role Permission Modal */}
         {openPermissionModal && (
-          <RolePermissionModal
+          <PermissionModal
             isOpen={openPermissionModal}
             onClose={() => setOpenPermissionModal(false)}
             refreshPermissions={fetchPermissions}
@@ -264,5 +264,5 @@ const RolePermissionPage = () => {
   );
 };
 
-export default RolePermissionPage;
+export default PermissionPage;
 
