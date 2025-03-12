@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import HomeNavigation from "../navigation";
 import AssessmentNumberComponent from "./AssessmentNumberComponent";
 import PaymentDetails from "./PaymentDetails";
@@ -7,9 +7,21 @@ import PaymentPeriod from "./PaymentPeriod";
 import TaxPayerDetails from "./TaxPayerDetails";
 import Invoice from "./Invoice";
 import SelectPaymentGateway from "./SelectPaymentGateway";
+import { PaymentRequest } from "@/context/PaymentRequestDetails";
 
 const HomePage = () => {
   const [nextComponent, showNextComponent] = useState(0);
+  const { paymentRequestDetails, setPaymentRequestDetails } =
+    useContext(PaymentRequest);
+
+  const handleSetPaymentAssessmentNumber = (paymentNumber) => {
+    paymentRequestDetails.paymentAssessmentNumber = paymentNumber;
+    setPaymentRequestDetails({ ...paymentRequestDetails });
+  };
+
+  const handleSetTaxPayerDetails = (taxPayerDetails) => {
+    setPaymentRequestDetails({ ...paymentRequestDetails, ...taxPayerDetails });
+  };
 
   const handleShowPayerDetails = (e) => {
     e.preventDefault();
@@ -66,6 +78,7 @@ const HomePage = () => {
             <div className="w-full my-10 max-h-[600px] overflow-y-auto customScroll">
               {nextComponent === 0 && (
                 <AssessmentNumberComponent
+                  paymentAssessmentNumberment={handleSetPaymentAssessmentNumber}
                   showNextComponent={handleShowPayerDetails}
                 />
               )}
@@ -96,6 +109,7 @@ const HomePage = () => {
                 <TaxPayerDetails
                   showPreviousComponent={() => showNextComponent(2)}
                   showNextComponent={handleShowInvoice}
+                  handleSetTaxPayerDetails={handleSetTaxPayerDetails}
                 />
               )}
               {nextComponent === 4 && (
