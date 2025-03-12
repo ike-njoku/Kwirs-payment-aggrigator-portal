@@ -15,6 +15,29 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
   const [selectedOption, setSelectedOption] = useState("nil");
   const [showModal, setShowModal] = useState(false);
 
+  const [invoiceData, setInvoiceData] = useState(null);
+
+  useEffect(() => {
+    const fetchInvoice = async () => {
+      try {
+        const response = await fetch(
+          "http://nofifications.fctirs.gov.ng/api/invoice/GetSingleInvoice/6354-2177-9124"
+        );
+        const result = await response.json();
+        if (result.StatusCode === 200 && result.Data.length > 0) {
+          setInvoiceData(result.Data[0]); // Store the first invoice object
+          console.log("Invoice Data:", result.Data[0]); // Debugging
+        } else {
+          console.error("Invoice not found");
+        }
+      } catch (error) {
+        console.error("Error fetching invoice:", error);
+      }
+    };
+  
+    fetchInvoice();
+  }, []);
+  
   const handleSelectGateway = (e) => {
     setSelectedOption(e.target.value);
   };
@@ -46,6 +69,20 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
           key={i}
         />
       ))}
+
+
+
+{/* <div className="w-full flex justify-between gap-4 items-center mt-6">
+        <PaymentButtons label="Back" onClick={showPreviousComponent} />
+
+        {selectedOption === "flutterWave" && (
+          <PaymentButtons label="Pay with Flutterwave" onClick={handlePayment} />
+        )}
+
+        {selectedOption === "icadpay" && (
+          <PaymentButtons label="Pay with IcadPay" onClick={() => setShowModal(true)} />
+        )}
+      </div> */}
 
       <div className="w-full flex justify-between gap-4 items-center mt-6">
         <PaymentButtons label="Back" onClick={showPreviousComponent} />
