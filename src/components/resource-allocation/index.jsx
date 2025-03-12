@@ -10,7 +10,7 @@ import { FaPlus, FaFilter } from "react-icons/fa";
 import { MAIN_MENU, SUB_MENU } from "../../utils/constants";
 
 const ResourcesAllocationPage = () => {
-  const tableHeadings = ["Resource Name", "Actions"];
+  const tableHeadings = ["Resource Name", "Action"];
   const [roleResources, setRoleResources] = useState([]);
   const [roles, setRoles] = useState([]);
   const [selectedRoleId, setSelectedRoleId] = useState(null);
@@ -62,6 +62,7 @@ const ResourcesAllocationPage = () => {
       setLoading(false);
     }
   };
+
 
   const fetchAllResources = async () => {
     const apiResponse = await AxiosGet(
