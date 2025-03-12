@@ -10,17 +10,15 @@ const TaxPayerDetails = ({
   handleSetTaxPayerDetails,
 }) => {
   const [taxIdentificationNumber, setTaxIdentificationNumber] = useState("");
-  const [dob, setDob] = useState("");
   const [tinDetails, setTinDetails] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
   const validateTin = async () => {
     if (!taxIdentificationNumber || taxIdentificationNumber.length < 10) return;
-    if (!dob || !dob.length) return;
     setIsLoading(true);
 
-    const requestBody = { TIN: taxIdentificationNumber, dob: dob, bvn: "" };
-    const validationURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/utility/TIN`;
+    const requestBody = { TIN: taxIdentificationNumber, dob: "", bvn: "" };
+    const validationURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/utility/Tin2`;
     const _taxIDValidationResponse = await AxiosPost(
       validationURL,
       requestBody
@@ -35,11 +33,6 @@ const TaxPayerDetails = ({
 
   const updateTin = (e) => {
     setTaxIdentificationNumber(e.target.value);
-    validateTin();
-  };
-
-  const updateDOB = (e) => {
-    setDob(e.target.value);
     validateTin();
   };
 
@@ -60,15 +53,7 @@ const TaxPayerDetails = ({
           handleChange={updateTin}
           value={taxIdentificationNumber}
         />
-        <PrimaryInput
-          label="Date of Birth"
-          placeholder="Date of Birth / Date of Reg"
-          name="dob"
-          type="date"
-          labelStyle="capitalize"
-          handleChange={updateDOB}
-          value={dob}
-        />
+
         {isLoading && <Spinner></Spinner>}
         {tinDetails && Object.keys(tinDetails).length > 0 && (
           <PrimaryInput
