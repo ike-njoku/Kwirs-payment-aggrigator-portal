@@ -1,9 +1,7 @@
-"use client";
-import React, { useState } from "react";
+import React from "react";
 
-const PaymentPeriodTable = () => {
-  const tableData = [];
-  const tableHeadings = ["S/N", "PRN", "Period", "Amount"];
+const PaymentPeriodTable = ({ tableData = [] }) => {
+  const tableHeadings = ["S/N", "PRN", "Period (mm/yy)", "Amount (₦)"];
   return (
     <div className="relative overflow-x-auto h-auto shadow-md sm:rounded-lg mt-8">
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 ">
@@ -27,11 +25,19 @@ const PaymentPeriodTable = () => {
                   scope="row"
                   className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize text-sm"
                 >
-                  {tableInfo.title}
+                  {i + 1}
+                </td>
+
+                <td
+                  scope="row"
+                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize text-sm"
+                >
+                  {/* {tableInfo.title} */}
+                  ...
                 </td>
 
                 <td className="px-6 py-4 text-gray-900 capitalize text-sm">
-                  {tableInfo.dateOfPayment}
+                  {tableInfo.period}
                 </td>
 
                 <td className="px-6 py-4 text-gray-900 text-sm">

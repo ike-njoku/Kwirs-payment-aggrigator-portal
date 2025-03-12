@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import HomeNavigation from "../navigation";
 import AssessmentNumberComponent from "./AssessmentNumberComponent";
 import PaymentDetails from "./PaymentDetails";
@@ -7,30 +7,20 @@ import PaymentPeriod from "./PaymentPeriod";
 import TaxPayerDetails from "./TaxPayerDetails";
 import Invoice from "./Invoice";
 import SelectPaymentGateway from "./SelectPaymentGateway";
+import { PaymentRequest } from "@/context/PaymentRequestDetails";
 
 const HomePage = () => {
   const [nextComponent, showNextComponent] = useState(0);
-  const [paymentRequestDetails, setPaymentRequestDetails] = useState({});
+  const { paymentRequestDetails, setPaymentRequestDetails } =
+    useContext(PaymentRequest);
 
   const handleSetPaymentAssessmentNumber = (paymentNumber) => {
     paymentRequestDetails.paymentAssessmentNumber = paymentNumber;
     setPaymentRequestDetails({ ...paymentRequestDetails });
-    localStorage.setItem(
-      "paymentDetails",
-      JSON.stringify(paymentRequestDetails)
-    );
   };
 
-  console.log(
-    "PAYMENT REQUEST DETAILS ----------->>>> ",
-    paymentRequestDetails
-  );
-
-  const handleSetPaymtDetails = (paymentDetailsObject) => {
-    setPaymentRequestDetails({
-      ...paymentRequestDetails,
-      ...paymentDetailsObject,
-    });
+  const handleSetTaxPayerDetails = (taxPayerDetails) => {
+    setPaymentRequestDetails({ ...paymentRequestDetails, ...taxPayerDetails });
   };
 
   const handleShowPayerDetails = (e) => {
@@ -105,7 +95,6 @@ const HomePage = () => {
                 <PaymentDetails
                   showNextComponent={handleShowPaymentPeriod}
                   showPreviousComponent={() => showNextComponent(0)}
-                  paymentDetails={handleSetPaymtDetails}
                 />
               )}
 
@@ -120,6 +109,7 @@ const HomePage = () => {
                 <TaxPayerDetails
                   showPreviousComponent={() => showNextComponent(2)}
                   showNextComponent={handleShowInvoice}
+                  handleSetTaxPayerDetails={handleSetTaxPayerDetails}
                 />
               )}
               {nextComponent === 4 && (
