@@ -32,7 +32,21 @@ const PaymentDetails = ({ showNextComponent, showPreviousComponent }) => {
   };
 
   //select an agency and then use agency Id to select tax
-  const handleSelectAgency = (e) => {};
+  const handleSelectAgency = (e) => {
+    setSelectedTaxType(e.target.value);
+    setPaymentRequestDetails((previousValue) => ({
+      ...previousValue,
+      taxAgency: e.target.value,
+    }));
+  };
+
+  const handleSelectTaxType = (e) => {
+    setSelectedTaxType(e.target.value);
+    setPaymentRequestDetails((previousValue) => ({
+      ...previousValue,
+      taxType: e.target.value,
+    }));
+  };
 
   const getAgencies = async () => {
     const apiResponse = await AxiosGet(
@@ -102,6 +116,7 @@ const PaymentDetails = ({ showNextComponent, showPreviousComponent }) => {
           placeholder="Select tax type"
           name="taxType"
           labelStyle="capitalize"
+          handleChange={handleSelectTaxType}
           optionData={
             taxTypes &&
             taxTypes?.map((option) => (
