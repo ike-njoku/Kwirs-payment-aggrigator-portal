@@ -10,6 +10,7 @@ import interswitch from "../../../public/images/interswitch.png";
 import etranzact from "../../../public/images/etranzact.jpg";
 import flutterWave from "../../../public/images/Flutterwave-Logo.jpg";
 import IcadPayModal from "./IcadPayModal";
+import { initiateFlutterwavePayment } from "../../utils/flutterwavePayment";
 
 const SelectPaymentGateway = ({ showPreviousComponent }) => {
   const [selectedOption, setSelectedOption] = useState("nil");
@@ -46,6 +47,24 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
   };
 
 
+  // flutter wave payment
+
+  const publicKey = "FLWPUBK_TEST-1c4502bfb6f511ca669c5246ffec899a-X"; // Replace with your real Flutterwave public key
+
+  const handlePayment = () => {
+    initiateFlutterwavePayment({
+      publicKey,
+      email: "user@example.com",
+      phoneNumber: "08012345678",
+      firstName: "John",
+      lastName: "Doe",
+      setPaymentResponse: (ref) => console.log("Payment Ref:", ref),
+      submitPaymentInfo: (info) => console.log("Payment Info:", info),
+      setCanceledPay: (status) => console.log("Payment Canceled:", status),
+    });
+  };
+
+
 
   // payment options to display
   const paymentGateways = [
@@ -73,8 +92,26 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
       ))}
 
 
+
+{/* <div className="w-full flex justify-between gap-4 items-center mt-6">
+        <PaymentButtons label="Back" onClick={showPreviousComponent} />
+
+        {selectedOption === "flutterWave" && (
+          <PaymentButtons label="Pay with Flutterwave" onClick={handlePayment} />
+        )}
+
+        {selectedOption === "icadpay" && (
+          <PaymentButtons label="Pay with IcadPay" onClick={() => setShowModal(true)} />
+        )}
+      </div> */}
+
       <div className="w-full flex justify-between gap-4 items-center mt-6">
         <PaymentButtons label="Back" onClick={showPreviousComponent} />
+
+        {selectedOption === "flutterWave" && (
+          <PaymentButtons label="Pay with Flutterwave" onClick={handlePayment} />
+        )}
+
 
         {selectedOption === "icadpay" && invoiceData && (
           <PaymentButtons label="Pay with IcadPay" onClick={() => setShowModal(true)} />
