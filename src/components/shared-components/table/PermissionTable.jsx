@@ -1,16 +1,16 @@
 import React from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
-const RolePermissionTable = ({ tableHeadings = [], tableData = [], permissions, onEdit, onDelete, handleEditPermission }) => {
+const PermissionTable = ({ tableHeadings = [], tableData = [], permissions, onEdit, onDelete, handleEditPermission }) => {
   return (
     <div className="overflow-x-auto bg-white rounded-lg shadow-md">
-      <table className="min-w-full table-auto border-collapse">
+      <table className="min-w-full table-auto border-collapse text-sm">
         <thead className="bg-pumpkin">
           <tr>
             {tableHeadings.map((heading, index) => (
               <th 
                 key={index} 
-                className="border-b px-6 py-3 text-left text-sm font-semibold text-white"
+                className=" px-6 py-3 text-left text-sm font-semibold text-white"
               >
                 {heading}
               </th>
@@ -58,7 +58,7 @@ const RolePermissionTable = ({ tableHeadings = [], tableData = [], permissions, 
   );
 };
 
-export default RolePermissionTable;
+export default PermissionTable;
 
 
 
