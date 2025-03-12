@@ -13,6 +13,8 @@ const TaxPayerDetails = ({
   const [tinDetails, setTinDetails] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
+
+
   const validateTin = async () => {
     if (!taxIdentificationNumber || taxIdentificationNumber.length < 10) return;
     setIsLoading(true);
@@ -81,9 +83,9 @@ const TaxPayerDetails = ({
         )}
         <div className="w-full flex justify-between gap-4 items-center">
           <PaymentButtons label="Back" onClick={showPreviousComponent} />
-          {tinDetails && Object.keys(tinDetails).length > 0 && (
+          {/* {tinDetails && Object.keys(tinDetails).length > 0 && ( */}
             <PaymentButtons onClick={showNextComponent} />
-          )}
+          {/* )} */}
         </div>
       </div>
     </div>
