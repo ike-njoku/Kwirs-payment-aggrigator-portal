@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useContext } from "react";
 import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 import PaymentButtons from "../shared-components/buttons/PaymentButtons";
 import { AxiosPost } from "../../services/http-service";
-import { toast } from "react-toastify";
 import Spinner from "../shared-components/Spinner";
-import VerifyInput from "../shared-components/inputs/VerifyInput";
 
-const TaxPayerDetails = ({ showNextComponent, showPreviousComponent }) => {
+const TaxPayerDetails = ({
+  showNextComponent,
+  showPreviousComponent,
+  handleSetTaxPayerDetails,
+}) => {
   const [taxIdentificationNumber, setTaxIdentificationNumber] = useState("");
   const [dob, setDob] = useState("");
   const [tinDetails, setTinDetails] = useState({});
@@ -15,7 +17,6 @@ const TaxPayerDetails = ({ showNextComponent, showPreviousComponent }) => {
   const validateTin = async () => {
     if (!taxIdentificationNumber || taxIdentificationNumber.length < 10) return;
     if (!dob || !dob.length) return;
-
     setIsLoading(true);
 
     const requestBody = { TIN: taxIdentificationNumber, dob: dob, bvn: "" };
@@ -26,11 +27,11 @@ const TaxPayerDetails = ({ showNextComponent, showPreviousComponent }) => {
     );
 
     const taxDetails = JSON.parse(_taxIDValidationResponse);
+    handleSetTaxPayerDetails(taxDetails);
     setTinDetails(taxDetails);
+
     setIsLoading(false);
   };
-
-  console.log("TIN DETILS --------->>> ", tinDetails);
 
   const updateTin = (e) => {
     setTaxIdentificationNumber(e.target.value);
