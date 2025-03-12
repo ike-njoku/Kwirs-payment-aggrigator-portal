@@ -1,20 +1,20 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import GatewayRadio from "../shared-components/inputs/GatewayRadio";
-
-import PaymentButtons from "../shared-components/buttons/PaymentButtons";
-
 import icadpay from "../../../public/images/icad-logo.png";
 import remita from "../../../public/images/remita.png";
 import interswitch from "../../../public/images/interswitch.png";
 import etranzact from "../../../public/images/etranzact.jpg";
 import flutterWave from "../../../public/images/Flutterwave-Logo.jpg";
+
+import PaymentButtons from "../shared-components/buttons/PaymentButtons";
+import PayWithFlutterWave from "../../utils/flutterwavePayment";
 import IcadPayModal from "./IcadPayModal";
-import { initiateFlutterwavePayment } from "../../utils/flutterwavePayment";
 
 const SelectPaymentGateway = ({ showPreviousComponent }) => {
   const [selectedOption, setSelectedOption] = useState("nil");
   const [showModal, setShowModal] = useState(false);
+
   const [invoiceData, setInvoiceData] = useState(null);
 
   useEffect(() => {
@@ -46,27 +46,6 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
     setShowModal(false);
   };
 
-
-  // flutter wave payment
-
-  const publicKey = "FLWPUBK_TEST-1c4502bfb6f511ca669c5246ffec899a-X"; // Replace with your real Flutterwave public key
-
-  const handlePayment = () => {
-    initiateFlutterwavePayment({
-      publicKey,
-      email: "user@example.com",
-      phoneNumber: "08012345678",
-      firstName: "John",
-      lastName: "Doe",
-      setPaymentResponse: (ref) => console.log("Payment Ref:", ref),
-      submitPaymentInfo: (info) => console.log("Payment Info:", info),
-      setCanceledPay: (status) => console.log("Payment Canceled:", status),
-    });
-  };
-
-
-
-  // payment options to display
   const paymentGateways = [
     { name: "icadpay", img: icadpay },
     { name: "remita", img: remita },
@@ -109,16 +88,14 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
         <PaymentButtons label="Back" onClick={showPreviousComponent} />
 
         {selectedOption === "flutterWave" && (
-          <PaymentButtons label="Pay with Flutterwave" onClick={handlePayment} />
-        )}
-
-
-        {selectedOption === "icadpay" && invoiceData && (
-          <PaymentButtons label="Pay with IcadPay" onClick={() => setShowModal(true)} />
+          <>
+            <PayWithFlutterWave />
+          </>
         )}
       </div>
 
-      {showModal && <IcadPayModal isOpen={showModal} onClose={closeModal} invoiceData={invoiceData} />}
+      {/* Render IcadPayModal conditionally */}
+      {showModal && <IcadPayModal isOpen={showModal} onClose={closeModal} />}
     </section>
   );
 };

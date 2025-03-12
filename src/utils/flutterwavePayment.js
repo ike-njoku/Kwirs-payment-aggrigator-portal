@@ -70,10 +70,10 @@ const PayWithFlutterWave = () => {
     customer: {
       email: invoiceData?.payerEmail || "default@example.com",
       phone_number: invoiceData?.payerPhone || "0000000000",
-      name: "Unknown Payer",
+      name: invoiceData?.payerName || "Unknown Payer",
     },
     customizations: {
-      title: "Payment",
+      title: "Invoice Payment",
       description: "Invoice Payment",
       logo: "https://media.istockphoto.com/id/1465234647/vector/bank-with-dollar-sign-icon.jpg",
     },
@@ -97,13 +97,14 @@ const PayWithFlutterWave = () => {
 
   return (
     <button
-      className="bg-blue-500 text-white p-2 rounded disabled:opacity-50"
+      className=" text-pumpkin !important font-bold p-2 rounded disabled:opacity-50"
       onClick={initiatePayment}
       disabled={!isPaymentReady}
     >
-      {isPaymentReady ? "Pay Now" : "Loading..."}
+      {isPaymentReady ? "Pay Flutterwave" : "Loading..."}
     </button>
   );
 };
+
 
 export default PayWithFlutterWave;
