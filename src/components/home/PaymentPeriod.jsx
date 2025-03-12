@@ -61,6 +61,8 @@ const PaymentPeriod = ({ showNextComponent, showPreviousComponent }) => {
     setTableDetails((prev) => ({ ...prev, [name]: e.target.value }));
   };
 
+  const createPaymentInvoice = () => {};
+
   return (
     <section className="w-full md:max-w-[700px] sm:mx-auto md:mx-0 md:ml-auto pt-8 pb-5 px-8 md:px-10 rounded-[28px] border border-pumpkin mt-10">
       <h3
