@@ -81,7 +81,7 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
           <PaymentButtons label="Pay with IcadPay" onClick={() => setShowModal(true)} />
         )}
       </div> */}
-
+{/* 
       <div className="w-full flex justify-between gap-4 items-center mt-6">
         <PaymentButtons label="Back" onClick={showPreviousComponent} />
 
@@ -90,10 +90,32 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
             <PayWithFlutterWave />
           </>
         )}
-      </div>
+      </div> */}
 
       {/* Render IcadPayModal conditionally */}
-      {showModal && <IcadPayModal isOpen={showModal} onClose={closeModal} />}
+      {/* {showModal && <IcadPayModal isOpen={showModal} onClose={closeModal} />
+      
+    } */}
+
+
+<div className="w-full flex justify-between gap-4 items-center mt-6">
+        <PaymentButtons label="Back" onClick={showPreviousComponent} />
+
+        {selectedOption === "icadpay" && invoiceData && (
+          <PaymentButtons label="Pay with IcadPay" onClick={() => setShowModal(true)} />
+        )}
+
+{selectedOption === "flutterWave" && (
+          <>
+            <PayWithFlutterWave />
+          </>
+        )}
+      </div>
+
+      {showModal && <IcadPayModal isOpen={showModal} onClose={closeModal} invoiceData={invoiceData} />}
+   
+
+
     </section>
   );
 };
