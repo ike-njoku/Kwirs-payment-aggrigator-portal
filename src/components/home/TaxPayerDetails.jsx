@@ -9,15 +9,12 @@ const TaxPayerDetails = ({
   showPreviousComponent,
   handleSetTaxPayerDetails,
 }) => {
-  const [taxIdentificationNumber, setTaxIdentificationNumber] = useState("");
   const [tinDetails, setTinDetails] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
-  const validateTin = async () => {
-    if (!taxIdentificationNumber || taxIdentificationNumber.length < 10) return;
+  const validateTin = async (tin) => {
     setIsLoading(true);
-
-    const requestBody = { TIN: taxIdentificationNumber, dob: "", bvn: "" };
+    const requestBody = { TIN: tin, dob: "", bvn: "" };
     const validationURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/utility/Tin2`;
     const _taxIDValidationResponse = await AxiosPost(
       validationURL,
@@ -32,8 +29,10 @@ const TaxPayerDetails = ({
   };
 
   const updateTin = (e) => {
-    setTaxIdentificationNumber(e.target.value);
-    validateTin();
+    const tin = e.target.value;
+    if (tin.length < 10) return;
+    validateTin(tin);
+    return;
   };
 
   return (
@@ -51,7 +50,6 @@ const TaxPayerDetails = ({
           type="text"
           labelStyle="capitalize"
           handleChange={updateTin}
-          value={taxIdentificationNumber}
         />
 
         {isLoading && <Spinner></Spinner>}
@@ -81,9 +79,9 @@ const TaxPayerDetails = ({
         )}
         <div className="w-full flex justify-between gap-4 items-center">
           <PaymentButtons label="Back" onClick={showPreviousComponent} />
-          {/* {tinDetails && Object.keys(tinDetails).length > 0 && ( */}
-          <PaymentButtons onClick={showNextComponent} />
-          {/* )} */}
+          {tinDetails && Object.keys(tinDetails).length > 0 && (
+            <PaymentButtons onClick={showNextComponent} />
+          )}
         </div>
       </div>
     </div>

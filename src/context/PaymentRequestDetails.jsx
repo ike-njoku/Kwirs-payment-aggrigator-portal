@@ -18,10 +18,6 @@ const PaymentRequestDetails = ({ children }) => {
     setPaymentRequestDetails,
   };
 
-  console.log(
-    "PAYMENT REQUEST DETAILS ----------->>>> ",
-    paymentRequestDetails
-  );
   return (
     <PaymentRequest.Provider value={contextValue}>
       {children}

@@ -7,6 +7,7 @@ import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 const AssessmentNumberComponent = ({
   showNextComponent,
   paymentAssessmentNumberment,
+  paymentRequestDetails,
 }) => {
   const [selectedOption, setSelectedOption] = useState("");
   const [assessmentNumber, setAssessmentNumber] = useState("");
@@ -37,7 +38,7 @@ const AssessmentNumberComponent = ({
             placeholder="Enter assessment number"
             type="text"
             handleChange={handleChangeassessmentNumber}
-            value={assessmentNumber}
+            value={paymentRequestDetails.paymentAssessmentNumber}
           />
         )}
 

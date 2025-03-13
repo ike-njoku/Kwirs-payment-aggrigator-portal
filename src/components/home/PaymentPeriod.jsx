@@ -8,7 +8,11 @@ import { selectInputMonths } from "@/utils/functions";
 import { toast } from "react-toastify";
 import { AxiosPost } from "../../services/http-service";
 
-const PaymentPeriod = ({ showNextComponent, showPreviousComponent }) => {
+const PaymentPeriod = ({
+  showNextComponent,
+  showPreviousComponent,
+  paymentRequestDetails,
+}) => {
   const [tableDetails, setTableDetails] = useState({
     year: "",
     amount: "",
@@ -19,12 +23,7 @@ const PaymentPeriod = ({ showNextComponent, showPreviousComponent }) => {
   const [PRN, setPRN] = useState("N/A");
   const [invoiceDetails, setInvoiceDetails] = useState({});
   const paymentDetails =
-    JSON.parse(localStorage.getItem("paymentDetails")) || [];
-
-  console.log({ paymentDetails });
-  console.log("------------------");
-  console.table({ PRN: PRN });
-  console.log("------------------");
+    JSON.parse(localStorage.getItem("paymentDetails") ?? "{}") || [];
 
   const handleAddItemToTable = () => {
     const period = `${
@@ -68,14 +67,13 @@ const PaymentPeriod = ({ showNextComponent, showPreviousComponent }) => {
   };
 
   const createPaymentInvoice = async () => {
-    console.log("THIS FUNCTION WAS CALLED");
-    const paymentRequestDetails = JSON.parse(
-      localStorage.getItem("paymentDetails")
-    );
-    if (!paymentRequestDetails) {
+    const _paymentRequestDetails = localStorage.getItem("paymentDetails");
+    if (!_paymentRequestDetails) {
       toast.error("Please fill out the form leading here");
       return;
     }
+
+    const paymentRequestDetails = JSON.parse(_paymentRequestDetails);
 
     const requestObject = {
       TIN: paymentRequestDetails.TIN ?? "N/A",
@@ -99,12 +97,13 @@ const PaymentPeriod = ({ showNextComponent, showPreviousComponent }) => {
       setInvoiceDetails(invoice);
       setPRN(invoice.PRN);
       paymentRequestDetails.invoice = invoice;
-      localStorage.setItem("paymentDetails", paymentRequestDetails);
+      localStorage.setItem(
+        "paymentDetails",
+        JSON.stringify(paymentRequestDetails)
+      );
     }
     return;
   };
-
-  console.log("___ INVOICE ____ ", invoiceDetails);
 
   useEffect(() => {
     createPaymentInvoice();

@@ -4,32 +4,11 @@ import InvoiceTable from "../shared-components/table/InvoiceTable";
 import PaymentButtons from "../shared-components/buttons/PaymentButtons";
 import { toast } from "react-toastify";
 
-const Invoice = ({ showPreviousComponent, showNextComponent }) => {
-  const createInvoice = async () => {
-    const paymentRequestDetails = localStorage.getItem("paymentDetails");
-    if (!paymentRequestDetails) {
-      toast.error("Please fill out the entire form");
-      return;
-    }
-
-    const something = {
-      TIN: paymentRequestDetails.tin,
-      taxPayerName: "sample string 3",
-      taxtypeId: "PAYE",
-      amount: 1000,
-      payerName: "David",
-      payerAddress: "sample string 7",
-      payerPhone: "09077003490",
-      payerEmail: "sample@gmail.com",
-      taxOffice: "Asokoro",
-      narration: "sample string 11",
-      createdBy: "1000000826",
-      assessmentId: "",
-    };
-
-    paymentRequestDetails;
-  };
-
+const Invoice = ({
+  showPreviousComponent,
+  showNextComponent,
+  paymentRequestDetails,
+}) => {
   return (
     <section className="w-full md:max-w-[550px] sm:mx-auto md:mx-0 md:ml-auto py-8 px-6 md:px-10 rounded-[28px] border border-pumpkin mt-16 bg-[rgba(255,255,255,0.7)]">
       <article className="w-full flex justify-between items-center">
@@ -54,7 +33,9 @@ const Invoice = ({ showPreviousComponent, showNextComponent }) => {
           <h3 className={`font-semibold capitalize text-base  `}>
             Invoice Number
           </h3>
-          <p className="m-0 p-0 text-sm font-light">000001</p>
+          <p className="m-0 p-0 text-sm font-light">
+            {paymentRequestDetails?.invoice?.PRN}
+          </p>
         </article>
         <article className="flex flex-col justify-between gap-1 text-white max-w-[150px] w-full">
           <h3 className={`font-semibold capitalize text-base  `}>
