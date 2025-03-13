@@ -11,7 +11,7 @@ import { AxiosPost } from "../../services/http-service";
 const PaymentPeriod = ({
   showNextComponent,
   showPreviousComponent,
-  paymentRequestDetails,
+  storeInvoiceDetails,
 }) => {
   const [tableDetails, setTableDetails] = useState({
     year: "",
@@ -96,11 +96,12 @@ const PaymentPeriod = ({
       const invoice = apiResponse.Data[0];
       setInvoiceDetails(invoice);
       setPRN(invoice.PRN);
-      paymentRequestDetails.invoice = invoice;
-      localStorage.setItem(
-        "paymentDetails",
-        JSON.stringify(paymentRequestDetails)
-      );
+      storeInvoiceDetails(invoice);
+      // paymentRequestDetails.invoice = invoice;
+      // localStorage.setItem(
+      //   "paymentDetails",
+      //   JSON.stringify(paymentRequestDetails)
+      // );
     }
     return;
   };

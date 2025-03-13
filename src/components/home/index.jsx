@@ -23,6 +23,13 @@ const HomePage = () => {
     setPaymentRequestDetails({ ...paymentRequestDetails, ...taxPayerDetails });
   };
 
+  const handleStoreInvoiceDetails = (invoiceDetails) => {
+    setPaymentRequestDetails({
+      ...paymentRequestDetails,
+      invoice: { ...invoiceDetails },
+    });
+  };
+
   const handleShowPayerDetails = (e) => {
     e.preventDefault();
     showNextComponent(1);
@@ -115,6 +122,7 @@ const HomePage = () => {
                   showNextComponent={handleShowInvoice}
                   handleSetTaxPayerDetails={handleSetTaxPayerDetails}
                   paymentRequestDetails={paymentRequestDetails}
+                  storeInvoiceDetails={handleStoreInvoiceDetails}
                 />
               )}
 

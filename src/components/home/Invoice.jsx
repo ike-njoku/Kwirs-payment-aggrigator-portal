@@ -9,6 +9,7 @@ const Invoice = ({
   showNextComponent,
   paymentRequestDetails,
 }) => {
+  console.table(paymentRequestDetails);
   return (
     <section className="w-full md:max-w-[550px] sm:mx-auto md:mx-0 md:ml-auto py-8 px-6 md:px-10 rounded-[28px] border border-pumpkin mt-16 bg-[rgba(255,255,255,0.7)]">
       <article className="w-full flex justify-between items-center">
@@ -34,7 +35,8 @@ const Invoice = ({
             Invoice Number
           </h3>
           <p className="m-0 p-0 text-sm font-light">
-            {paymentRequestDetails?.invoice?.PRN}
+            {" "}
+            {paymentRequestDetails.invoice.PRN ?? "HEllo world"}{" "}
           </p>
         </article>
         <article className="flex flex-col justify-between gap-1 text-white max-w-[150px] w-full">
