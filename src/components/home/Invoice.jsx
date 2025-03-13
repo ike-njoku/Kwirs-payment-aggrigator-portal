@@ -36,32 +36,44 @@ const Invoice = ({
           </h3>
           <p className="m-0 p-0 text-sm font-light">
             {" "}
-            {paymentRequestDetails.invoice.PRN ?? "HEllo world"}{" "}
+            {paymentRequestDetails?.invoice.PRN ?? "N/A"}{" "}
           </p>
         </article>
         <article className="flex flex-col justify-between gap-1 text-white max-w-[150px] w-full">
           <h3 className={`font-semibold capitalize text-base  `}>
             Date Issued
           </h3>
-          <p className="m-0 p-0 text-sm font-light">dd/mm/yyyy</p>
+          <p className="m-0 p-0 text-sm font-light">
+            {new Date(
+              paymentRequestDetails?.invoice?.createdDate
+            ).toLocaleDateString() ?? ""}
+          </p>
         </article>
       </div>
       {/*  */}
       <div className="my-5 flex gap-8">
         <article className="flex flex-col gap-1 text-white max-w-[150px] w-full">
           <h3 className={`font-semibold capitalize text-base  `}>Billed to:</h3>
-          <p className="m-0 p-0 text-sm font-light">John Doe</p>
-          <p className="m-0 p-0 text-sm font-light max-w-[">
-            No 5 Okigwe Rd. Owerri, Imo state.
+          <p className="m-0 p-0 text-sm font-light">
+            {paymentRequestDetails?.payerName}
           </p>
-          <p className="m-0 p-0 text-sm font-light max-w-[">TIN: N1234567890</p>
+          <p className="m-0 p-0 text-sm font-light max-w-[">
+            {paymentRequestDetails?.invoice?.payerAddress}
+          </p>
+          <p className="m-0 p-0 text-sm font-light max-w-[">
+            TIN: {paymentRequestDetails?.invoice?.TIN ?? "N/A"}{" "}
+          </p>
         </article>
         <article className="flex flex-col  gap-1 text-white max-w-[150px] w-full">
           <h3 className={`font-semibold capitalize  text-base  `}>
             contact details:
           </h3>
-          <p className="m-0 p-0 text-sm font-light">+2348000000000</p>
-          <p className="m-0 p-0 text-sm font-light">johndoe@gmail.com</p>
+          <p className="m-0 p-0 text-sm font-light">
+            {paymentRequestDetails?.invoice?.payerPhone}
+          </p>
+          <p className="m-0 p-0 text-sm font-light">
+            {paymentRequestDetails?.invoice?.payerEmail}
+          </p>
         </article>
       </div>
       <InvoiceTable />
