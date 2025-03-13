@@ -31,8 +31,6 @@ const InvoiceTable = (paymentRequestDetails) => {
     setTableData(_tableData);
   };
 
-  console.log("____________data", tableData);
-
   useEffect(() => {
     getPaymentPeriods();
   }, []);

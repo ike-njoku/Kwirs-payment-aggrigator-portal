@@ -80,7 +80,8 @@ const Invoice = ({
       <div className="flex justify-end items-center mt-5">
         <h3 className=" font-semibold text-pumpkin">
           {" "}
-          Total Amount (₦): <span className="text-white"> 0.00</span>
+          Total Amount (₦):{" "}
+          <span className="text-white"> {paymentRequestDetails?.amount}</span>
         </h3>
       </div>
 
