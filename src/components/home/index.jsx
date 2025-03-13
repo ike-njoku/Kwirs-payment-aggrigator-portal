@@ -122,6 +122,7 @@ const HomePage = () => {
                 <Invoice
                   showNextComponent={handleShowPaymentGateway}
                   showPreviousComponent={() => showNextComponent(3)}
+                  paymentRequestDetails={paymentRequestDetails}
                 />
               )}
 

@@ -97,7 +97,10 @@ const PaymentPeriod = ({
       setInvoiceDetails(invoice);
       setPRN(invoice.PRN);
       paymentRequestDetails.invoice = invoice;
-      localStorage.setItem("paymentDetails", paymentRequestDetails);
+      localStorage.setItem(
+        "paymentDetails",
+        JSON.stringify(paymentRequestDetails)
+      );
     }
     return;
   };
