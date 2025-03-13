@@ -9,8 +9,8 @@ const formatDate = () => {
   };
 };
 
-const displayMonth = () => {
-  let month = "";
+export const displayMonth = (_month) => {
+  let month = _month ?? "";
   let date = formatDate();
   switch (date.month) {
     case 0:

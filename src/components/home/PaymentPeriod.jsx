@@ -46,8 +46,10 @@ const PaymentPeriod = ({
       return;
     }
 
-    await createPaymentPeriod(newData);
-
+    const createPeriodResponse = await createPaymentPeriod(newData);
+    if (!createPeriodResponse) {
+      return;
+    }
     setTableData((prev) => [...prev, newData]);
     setTotalAmount((prevAmount) => prevAmount + Number(tableDetails.amount));
 
@@ -62,12 +64,15 @@ const PaymentPeriod = ({
     paymentPeriodDetails.month = tableDetails.month;
     paymentPeriodDetails.year = tableDetails.year;
     paymentPeriodDetails.PRN = paymentRequestDetails?.invoice?.PRN ?? "N/A";
-    paymentPeriodDetails.CreatedBy = paymentDetails.invoice.TIN ?? "Tax Admin";
-
+    paymentPeriodDetails.CreatedBy = "1000000826"; //Insert admin details
     const requestUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/PaymentPeriod/Create`;
 
     const apiResponse = await AxiosPost(requestUrl, paymentPeriodDetails);
-    console.log("API RESPONSE ------------>>> ", apiResponse);
+    if (!apiResponse || apiResponse.StatusCode == 500) {
+      toast.error("could not create payment period");
+      return false;
+    }
+    return true;
   };
 
   const startYear = 1980;
@@ -103,7 +108,7 @@ const PaymentPeriod = ({
       payerEmail: paymentRequestDetails.payerEmail,
       taxOffice: paymentRequestDetails.TaxOffice,
       narration: "sample string 11",
-      createdBy: "1000000826",
+      createdBy: "1000000826", // Replace with admin details
       assessmentId: paymentRequestDetails.paymentAssessmentNumber ?? "",
     };
 
