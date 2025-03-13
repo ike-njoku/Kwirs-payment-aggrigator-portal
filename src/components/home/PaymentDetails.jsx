@@ -7,7 +7,11 @@ import { PaymentRequest } from "@/context/PaymentRequestDetails";
 import { AxiosGet } from "../../services/http-service";
 import { toast } from "react-toastify";
 
-const PaymentDetails = ({ showNextComponent, showPreviousComponent }) => {
+const PaymentDetails = ({
+  showNextComponent,
+  showPreviousComponent,
+  paymentRequestDetails,
+}) => {
   const { setPaymentRequestDetails } = useContext(PaymentRequest);
 
   const [paymentDetailsObject, setPaymentDetailsObject] = useState({});
@@ -133,6 +137,7 @@ const PaymentDetails = ({ showNextComponent, showPreviousComponent }) => {
           type="text"
           labelStyle="capitalize"
           handleChange={updatePaymentDetailsObject}
+          value={paymentRequestDetails?.amount ?? ""}
         />
         <PrimaryInput
           label="payer name"
@@ -141,6 +146,7 @@ const PaymentDetails = ({ showNextComponent, showPreviousComponent }) => {
           type="text"
           labelStyle="capitalize"
           handleChange={updatePaymentDetailsObject}
+          value={paymentRequestDetails?.payerName ?? ""}
         />
         <PrimaryInput
           label="payer phone"
@@ -149,6 +155,7 @@ const PaymentDetails = ({ showNextComponent, showPreviousComponent }) => {
           type="text"
           labelStyle="capitalize"
           handleChange={updatePaymentDetailsObject}
+          value={paymentRequestDetails.payerPhone ?? ""}
         />
         <PrimaryInput
           label="payer email"
@@ -157,6 +164,7 @@ const PaymentDetails = ({ showNextComponent, showPreviousComponent }) => {
           type="email"
           labelStyle="capitalize"
           handleChange={updatePaymentDetailsObject}
+          value={paymentRequestDetails.payerEmail ?? ""}
         />
         <PrimaryInput
           label="address"
@@ -165,6 +173,7 @@ const PaymentDetails = ({ showNextComponent, showPreviousComponent }) => {
           type="text"
           labelStyle="capitalize"
           handleChange={updatePaymentDetailsObject}
+          value={paymentRequestDetails.address ?? ""}
         />
         <div className="w-full flex justify-between gap-4 items-center">
           <PaymentButtons label="Back" onClick={showPreviousComponent} />

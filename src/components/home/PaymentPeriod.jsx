@@ -8,7 +8,11 @@ import { selectInputMonths } from "@/utils/functions";
 import { toast } from "react-toastify";
 import { AxiosPost } from "../../services/http-service";
 
-const PaymentPeriod = ({ showNextComponent, showPreviousComponent }) => {
+const PaymentPeriod = ({
+  showNextComponent,
+  showPreviousComponent,
+  paymentRequestDetails,
+}) => {
   const [tableDetails, setTableDetails] = useState({
     year: "",
     amount: "",
@@ -19,12 +23,7 @@ const PaymentPeriod = ({ showNextComponent, showPreviousComponent }) => {
   const [PRN, setPRN] = useState("N/A");
   const [invoiceDetails, setInvoiceDetails] = useState({});
   const paymentDetails =
-    JSON.parse(localStorage.getItem("paymentDetails")) || [];
-
-  console.log({ paymentDetails });
-  console.log("------------------");
-  console.table({ PRN: PRN });
-  console.log("------------------");
+    JSON.parse(localStorage.getItem("paymentDetails") ?? "{}") || [];
 
   const handleAddItemToTable = () => {
     const period = `${

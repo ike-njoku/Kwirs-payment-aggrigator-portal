@@ -80,6 +80,7 @@ const HomePage = () => {
                 <AssessmentNumberComponent
                   paymentAssessmentNumberment={handleSetPaymentAssessmentNumber}
                   showNextComponent={handleShowPayerDetails}
+                  paymentRequestDetails={paymentRequestDetails}
                 />
               )}
               {/* 
@@ -96,12 +97,13 @@ const HomePage = () => {
                   // showNextComponent={handleShowPaymentPeriod}
                   showNextComponent={handleShowTaxPayerDetails}
                   showPreviousComponent={() => showNextComponent(0)}
+                  paymentRequestDetails={paymentRequestDetails}
                 />
               )}
               {nextComponent === 2 && (
                 <TaxPayerDetails
                   showPreviousComponent={() => showNextComponent(1)}
-                  // showNextComponent={handleShowInvoice}
+                  paymentRequestDetails={paymentRequestDetails}
                   showNextComponent={handleShowPaymentPeriod}
                   handleSetTaxPayerDetails={handleSetTaxPayerDetails}
                 />
@@ -110,9 +112,9 @@ const HomePage = () => {
               {nextComponent === 3 && (
                 <PaymentPeriod
                   showPreviousComponent={() => showNextComponent(2)}
-                  // showNextComponent={handleShowTaxPayerDetails}
                   showNextComponent={handleShowInvoice}
                   handleSetTaxPayerDetails={handleSetTaxPayerDetails}
+                  paymentRequestDetails={paymentRequestDetails}
                 />
               )}
 

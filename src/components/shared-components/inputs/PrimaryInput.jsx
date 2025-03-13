@@ -8,6 +8,7 @@ const PrimaryInput = ({
   handleChange,
   value,
   labelStyle = "uppercase",
+  disabled,
 }) => {
   return (
     <div className="w-full mb-5">
@@ -26,6 +27,7 @@ const PrimaryInput = ({
           placeholder={placeholder}
           name={name}
           value={value}
+          disabled={disabled}
         />
       </div>
     </div>
