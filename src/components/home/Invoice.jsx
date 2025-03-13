@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React from "react";
+import React, { useEffect } from "react";
 import InvoiceTable from "../shared-components/table/InvoiceTable";
 import PaymentButtons from "../shared-components/buttons/PaymentButtons";
 import { toast } from "react-toastify";
@@ -9,7 +9,6 @@ const Invoice = ({
   showNextComponent,
   paymentRequestDetails,
 }) => {
-  console.table(paymentRequestDetails);
   return (
     <section className="w-full md:max-w-[550px] sm:mx-auto md:mx-0 md:ml-auto py-8 px-6 md:px-10 rounded-[28px] border border-pumpkin mt-16 bg-[rgba(255,255,255,0.7)]">
       <article className="w-full flex justify-between items-center">
@@ -76,7 +75,7 @@ const Invoice = ({
           </p>
         </article>
       </div>
-      <InvoiceTable />
+      <InvoiceTable paymentRequestDetails={paymentRequestDetails} />
 
       <div className="flex justify-end items-center mt-5">
         <h3 className=" font-semibold text-pumpkin">
