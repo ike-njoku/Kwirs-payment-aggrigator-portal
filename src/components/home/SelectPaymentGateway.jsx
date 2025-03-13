@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import GatewayRadio from "../shared-components/inputs/GatewayRadio";
 import icadpay from "../../../public/images/icad-logo.png";
 import remita from "../../../public/images/remita.png";
@@ -34,10 +34,10 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
         console.error("Error fetching invoice:", error);
       }
     };
-  
+
     fetchInvoice();
   }, []);
-  
+
   const handleSelectGateway = (e) => {
     setSelectedOption(e.target.value);
   };
@@ -70,9 +70,7 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
         />
       ))}
 
-
-
-{/* <div className="w-full flex justify-between gap-4 items-center mt-6">
+      {/* <div className="w-full flex justify-between gap-4 items-center mt-6">
         <PaymentButtons label="Back" onClick={showPreviousComponent} />
 
         {selectedOption === "flutterWave" && (

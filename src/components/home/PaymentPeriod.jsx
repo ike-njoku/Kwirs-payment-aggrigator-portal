@@ -12,6 +12,7 @@ const PaymentPeriod = ({
   showNextComponent,
   showPreviousComponent,
   storeInvoiceDetails,
+  paymentRequestDetails,
 }) => {
   const [tableDetails, setTableDetails] = useState({
     year: "",
@@ -25,7 +26,7 @@ const PaymentPeriod = ({
   const paymentDetails =
     JSON.parse(localStorage.getItem("paymentDetails") ?? "{}") || [];
 
-  const handleAddItemToTable = () => {
+  const handleAddItemToTable = async () => {
     const period = `${
       Number(tableDetails.month) + 1 < 10
         ? `0${Number(tableDetails.month) + 1}`
@@ -44,6 +45,9 @@ const PaymentPeriod = ({
       );
       return;
     }
+
+    await createPaymentPeriod(newData);
+
     setTableData((prev) => [...prev, newData]);
     setTotalAmount((prevAmount) => prevAmount + Number(tableDetails.amount));
 
@@ -53,6 +57,19 @@ const PaymentPeriod = ({
       month: "",
     });
   };
+
+  const createPaymentPeriod = async (paymentPeriodDetails) => {
+    paymentPeriodDetails.month = tableDetails.month;
+    paymentPeriodDetails.year = tableDetails.year;
+    paymentPeriodDetails.PRN = paymentRequestDetails?.invoice?.PRN ?? "N/A";
+    paymentPeriodDetails.CreatedBy = paymentDetails.invoice.TIN ?? "Tax Admin";
+
+    const requestUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/PaymentPeriod/Create`;
+
+    const apiResponse = await AxiosPost(requestUrl, paymentPeriodDetails);
+    console.log("API RESPONSE ------------>>> ", apiResponse);
+  };
+
   const startYear = 1980;
   const currentYear = new Date().getFullYear();
 
