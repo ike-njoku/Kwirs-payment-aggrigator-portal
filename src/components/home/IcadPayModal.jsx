@@ -55,7 +55,7 @@ const IcadPayModal = ({ isOpen, onClose, invoiceData }) => {
       &times;
     </button>
 
-    <h2 className="text-lg font-bold mb-4">Complete Payment</h2>
+    <h2 className="text-lg font-bold mb-4"> Payment Details</h2>
 
     <form className="flex flex-col gap-3" id="payment-form">
       <div>
@@ -83,7 +83,7 @@ const IcadPayModal = ({ isOpen, onClose, invoiceData }) => {
         <input type="text" className="border p-3 rounded-md w-full" value={invoiceData.amount} readOnly />
       </div>
 
-      <button type="button" className="bg-blue-600 text-white p-3 rounded-md mt-4" onClick={iCadPay}>
+      <button type="button" className="bg-orange-600 text-white p-3 rounded-md mt-4" onClick={iCadPay}>
         Submit Payment
       </button>
     </form>
