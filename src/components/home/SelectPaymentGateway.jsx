@@ -20,10 +20,31 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
   useEffect(() => {
     const fetchInvoice = async () => {
       try {
+
+        // getting the PRN number form the Local storage
+        const storedData = localStorage.getItem("paymentDetails");
+        console.log("Stored Data:", storedData); // Debugging
+    
+        if (!storedData) {
+          console.error("No payment details found in localStorage");
+          return;
+        }
+    
+        const parsedData = JSON.parse(storedData);
+    
+        if (!parsedData.invoice || !parsedData.invoice.PRN) {
+          console.error("Invalid payment details structure");
+          return;
+        }
+    
+        const prnNumber = parsedData.invoice.PRN; // Extract PRN dynamically
+    
         const response = await fetch(
-          "http://nofifications.fctirs.gov.ng/api/invoice/GetSingleInvoice/6354-2177-9124"
+          `http://nofifications.fctirs.gov.ng/api/invoice/GetSingleInvoice/${prnNumber}`
         );
+    
         const result = await response.json();
+    
         if (result.StatusCode === 200 && result.Data.length > 0) {
           setInvoiceData(result.Data[0]); // Store the first invoice object
           console.log("Invoice Data:", result.Data[0]); // Debugging
@@ -34,6 +55,7 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
         console.error("Error fetching invoice:", error);
       }
     };
+    
 
     fetchInvoice();
   }, []);

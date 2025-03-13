@@ -83,7 +83,7 @@ const IcadPayModal = ({ isOpen, onClose, invoiceData }) => {
         <input type="text" className="border p-3 rounded-md w-full" value={invoiceData.amount} readOnly />
       </div>
 
-      <button type="button" className="bg-orange-600 text-white p-3 rounded-md mt-4" onClick={iCadPay}>
+      <button type="button" className="bg-orange-600 text-white p-3 rounded-md mt-4" onClick={() => { iCadPay(); onClose(); }}>
         Submit Payment
       </button>
     </form>
