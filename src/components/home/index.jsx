@@ -103,6 +103,7 @@ const HomePage = () => {
                   showPreviousComponent={() => showNextComponent(1)}
                   // showNextComponent={handleShowInvoice}
                   showNextComponent={handleShowPaymentPeriod}
+                  handleSetTaxPayerDetails={handleSetTaxPayerDetails}
                 />
               )}
 
