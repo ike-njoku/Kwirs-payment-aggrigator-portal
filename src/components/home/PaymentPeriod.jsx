@@ -67,14 +67,13 @@ const PaymentPeriod = ({
   };
 
   const createPaymentInvoice = async () => {
-    console.log("THIS FUNCTION WAS CALLED");
-    const paymentRequestDetails = JSON.parse(
-      localStorage.getItem("paymentDetails")
-    );
-    if (!paymentRequestDetails) {
+    const _paymentRequestDetails = localStorage.getItem("paymentDetails");
+    if (!_paymentRequestDetails) {
       toast.error("Please fill out the form leading here");
       return;
     }
+
+    const paymentRequestDetails = JSON.parse(_paymentRequestDetails);
 
     const requestObject = {
       TIN: paymentRequestDetails.TIN ?? "N/A",
@@ -102,8 +101,6 @@ const PaymentPeriod = ({
     }
     return;
   };
-
-  console.log("___ INVOICE ____ ", invoiceDetails);
 
   useEffect(() => {
     createPaymentInvoice();
