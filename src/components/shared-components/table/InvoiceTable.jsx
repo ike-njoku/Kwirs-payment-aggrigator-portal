@@ -4,15 +4,6 @@ import { displayMonth } from "../../../utils/functions";
 
 const InvoiceTable = (paymentRequestDetails) => {
   const [tableData, setTableData] = useState([]);
-  // const tableData = [
-  //   {
-  //     prn: paymentRequestDetails.paymentRequestDetails.invoice?.PRN,
-  //     agency: "some agency",
-  //     taxType: "some tax type",
-  //     period: "Feb 2024",
-  //     amount: paymentRequestDetails?.paymentRequestDetails?.invoice?.amount,
-  //   },
-  // ];
 
   const getPaymentPeriods = async () => {
     const PRN = paymentRequestDetails.paymentRequestDetails.invoice?.PRN;

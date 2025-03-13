@@ -35,7 +35,7 @@ const Invoice = ({
           </h3>
           <p className="m-0 p-0 text-sm font-light">
             {" "}
-            {paymentRequestDetails?.invoice.PRN ?? "N/A"}{" "}
+            {paymentRequestDetails?.invoice?.PRN ?? "N/A"}{" "}
           </p>
         </article>
         <article className="flex flex-col justify-between gap-1 text-white max-w-[150px] w-full">
