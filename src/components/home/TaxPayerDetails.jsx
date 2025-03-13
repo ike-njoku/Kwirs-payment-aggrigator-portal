@@ -79,9 +79,9 @@ const TaxPayerDetails = ({
         )}
         <div className="w-full flex justify-between gap-4 items-center">
           <PaymentButtons label="Back" onClick={showPreviousComponent} />
-          {/* {tinDetails && Object.keys(tinDetails).length > 0 && ( */}
-          <PaymentButtons onClick={showNextComponent} />
-          {/* //  )} */}
+          {tinDetails && Object.keys(tinDetails).length > 0 && (
+            <PaymentButtons onClick={showNextComponent} />
+          )}
         </div>
       </div>
     </div>

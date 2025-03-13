@@ -60,6 +60,15 @@ const PaymentPeriod = ({
     });
   };
 
+  const checkForAmountMismatch = (e) => {
+    const sum = Number(tableDetails.amount) + totalAmount;
+    if (paymentDetails && sum < Number(paymentDetails?.amount)) {
+      toast.error(`Total amount cannot be less than ${paymentDetails?.amount}`);
+      return;
+    }
+    showNextComponent(e);
+  };
+
   const createPaymentPeriod = async (paymentPeriodDetails) => {
     paymentPeriodDetails.month = tableDetails.month;
     paymentPeriodDetails.year = tableDetails.year;
@@ -195,7 +204,7 @@ const PaymentPeriod = ({
 
         <div className="w-full flex justify-between gap-4 items-center mt-6">
           <PaymentButtons label="Back" onClick={showPreviousComponent} />
-          <PaymentButtons onClick={showNextComponent} />
+          <PaymentButtons onClick={checkForAmountMismatch} />
         </div>
       </div>
     </section>
