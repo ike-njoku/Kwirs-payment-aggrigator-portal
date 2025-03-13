@@ -16,10 +16,15 @@ const PaymentPeriod = ({ showNextComponent, showPreviousComponent }) => {
   });
   const [tableData, setTableData] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [PRN, setPRN] = useState("N/A");
+  const [invoiceDetails, setInvoiceDetails] = useState({});
   const paymentDetails =
     JSON.parse(localStorage.getItem("paymentDetails")) || [];
 
   console.log({ paymentDetails });
+  console.log("------------------");
+  console.table({ PRN: PRN });
+  console.log("------------------");
 
   const handleAddItemToTable = () => {
     const period = `${
@@ -63,31 +68,43 @@ const PaymentPeriod = ({ showNextComponent, showPreviousComponent }) => {
   };
 
   const createPaymentInvoice = async () => {
-    const paymentRequestDetails = localStorage.getItem("aymentDetails");
-    // if (!paymentRequestDetails) {
-    //   toast.error("Please fill out the form leading here");
-    //   return;
-    // }
+    console.log("THIS FUNCTION WAS CALLED");
+    const paymentRequestDetails = JSON.parse(
+      localStorage.getItem("paymentDetails")
+    );
+    if (!paymentRequestDetails) {
+      toast.error("Please fill out the form leading here");
+      return;
+    }
 
     const requestObject = {
-      TIN: paymentRequestDetails.tin ?? "N/A",
+      TIN: paymentRequestDetails.TIN ?? "N/A",
       taxPayerName: paymentRequestDetails.payerName,
       taxtypeId: "PAYE",
-      amount: paymentRequestDetails.amount,
+      amount: Number(paymentRequestDetails.amount),
       payerName: paymentRequestDetails.payerName,
       payerAddress: paymentRequestDetails.address,
       payerPhone: paymentRequestDetails.payerPhone,
       payerEmail: paymentRequestDetails.payerEmail,
       taxOffice: paymentRequestDetails.TaxOffice,
       narration: "sample string 11",
-      createdBy: paymentRequestDetails.tin,
+      createdBy: "1000000826",
       assessmentId: paymentRequestDetails.paymentAssessmentNumber ?? "",
     };
 
     const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/invoice/Create`;
     const apiResponse = await AxiosPost(apiUrl, requestObject);
-    console.log(" PRN RESPONSE ------------>>> ", apiResponse);
+    if (apiResponse && apiResponse.Data) {
+      const invoice = apiResponse.Data[0];
+      setInvoiceDetails(invoice);
+      setPRN(invoice.PRN);
+      paymentRequestDetails.invoice = invoice;
+      localStorage.setItem("paymentDetails", paymentRequestDetails);
+    }
+    return;
   };
+
+  console.log("___ INVOICE ____ ", invoiceDetails);
 
   useEffect(() => {
     createPaymentInvoice();
@@ -150,7 +167,7 @@ const PaymentPeriod = ({ showNextComponent, showPreviousComponent }) => {
           </button>
         </div>
 
-        <PaymentPeriodTable tableData={tableData} />
+        <PaymentPeriodTable tableData={tableData} PRN={PRN ?? "N/A"} />
 
         <div className="flex justify-end items-center mt-5">
           <h3 className="text-white font-semibold">

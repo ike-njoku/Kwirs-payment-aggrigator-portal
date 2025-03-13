@@ -1,6 +1,6 @@
 import React from "react";
 
-const PaymentPeriodTable = ({ tableData = [] }) => {
+const PaymentPeriodTable = ({ tableData = [], PRN }) => {
   const tableHeadings = ["S/N", "PRN", "Period (mm/yy)", "Amount (₦)"];
   return (
     <div className="relative overflow-x-auto h-auto shadow-md sm:rounded-lg mt-8">
@@ -33,7 +33,7 @@ const PaymentPeriodTable = ({ tableData = [] }) => {
                   className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize text-sm"
                 >
                   {/* {tableInfo.title} */}
-                  ...
+                  {PRN}
                 </td>
 
                 <td className="px-6 py-4 text-gray-900 capitalize text-sm">
