@@ -40,7 +40,7 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
         const prnNumber = parsedData.invoice.PRN; // Extract PRN dynamically
     
         const response = await fetch(
-          `http://nofifications.fctirs.gov.ng/api/invoice/GetSingleInvoice/${prnNumber}`
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/invoice/GetSingleInvoice/${prnNumber}`
         );
     
         const result = await response.json();
