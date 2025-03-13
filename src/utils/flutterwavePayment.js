@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useFlutterwave, closePaymentModal } from "flutterwave-react-v3";
+import { PaymentRequest } from "@/context/PaymentRequestDetails";
 
 const PayWithFlutterWave = () => {
   const [invoiceData, setInvoiceData] = useState(null);
   const [isPaymentReady, setIsPaymentReady] = useState(false);
   const [paymentResponse, setPaymentResponse] = useState(null);
+  const { paymentRequestDetails, setPaymentRequestDetails } =
+    useContext(PaymentRequest);
 
-  const invoiceId = "6318-2159-9048"; // Replace with dynamic ID if needed
+  const invoiceId = paymentRequestDetails?.invoice.PRN; //"6318-2159-9048"; // Replace with dynamic ID if needed
   const publicKey = "FLWPUBK_TEST-1c4502bfb6f511ca669c5246ffec899a-X"; // Use env variables in production
-  const API_BASE_URL = "http://nofifications.fctirs.gov.ng";
+  const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
   useEffect(() => {
     const fetchInvoiceData = async () => {
@@ -105,6 +108,5 @@ const PayWithFlutterWave = () => {
     </button>
   );
 };
-
 
 export default PayWithFlutterWave;
