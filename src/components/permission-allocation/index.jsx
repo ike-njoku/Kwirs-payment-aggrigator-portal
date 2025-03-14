@@ -73,7 +73,6 @@
 //   }
 // }, [selectedRoleId, allRolePermissions]);
 
-
 //   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 //   const fetchRoles = async () => {
@@ -155,7 +154,6 @@
 //     setTableData(tableData);
 //   };
 
-
 //   const fetchUserName = async (userId) => {
 //     try {
 //       const response = await AxiosGet(`${API_BASE_URL}/api/User/GetUser/${userId}`);
@@ -165,7 +163,7 @@
 //       return "Unknown";
 //     }
 //   };
-  
+
 //   const fetchRoleName = async (roleId) => {
 //     try {
 //       const response = await AxiosGet(`${API_BASE_URL}/api/Role/GetRole/${roleId}`);
@@ -175,7 +173,7 @@
 //       return "Unknown";
 //     }
 //   };
-  
+
 //   const fetchPermissionName = async (permissionId) => {
 //     try {
 //       const response = await AxiosGet(`${API_BASE_URL}/api/Permission/GetPermission/${permissionId}`);
@@ -185,12 +183,10 @@
 //       return "Unknown";
 //     }
 //   };
-  
-
 
 //   useEffect(() => {
 //     if (!selectedRoleId) return; // Ensure roleId exists before making API call
-  
+
 //     const fetchRolePermissions = async () => {
 //       setLoading(true);
 //       try {
@@ -198,13 +194,13 @@
 //         const response = await AxiosGet(
 //           `${API_BASE_URL}/api/RolePermission/GetAllRolePermission/${selectedRoleId}`
 //         );
-        
+
 //         console.log("API Response:", response.data); // Debugging
-  
+
 //         const rolePermissions = Array.isArray(response.data.Data) ? response.data.Data : [];
-  
+
 //         console.log("Fetched role permissions:", rolePermissions); // Debugging
-  
+
 //         // 2️⃣ Fetch corresponding names (CreatedBy, Role, Permission)
 //         const formattedData = await Promise.all(
 //           rolePermissions.map(async (item) => ({
@@ -214,7 +210,7 @@
 //             permissionId: item.permissionId, // Keep permissionId for delete action
 //           }))
 //         );
-  
+
 //         // 3️⃣ Update table data state
 //         setTableData(formattedData);
 //       } catch (error) {
@@ -223,10 +219,9 @@
 //         setLoading(false);
 //       }
 //     };
-  
+
 //     fetchRolePermissions();
 //   }, [selectedRoleId]);
-  
 
 //   const handleDeleteResource = async (RoleResourceId) => {
 //     try {
@@ -256,7 +251,6 @@
 //   // const handleUpdateRoleResource = (resource) => {
 //   //   setSelectedRoleResource(resource);
 //   //   console.log("SeLECTING ");
-//   //   console.table(resource);
 //   //   setOpenEditModal(true);
 //   // };
 
@@ -265,7 +259,6 @@
 //     setSelectedRoleResource(roleResource);
 //     setOpenEditModal(true);
 //   };
-  
 
 //   useEffect(() => {
 //     fetchRoles();
@@ -277,9 +270,6 @@
 //       setRoleResources([]);
 //     }
 //   }, [selectedRoleId]);
-
-
-  
 
 //   return (
 //     <DashboardLayout page="Permission Allocation">
@@ -320,8 +310,8 @@
 //             <p className="text-red-500">{error}</p>
 //           ) : (
 //             <RolePermissionTable
-//          tableHeadings={tableHeadings} 
-//          tableData={tableData} 
+//          tableHeadings={tableHeadings}
+//          tableData={tableData}
 //         //  onDelete={handleDeletePermission}
 //         //  onEdit={handleEditPermission}
 //           />
@@ -346,7 +336,7 @@
 //          selectedRoleResource={selectedRoleResource}
 //          selectedRole={selectedRole}
 //        />
-       
+
 //         )}
 //       </section>
 //     </DashboardLayout>
@@ -354,11 +344,6 @@
 // };
 
 // export default PermissionAllocationPage;
-
-
-
-
-
 
 "use client";
 import React, { useEffect, useState } from "react";
@@ -373,7 +358,12 @@ import { FaPlus, FaFilter } from "react-icons/fa";
 import { MAIN_MENU, SUB_MENU } from "../../utils/constants";
 
 const PermissionAllocationPage = () => {
-  const tableHeadings = ["Created By", "Role Name", "Permission Name", "Actions"];
+  const tableHeadings = [
+    "Created By",
+    "Role Name",
+    "Permission Name",
+    "Actions",
+  ];
   const [roleResources, setRoleResources] = useState([]);
   const [roles, setRoles] = useState([]);
   const [permissions, setPermissions] = useState([]);
@@ -386,57 +376,58 @@ const PermissionAllocationPage = () => {
   const [tableData, setTableData] = useState([]);
   const [selectedRole, setSelectedRole] = useState({});
   const [allRolePermissions, setAllRolePermissions] = useState([]);
-const [filteredData, setFilteredData] = useState([]);
-const [selectedRoleId, setSelectedRoleId] = useState(null); 
-const [userRoleId, setUserRoleId] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [selectedRoleId, setSelectedRoleId] = useState(null);
+  const [userRoleId, setUserRoleId] = useState([]);
 
+  const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+  useEffect(() => {
+    const fetchAllRolePermissions = async () => {
+      setLoading(true);
+      try {
+        const response = await AxiosGet(
+          `${API_BASE_URL}/api/RolePermission/GetAll`
+        );
 
+        console.log("API Response:");
 
-useEffect(() => {
-  const fetchAllRolePermissions = async () => {
-    setLoading(true);
-    try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/RolePermission/GetAll`);
+        const rolePermissions = Array.isArray(response.data.Data)
+          ? response.data.Data
+          : [];
 
-      console.log("API Response:");
+        const formattedData = await Promise.all(
+          rolePermissions.map(async (item) => ({
+            createdBy: await fetchUserName(item.CreatedBy),
+            roleName: await fetchRoleName(item.RoleId),
+            permissionName: await fetchPermissionName(item.permissionId),
+            roleId: item.RoleId,
+            permissionId: item.permissionId,
+          }))
+        );
 
-      const rolePermissions = Array.isArray(response.data.Data) ? response.data.Data : [];
+        setAllRolePermissions(formattedData);
+        setFilteredData(formattedData);
+      } catch (error) {
+        console.error("Error fetching role permissions:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      const formattedData = await Promise.all(
-        rolePermissions.map(async (item) => ({
-          createdBy: await fetchUserName(item.CreatedBy),
-          roleName: await fetchRoleName(item.RoleId),
-          permissionName: await fetchPermissionName(item.permissionId),
-          roleId: item.RoleId,
-          permissionId: item.permissionId,
-        }))
+    fetchAllRolePermissions();
+  }, []);
+
+  useEffect(() => {
+    if (selectedRoleId) {
+      const filtered = allRolePermissions.filter(
+        (item) => item.roleId === selectedRoleId
       );
-
-      setAllRolePermissions(formattedData); 
-      setFilteredData(formattedData);
-    } catch (error) {
-      console.error("Error fetching role permissions:", error);
-    } finally {
-      setLoading(false);
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(allRolePermissions);
     }
-  };
-
-  fetchAllRolePermissions();
-}, []);
-
-
-useEffect(() => {
-  if (selectedRoleId) {
-    const filtered = allRolePermissions.filter(
-      (item) => item.roleId === selectedRoleId
-    );
-    setFilteredData(filtered);
-  } else {
-    setFilteredData(allRolePermissions);
-  }
-}, [selectedRoleId, allRolePermissions]);
+  }, [selectedRoleId, allRolePermissions]);
 
   const fetchRoles = async () => {
     try {
@@ -517,46 +508,48 @@ useEffect(() => {
     setTableData(tableData);
   };
 
-
   const fetchUserName = async (userId) => {
     try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/User/GetUser/${userId}`);
-      console.table(response)
-      console.log("-------------->>> ", response)
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/User/GetUser/${userId}`
+      );
       return response?.FirstName || "Unknown";
     } catch (error) {
       console.error(`Error fetching user (${userId}):`, error);
       return "Unknown";
     }
   };
-  
+
   const fetchRoleName = async (roleId) => {
     try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/Role/GetRole/${roleId}`);
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/Role/GetRole/${roleId}`
+      );
       return response.data?.Name || "Unknown";
     } catch (error) {
       console.error(`Error fetching role (${roleId}):`, error);
       return "Unknown";
     }
   };
-  
+
   const fetchPermissionName = async (permissionId) => {
     try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/Permission/GetPermission/${permissionId}`);
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/Permission/GetPermission/${permissionId}`
+      );
       return response.data?.Data?.description || "Unknown";
     } catch (error) {
       console.error(`Error fetching permission (${permissionId}):`, error);
       return "Unknown";
     }
   };
-  
 
   const fetchPermissions = async (roleId) => {
     if (!roleId) {
       console.error("Error: roleId is undefined!");
       return;
     }
-  
+
     try {
       const response = await AxiosGet(
         `https://nofifications.fctirs.gov.ng/api/RolePermission/GetAllRolePermission/${roleId}`
@@ -566,7 +559,6 @@ useEffect(() => {
       console.error("Error fetching role permissions:", error);
     }
   };
-  
 
   useEffect(() => {
     if (userRoleId) {
@@ -575,25 +567,25 @@ useEffect(() => {
       console.error("User role ID is missing!");
     }
   }, [userRoleId]);
-  
-
 
   useEffect(() => {
-    if (!selectedRoleId) return; 
-  
+    if (!selectedRoleId) return;
+
     const fetchRolePermissions = async () => {
       setLoading(true);
       try {
         const response = await AxiosGet(
           `${API_BASE_URL}/api/RolePermission/GetAllRolePermission/${selectedRoleId}`
         );
-        
+
         // console.log("API Response:", response);
-  
-        const rolePermissions = Array.isArray(response.data.Data) ? response.data.Data : [];
-  
+
+        const rolePermissions = Array.isArray(response.data.Data)
+          ? response.data.Data
+          : [];
+
         console.log("Fetched role permissions:", rolePermissions);
-  
+
         const formattedData = await Promise.all(
           rolePermissions.map(async (item) => ({
             createdBy: await fetchUserName(item.CreatedBy),
@@ -602,7 +594,7 @@ useEffect(() => {
             permissionId: item.permissionId,
           }))
         );
-  
+
         setTableData(formattedData);
       } catch (error) {
         console.error("Error fetching role permissions:", error);
@@ -610,34 +602,37 @@ useEffect(() => {
         setLoading(false);
       }
     };
-  
+
     fetchRolePermissions();
   }, [selectedRoleId]);
-  
 
-  const handleDeletePermission = async (roleId) => { 
-      if (!roleId) {
-            toast.error("Invalid permission ID.");
-            return;
-          }
+  const handleDeletePermission = async (roleId) => {
+    if (!roleId) {
+      toast.error("Invalid permission ID.");
+      return;
+    }
 
     try {
       const deleteResponse = await AxiosGet(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/RolePermission/RemovePermissionFromRole?roleId=${roleId}`
-      ); 
+      );
 
-        if (response.data?.StatusCode === 200) {
-             toast.success("Permission deleted successfully!");
-             fetchPermissions();
-           } else {
-             toast.error(response.data?.StatusMessage || "Failed to delete permission.");
-           }
-         } catch (error) {
-           console.error("Delete error:", error.response || error.message);
-           toast.error(error.response?.data?.StatusMessage || "Error deleting permission. Kindly contact the Admin.");
-         }
-       };
-
+      if (response.data?.StatusCode === 200) {
+        toast.success("Permission deleted successfully!");
+        fetchPermissions();
+      } else {
+        toast.error(
+          response.data?.StatusMessage || "Failed to delete permission."
+        );
+      }
+    } catch (error) {
+      console.error("Delete error:", error.response || error.message);
+      toast.error(
+        error.response?.data?.StatusMessage ||
+          "Error deleting permission. Kindly contact the Admin."
+      );
+    }
+  };
 
   const handleSetSelectedRole = (e) => {
     setSelectedRoleId(e.target.value);
@@ -647,7 +642,6 @@ useEffect(() => {
   // const handleUpdateRoleResource = (resource) => {
   //   setSelectedRoleResource(resource);
   //   console.log("SeLECTING ");
-  //   console.table(resource);
   //   setOpenEditModal(true);
   // };
 
@@ -656,7 +650,6 @@ useEffect(() => {
     setSelectedRoleResource(roleResource);
     setOpenEditModal(true);
   };
-  
 
   useEffect(() => {
     fetchRoles();
@@ -668,9 +661,6 @@ useEffect(() => {
       setRoleResources([]);
     }
   }, [selectedRoleId]);
-
-
-  
 
   return (
     <DashboardLayout page="Permission Allocation">
@@ -711,11 +701,11 @@ useEffect(() => {
             <p className="text-red-500">{error}</p>
           ) : (
             <RolePermissionTable
-         tableHeadings={tableHeadings} 
-         tableData={tableData} 
-         onDelete={handleDeletePermission}
-        //  onEdit={handleEditPermission}
-          />
+              tableHeadings={tableHeadings}
+              tableData={tableData}
+              onDelete={handleDeletePermission}
+              //  onEdit={handleEditPermission}
+            />
           )}
         </div>
 
@@ -727,17 +717,16 @@ useEffect(() => {
         )}
 
         {openEditModal && selectedRoleResource && (
-         <EditRoleResourceModal
-         isOpen={openEditModal}
-         onClose={() => {
-           setOpenEditModal(false);
-           fetchRoleResources();
-         }}
-         roleResourceId={selectedRoleResource?.RoleResourceId} // Ensuring it's correctly set
-         selectedRoleResource={selectedRoleResource}
-         selectedRole={selectedRole}
-       />
-       
+          <EditRoleResourceModal
+            isOpen={openEditModal}
+            onClose={() => {
+              setOpenEditModal(false);
+              fetchRoleResources();
+            }}
+            roleResourceId={selectedRoleResource?.RoleResourceId} // Ensuring it's correctly set
+            selectedRoleResource={selectedRoleResource}
+            selectedRole={selectedRole}
+          />
         )}
       </section>
     </DashboardLayout>

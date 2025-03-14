@@ -63,7 +63,6 @@ const ResourcesAllocationPage = () => {
     }
   };
 
-
   const fetchAllResources = async () => {
     const apiResponse = await AxiosGet(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/GetAllResource`
@@ -129,19 +128,11 @@ const ResourcesAllocationPage = () => {
     setSelectedRole(roles.filter((role) => role.Id == e.target.value)[0]);
   };
 
-  // const handleUpdateRoleResource = (resource) => {
-  //   setSelectedRoleResource(resource);
-  //   console.log("SeLECTING ");
-  //   console.table(resource);
-  //   setOpenEditModal(true);
-  // };
-
   const handleUpdateRoleResource = (roleResource) => {
     console.log("Selected Role Resource:", roleResource); // Debugging log
     setSelectedRoleResource(roleResource);
     setOpenEditModal(true);
   };
-  
 
   useEffect(() => {
     fetchRoles();
@@ -153,9 +144,6 @@ const ResourcesAllocationPage = () => {
       setRoleResources([]);
     }
   }, [selectedRoleId]);
-
-
-  
 
   return (
     <DashboardLayout page="Resource Allocation">
@@ -214,17 +202,16 @@ const ResourcesAllocationPage = () => {
         )}
 
         {openEditModal && selectedRoleResource && (
-         <EditRoleResourceModal
-         isOpen={openEditModal}
-         onClose={() => {
-           setOpenEditModal(false);
-           fetchRoleResources();
-         }}
-         roleResourceId={selectedRoleResource?.RoleResourceId} // Ensuring it's correctly set
-         selectedRoleResource={selectedRoleResource}
-         selectedRole={selectedRole}
-       />
-       
+          <EditRoleResourceModal
+            isOpen={openEditModal}
+            onClose={() => {
+              setOpenEditModal(false);
+              fetchRoleResources();
+            }}
+            roleResourceId={selectedRoleResource?.RoleResourceId} // Ensuring it's correctly set
+            selectedRoleResource={selectedRoleResource}
+            selectedRole={selectedRole}
+          />
         )}
       </section>
     </DashboardLayout>
@@ -232,4 +219,3 @@ const ResourcesAllocationPage = () => {
 };
 
 export default ResourcesAllocationPage;
-
