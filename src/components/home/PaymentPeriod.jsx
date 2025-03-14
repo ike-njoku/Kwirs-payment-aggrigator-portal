@@ -4,9 +4,9 @@ import PrimarySelect from "../shared-components/inputs/PrimarySelect";
 import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 import PaymentPeriodTable from "../shared-components/table/PaymentPeriodTable";
 import PaymentButtons from "../shared-components/buttons/PaymentButtons";
-import { selectInputMonths } from "@/utils/functions";
+import { displayMonth, selectInputMonths } from "@/utils/functions";
 import { toast } from "react-toastify";
-import { AxiosPost } from "../../services/http-service";
+import { AxiosGet, AxiosPost } from "../../services/http-service";
 
 const PaymentPeriod = ({
   showNextComponent,
@@ -81,7 +81,7 @@ const PaymentPeriod = ({
       toast.error("could not create payment period");
       return false;
     }
-    return true;
+    return await getPaymentPeriods();
   };
 
   const startYear = 1980;
@@ -132,8 +132,55 @@ const PaymentPeriod = ({
     return;
   };
 
+  const getPaymentPeriods = async () => {
+    let _paymentDetails = localStorage.getItem("paymentDetails");
+    if (!_paymentDetails) {
+      toast.error("Please fill the form first");
+      return;
+    }
+
+    _paymentDetails = JSON.parse(_paymentDetails);
+    const PRN = _paymentDetails?.invoice?.PRN;
+    if (!PRN) {
+      await createPaymentInvoice();
+      return;
+    }
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/PaymentPeriod/GetAllPaymentPeriodByPRN/${PRN}`;
+
+    const apiResponse = await AxiosGet(url);
+
+    const { data } = apiResponse;
+    const { Data } = data;
+    const _tableData = Data;
+    _tableData.map((period) => (period.prn = period.PRN));
+    _tableData.map((period) => (period.amount = period.amount));
+    _tableData.map(
+      (data) => (data.period = `${displayMonth(data.month)} / ${data.year}`)
+    );
+
+    let _totalAmount = 0;
+    for (let i = 0; i < _tableData.length; i++) {
+      const currentItem = _tableData[i];
+      _totalAmount += currentItem.amount;
+    }
+
+    setTableData(_tableData);
+    setPRN(_tableData[0]?.PRN);
+    setTotalAmount(_totalAmount);
+  };
+
+  const deletePaymentPeriod = async (paymentPeriod) => {
+    const requestURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/PaymentPeriod/Delete/${paymentPeriod.periodId}`;
+    const apiResponse = await AxiosGet(requestURL);
+    setTableData((prevVlue) =>
+      prevVlue.filter((value) => value.periodId !== value.periodId)
+    );
+    setTotalAmount(totalAmount - paymentPeriod.amount);
+    return await getPaymentPeriods();
+  };
+
   useEffect(() => {
-    createPaymentInvoice();
+    getPaymentPeriods();
   }, []);
 
   return (
@@ -193,7 +240,11 @@ const PaymentPeriod = ({
           </button>
         </div>
 
-        <PaymentPeriodTable tableData={tableData} PRN={PRN ?? "N/A"} />
+        <PaymentPeriodTable
+          deletePaymentPeriod={deletePaymentPeriod}
+          tableData={tableData ?? []}
+          PRN={PRN ?? "N/A"}
+        />
 
         <div className="flex justify-end items-center mt-5">
           <h3 className="text-white font-semibold">
