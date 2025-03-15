@@ -255,37 +255,3 @@ const PermissionAllocationModal = ({ isOpen, onClose }) => {
 };
 
 export default PermissionAllocationModal;
-
-
- {/* Select Permission */}
-//  <div className="w-full mb-4">
-//  <label className="text-base font-medium text-gray-700">Select Permission</label>
-//  <div className="border-b-2 border-gray-300 h-[45px] w-full rounded-md my-2">
-//    <select
-//      className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-//      value={selectedPermissionId || ""}
-//      onChange={(e) => {
-//        const permissionId = e.target.value;
-//        setSelectedPermissionId(permissionId);
-
-//        // Find the selected permission object and update state
-//        const selectedPermObj = permissions.find(
-//          (perm) => perm.permissionId.toString() === permissionId.toString()
-//        );
-//        setSelectedPermission(selectedPermObj || null);
-//      }}
-//      required
-//    >
-//      <option value="">-- Select a Permission --</option>
-//      {permissions.length > 0 ? (
-//        permissions.map((permission) => (
-//          <option key={permission.permissionId} value={permission.permissionId}>
-//            {permission.permissionCode || "Unnamed Permission"}
-//          </option>
-//        ))
-//      ) : (
-//        <option disabled>No permissions available</option>
-//      )}
-//    </select>
-//  </div>
-// </div>

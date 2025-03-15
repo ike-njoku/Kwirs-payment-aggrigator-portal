@@ -18,12 +18,13 @@ const CustomTable = ({ tableHeadings, tableData, onDelete }) => {
           {tableData.length > 0 ? (
             tableData.map((row, index) => (
               <tr key={index} className={`border-t hover:bg-gray-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}>
-                <td className="px-6 py-3 text-gray-700">{row.createdBy}</td>
-                <td className="px-6 py-3 text-gray-700">{row.roleName}</td>
-                <td className="px-6 py-3 text-gray-700">{row.permissionName}</td>
+                <td className="px-6 py-3 text-gray-700">{row.roleName}</td>  {/* Corrected roleName */}
+                {/* <td className="px-6 py-3 text-gray-700">{row.permissionCode}</td> Added permissionCode */}
+                <td className="hidden">{row.rolePermissionId}</td>
+                <td className="px-6 py-3 text-gray-700">{row.description}</td> {/* Added description */}
                 <td className="px-6 py-3 flex gap-3">
                   <button
-                    onClick={() => onDelete(row.permissionId)}
+                    onClick={() => onDelete(row.rolePermissionId)}
                     className="text-red-500 hover:text-red-700 transition duration-200 active:scale-95"
                   >
                     <FaTrashAlt />
@@ -33,7 +34,7 @@ const CustomTable = ({ tableHeadings, tableData, onDelete }) => {
             ))
           ) : (
             <tr>
-              <td colSpan="4" className="p-3 text-center text-gray-600">No Role Selected</td>
+              <td colSpan="5" className="p-3 text-center text-gray-600">No Role Selected</td>
             </tr>
           )}
         </tbody>
