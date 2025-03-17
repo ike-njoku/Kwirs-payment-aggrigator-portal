@@ -3,6 +3,7 @@ import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 import PaymentButtons from "../shared-components/buttons/PaymentButtons";
 import { AxiosPost } from "../../services/http-service";
 import Spinner from "../shared-components/Spinner";
+import { toast } from "react-toastify";
 
 const TaxPayerDetails = ({
   showNextComponent,
@@ -25,6 +26,12 @@ const TaxPayerDetails = ({
     handleSetTaxPayerDetails(taxDetails);
     setTinDetails(taxDetails);
 
+    if (taxDetails && taxDetails?.status == "Not Found") {
+      toast.error("Could not validate your Tin");
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(false);
   };
 
@@ -40,7 +47,7 @@ const TaxPayerDetails = ({
       <h3
         className={`font-bold sm:text-3xl capitalize text-center text-2xl text-white `}
       >
-        Verify Tax Payer Details
+        Tax Payer Details
       </h3>
       <div className="w-full my-5  customScroll">
         <PrimaryInput
@@ -53,35 +60,41 @@ const TaxPayerDetails = ({
         />
 
         {isLoading && <Spinner></Spinner>}
-        {tinDetails && Object.keys(tinDetails).length > 0 && (
-          <PrimaryInput
-            label="Fullname"
-            placeholder="Enter fullname"
-            name="fullName"
-            type="text"
-            disabled={true}
-            labelStyle="capitalize"
-            value={tinDetails?.firstname ?? "" + tinDetails?.lastname ?? ""}
-          />
-        )}
+        {tinDetails &&
+          Object.keys(tinDetails).length > 0 &&
+          tinDetails?.status !== "Not Found" && (
+            <PrimaryInput
+              label="Fullname"
+              placeholder="Enter fullname"
+              name="fullName"
+              type="text"
+              disabled={true}
+              labelStyle="capitalize"
+              value={tinDetails?.firstname ?? "" + tinDetails?.lastname ?? ""}
+            />
+          )}
 
-        {tinDetails && Object.keys(tinDetails).length > 0 && (
-          <PrimaryInput
-            label="email"
-            placeholder="Enter email"
-            name="taxPayerEmail"
-            type="email"
-            labelStyle="capitalize"
-            disabled={true}
-            readOnly={true}
-            value={tinDetails?.email}
-          />
-        )}
+        {tinDetails &&
+          Object.keys(tinDetails).length > 0 &&
+          tinDetails?.status !== "Not Found" && (
+            <PrimaryInput
+              label="email"
+              placeholder="Enter email"
+              name="taxPayerEmail"
+              type="email"
+              labelStyle="capitalize"
+              disabled={true}
+              readOnly={true}
+              value={tinDetails?.email}
+            />
+          )}
         <div className="w-full flex justify-between gap-4 items-center">
           <PaymentButtons label="Back" onClick={showPreviousComponent} />
-          {tinDetails && Object.keys(tinDetails).length > 0 && (
-            <PaymentButtons onClick={showNextComponent} />
-           )}
+          {tinDetails &&
+            Object.keys(tinDetails).length > 0 &&
+            tinDetails?.status !== "Not Found" && (
+              <PaymentButtons onClick={showNextComponent} />
+            )}
         </div>
       </div>
     </div>
