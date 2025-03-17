@@ -101,6 +101,7 @@ const PaymentDetails = ({
           //   handleChange={updateRegistrationDetails}
         /> */}
         <PrimarySelect
+          isCompulsory={true}
           label="Agency"
           placeholder="Select agency"
           name="agency"
@@ -116,6 +117,7 @@ const PaymentDetails = ({
           handleChange={handleSelectAgency}
         />
         <PrimarySelect
+          isCompulsory={true}
           label="Tax Type"
           placeholder="Select tax type"
           name="taxType"
@@ -131,6 +133,7 @@ const PaymentDetails = ({
           }
         />
         <PrimaryInput
+          isCompulsory={true}
           label="amount"
           placeholder="Enter amount"
           name="amount"
@@ -140,6 +143,7 @@ const PaymentDetails = ({
           value={paymentRequestDetails?.amount ?? ""}
         />
         <PrimaryInput
+          isCompulsory={true}
           label="payer name"
           placeholder="Enter payer name"
           name="payerName"
@@ -149,6 +153,7 @@ const PaymentDetails = ({
           value={paymentRequestDetails?.payerName ?? ""}
         />
         <PrimaryInput
+          isCompulsory={true}
           label="payer phone"
           placeholder="Enter payer phone"
           name="payerPhone"
@@ -158,6 +163,7 @@ const PaymentDetails = ({
           value={paymentRequestDetails.payerPhone ?? ""}
         />
         <PrimaryInput
+          isCompulsory={true}
           label="payer email"
           placeholder="Enter payer email"
           name="payerEmail"
@@ -165,8 +171,10 @@ const PaymentDetails = ({
           labelStyle="capitalize"
           handleChange={updatePaymentDetailsObject}
           value={paymentRequestDetails.payerEmail ?? ""}
+          pattern="/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/"
         />
         <PrimaryInput
+          isCompulsory={true}
           label="address"
           placeholder="Enter address"
           name="address"

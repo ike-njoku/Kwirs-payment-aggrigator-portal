@@ -8,6 +8,7 @@ const PrimarySelect = ({
   value,
   labelStyle = "uppercase",
   optionData,
+  isCompulsory,
 }) => {
   return (
     <div className="w-full mb-5">
@@ -15,6 +16,7 @@ const PrimarySelect = ({
         className={`${labelStyle} text-base font-medium text-white`}
         htmlFor={name}
       >
+        {isCompulsory && <>*</>}
         {label}
       </label>
 

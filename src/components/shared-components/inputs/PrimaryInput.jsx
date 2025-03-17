@@ -1,6 +1,7 @@
 import React from "react";
 
 const PrimaryInput = ({
+  isCompulsory,
   label,
   name,
   type,
@@ -9,6 +10,7 @@ const PrimaryInput = ({
   value,
   labelStyle = "uppercase",
   disabled,
+  pattern,
 }) => {
   return (
     <div className="w-full mb-5">
@@ -16,6 +18,7 @@ const PrimaryInput = ({
         className={`text-base font-medium text-white ${labelStyle}`}
         htmlFor={name}
       >
+        {isCompulsory && <>*</>}
         {label}
       </label>
 
@@ -28,6 +31,7 @@ const PrimaryInput = ({
           name={name}
           value={value}
           disabled={disabled}
+          pattern={pattern}
         />
       </div>
     </div>
