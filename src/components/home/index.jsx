@@ -8,6 +8,7 @@ import TaxPayerDetails from "./TaxPayerDetails";
 import Invoice from "./Invoice";
 import SelectPaymentGateway from "./SelectPaymentGateway";
 import { PaymentRequest } from "@/context/PaymentRequestDetails";
+import { toast } from "react-toastify";
 
 const HomePage = () => {
   const [nextComponent, showNextComponent] = useState(0);
@@ -39,7 +40,42 @@ const HomePage = () => {
     e.preventDefault();
     showNextComponent(3);
   };
+
+  const validatePaymentDetails = () => {
+    const {
+      address,
+      amount,
+      payerEmail,
+      payerName,
+      payerPhone,
+      taxAgency,
+      taxType,
+    } = paymentRequestDetails;
+
+    if (
+      address &&
+      address.length &&
+      amount &&
+      amount.length &&
+      payerEmail &&
+      payerEmail.length &&
+      String(payerEmail).match(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/) &&
+      payerName &&
+      payerName.length &&
+      payerPhone &&
+      payerPhone.length &&
+      taxAgency &&
+      taxAgency.length &&
+      taxType &&
+      taxType.length
+    ) {
+      return true;
+    }
+    toast.error("Please fill out all compulsory fields");
+    return false;
+  };
   const handleShowTaxPayerDetails = (e) => {
+    if (!validatePaymentDetails()) return false;
     e.preventDefault();
     showNextComponent(2);
   };
@@ -101,7 +137,6 @@ const HomePage = () => {
 
               {nextComponent === 1 && (
                 <PaymentDetails
-                  // showNextComponent={handleShowPaymentPeriod}
                   showNextComponent={handleShowTaxPayerDetails}
                   showPreviousComponent={() => showNextComponent(0)}
                   paymentRequestDetails={paymentRequestDetails}
