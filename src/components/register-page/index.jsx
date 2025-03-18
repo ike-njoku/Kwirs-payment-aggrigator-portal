@@ -123,8 +123,8 @@ const RegisterPage = () => {
   return (
     <AuthLayout>
       <div className="w-full">
-        <section className="flex justify-between items-center py-5 mt-20 gap-8">
-          <div className=" max-w-[600px] w-full hidden lg:flex flex-col justify-between ">
+        <section className="py-5 mt-20 gap-8">
+          <div className=" max-w-[600px] w-full hidden lg:flex flex-col justify-between fixed top-1/2 -translate-y-1/2 ">
             <article className="w-full">
               <h3 className="text-white font-bold text-5xl w-full">
                 Create New Account
@@ -146,7 +146,7 @@ const RegisterPage = () => {
           </div>
           {/*  */}
 
-          <div className="w-full sm:max-w-[450px] mx-auto py-8 px-10 rounded-[28px] bg-[rgba(255,255,255,0.5)]">
+          <div className="w-full sm:max-w-[450px] ml-auto py-8 px-10 rounded-[28px] bg-[rgba(255,255,255,0.5)]">
             <h3
               className={` font-bold sm:text-4xl capitalize text-center text-2xl `}
             >

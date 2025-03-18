@@ -96,8 +96,8 @@ const HomePage = () => {
         <div className="w-[90%] mx-auto xl:w-full xl:max-w-[1150px] py-6 min-h-screen ">
           <HomeNavigation />
 
-          <div className="lg:grid lg:grid-cols-2 justify-between items-center gap-8 w-full">
-            <div className="max-w-[600px] w-full hidden lg:flex flex-col justify-between text-white">
+          <div className=" w-full">
+            <div className="max-w-[600px] w-full hidden lg:flex flex-col fixed top-1/2 -translate-y-1/2 text-white">
               <article className="w-full">
                 <h3 className="text-white font-bold text-5xl">
                   Seamless Payments
@@ -118,7 +118,8 @@ const HomePage = () => {
               </div>
             </div>
 
-            <div className="w-full my-10 max-h-[600px] overflow-y-auto customScroll">
+            <div className="w-full my-10 flex justify-end">
+              {/* max-h-[600px] overflow-y-auto customScroll */}
               {nextComponent === 0 && (
                 <AssessmentNumberComponent
                   paymentAssessmentNumberment={handleSetPaymentAssessmentNumber}
