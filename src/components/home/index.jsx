@@ -82,7 +82,7 @@ const HomePage = () => {
               </div>
             </div>
 
-            <div className="w-full my-10 max-h-[600px] overflow-y-auto customScroll">
+            <div className="w-full my-10 overflow-y-auto customScroll">
               {nextComponent === 0 && (
                 <AssessmentNumberComponent
                   paymentAssessmentNumberment={handleSetPaymentAssessmentNumber}

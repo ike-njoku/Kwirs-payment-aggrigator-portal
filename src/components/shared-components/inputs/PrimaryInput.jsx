@@ -22,7 +22,7 @@ const PrimaryInput = ({
       <div className="w-full h-[48px] rounded-[30px] overflow-hidden bg-[rgba(255,255,255,0.5)] shadow-sm mt-3">
         <input
           onChange={handleChange}
-          className="w-full h-full outline-none border-none bg-transparent p-3 placeholder:text-white text-base font-light text-white"
+          className="w-full h-full outline-none border-none bg-transparent p-3 placeholder:text-white text-base font-light text-black"
           type={type}
           placeholder={placeholder}
           name={name}

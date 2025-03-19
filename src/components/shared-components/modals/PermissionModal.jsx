@@ -114,15 +114,15 @@ const PermissionModal = ({ isOpen, onClose, refreshPermissions }) => {
             handleAddRolePermission();
           }}
         >
-          {/* Permission Code */}
+          {/* Permission Name */}
           <div className="w-full mb-4">
-            <label className="text-base font-medium text-gray-700">Permission Code</label>
+            <label className="text-base font-medium text-gray-700">Permission Name</label>
             <input
               type="text"
               className="w-full border-b-2 border-gray-300 h-[45px] rounded-md my-2 bg-gray-100 px-3 text-gray-700 focus:outline-none"
               value={permissionCode}
               onChange={(e) => setPermissionCode(e.target.value)}
-              placeholder="Enter Permission Code"
+              placeholder="Enter Permission Name"
               required
             />
           </div>
@@ -172,6 +172,9 @@ const PermissionModal = ({ isOpen, onClose, refreshPermissions }) => {
 };
 
 export default PermissionModal;
+
+
+
 
 
 
