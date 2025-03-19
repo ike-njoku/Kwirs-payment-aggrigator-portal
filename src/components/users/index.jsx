@@ -11,23 +11,46 @@ const UsersTable = ({ isRoleAllocation = false }) => {
   const [selectedUser, setSelectedUser] = useState({});
   const [openModal, setOpenModal] = useState(false);
 
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 10; // Number of users per page
+
+  // Get current users for the page
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = userList.slice(indexOfFirstUser, indexOfLastUser);
+
+  // Change Page
+  const nextPage = () => {
+    if (currentPage < Math.ceil(userList.length / usersPerPage)) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
   const toggleUserStatus = async (index) => {
-    const user = index;
-    user.Isactive = user.IsActive == false ? true : false;
-
-    user.isActive = user.Isactive;
-    user.remark = "";
+    setUserList((prevUsers) =>
+      prevUsers.map((user, i) =>
+        i === index ? { ...user, isActive: !user.isActive } : user
+      )
+    );
+  
+    const updatedUser = { ...userList[index], isActive: !userList[index].isActive, remark: "" };
+  
     const updateUserStatusURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/userManagement/updateAccountStatus`;
-    const apiResponse = await AxiosPost(updateUserStatusURL, user);
-
-    if (apiResponse && apiResponse.StatusCode != 200) {
+    const apiResponse = await AxiosPost(updateUserStatusURL, updatedUser);
+  
+    if (apiResponse && apiResponse.StatusCode !== 200) {
       toast.error("Could not Update User Status");
       return;
     }
-    setUserList((prevUsers) =>
-      prevUsers.map((user, i) => user.isActive == user.Isactive)
-    );
-
+  
+    // Refresh user list
     await getAllUsers();
   };
 
@@ -44,22 +67,22 @@ const UsersTable = ({ isRoleAllocation = false }) => {
     const response = await AxiosGet(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/userManagement/GetAllUser`
     );
- if(!response){
-  toast.error("Could not fetch users")
-  return;
- }
+    if (!response) {
+      toast.error("Could not fetch users");
+      return;
+    }
     const { data } = response;
     if (!data.StatusCode) {
       toast.error("Failed to fetch Users");
       return;
     }
 
-    const userList = data.Data;
-
-    userList.map((user) => (user.userName = user.UserName));
-    userList.map((user) => (user.email = user.Email));
-    userList.map((user) => (user.phone = user.PrimaryPhone));
-    userList.map((user) => (user.isActive = user.IsActive));
+    const userList = data.Data.map((user) => ({
+      userName: user.UserName,
+      email: user.Email,
+      phone: user.PrimaryPhone,
+      isActive: user.IsActive,
+    }));
 
     setUserList(userList);
   };
@@ -75,70 +98,76 @@ const UsersTable = ({ isRoleAllocation = false }) => {
   }, []);
 
   return (
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-      <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 ">
-        <thead class="text-xs text-white uppercase bg-pumpkin">
+    <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead className="text-xs text-white uppercase bg-pumpkin">
           <tr>
-            <th scope="col" class="px-6 py-3">
-              Username
-            </th>
-            <th scope="col" class="px-6 py-3">
-              Email
-            </th>
-            <th scope="col" class="px-6 py-3">
-              Phone Number
-            </th>
-
+            <th scope="col" className="px-6 py-3">Username</th>
+            <th scope="col" className="px-6 py-3">Email</th>
+            <th scope="col" className="px-6 py-3">Phone Number</th>
             {!isRoleAllocation ? (
-              <th scope="col" class="px-6 py-3">
-                Status
-              </th>
+              <th scope="col" className="px-6 py-3">Status</th>
             ) : (
-              <th scope="col" class="px-6 py-3">
-                Role(s)
-              </th>
+              <th scope="col" className="px-6 py-3">Role(s)</th>
             )}
           </tr>
         </thead>
         <tbody>
-          {userList.length > 0 &&
-            userList.map((user, i) => (
+          {currentUsers.length > 0 &&
+            currentUsers.map((user, i) => (
               <tr
-                className="odd:bg-white even:bg-gray-100 border-b border-gray-200 cursor-pointer "
+                className="odd:bg-white even:bg-gray-100 border-b border-gray-200 cursor-pointer"
                 key={i}
                 onClick={() => openUserModal(user)}
               >
-                <td scope="row" class="px-6 py-4 font-medium text-gray-900 ">
-                  {user.userName}
-                </td>
-                <td class="px-6 py-4 text-gray-900 ">{user.email}</td>
-                <td class="px-6 py-4 text-gray-900">{user.phone}</td>
-
+                <td className="px-6 py-4 font-medium text-gray-900">{user.userName}</td>
+                <td className="px-6 py-4 text-gray-900">{user.email}</td>
+                <td className="px-6 py-4 text-gray-900">{user.phone}</td>
                 {!isRoleAllocation ? (
-                  <td class="px-6 py-4 text-gray-900">
-                    <SwitchIcon
-                      isActive={user.isActive}
-                      onToggle={toggleUserStatus}
-                      index={user}
-                    />
+                  <td className="px-6 py-4 text-gray-900">
+                    <SwitchIcon isActive={user.isActive} onToggle={() => toggleUserStatus(i)} />
                   </td>
                 ) : (
-                  <td class="px-6 py-4 text-gray-900">...</td>
+                  <td className="px-6 py-4 text-gray-900">...</td>
                 )}
               </tr>
             ))}
-
-          {userList.length === 0 && (
+          {currentUsers.length === 0 && (
             <tr>
-              <td colSpan={5} className="bg-white">
-                <h3 className="w-full font-semibold py-5 text-2xl text-center">
-                  No data available
-                </h3>
+              <td colSpan={5} className="bg-white text-center py-5">
+                <h3 className="w-full font-semibold text-2xl">No data available</h3>
               </td>
             </tr>
           )}
         </tbody>
       </table>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-between items-center mt-4 px-4 py-2 bg-gray-100">
+        <button
+          onClick={prevPage}
+          disabled={currentPage === 1}
+          className={`px-4 py-2 text-sm font-medium rounded ${
+            currentPage === 1 ? "bg-gray-300 cursor-not-allowed" : "bg-pumpkin text-white hover:bg-orange-600"
+          }`}
+        >
+          Previous
+        </button>
+
+        <span className="text-sm font-medium">
+          Page {currentPage} of {Math.ceil(userList.length / usersPerPage)}
+        </span>
+
+        <button
+          onClick={nextPage}
+          disabled={currentPage >= Math.ceil(userList.length / usersPerPage)}
+          className={`px-4 py-2 text-sm font-medium rounded ${
+            currentPage >= Math.ceil(userList.length / usersPerPage) ? "bg-gray-300 cursor-not-allowed" : "bg-pumpkin text-white hover:bg-orange-600"
+          }`}
+        >
+          Next
+        </button>
+      </div>
 
       {openModal && (
         <UserDetailsModal
@@ -153,3 +182,4 @@ const UsersTable = ({ isRoleAllocation = false }) => {
 };
 
 export default UsersTable;
+
