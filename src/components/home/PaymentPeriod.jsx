@@ -76,7 +76,6 @@ const PaymentPeriod = ({
     paymentPeriodDetails.CreatedBy = "1000000826"; //Insert admin details
     const requestUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/PaymentPeriod/Create`;
 
-    return true;
     const apiResponse = await AxiosPost(requestUrl, paymentPeriodDetails);
     if (!apiResponse || apiResponse.StatusCode == 500) {
       toast.error("could not create payment period");
@@ -99,17 +98,6 @@ const PaymentPeriod = ({
   };
 
   const createPaymentInvoice = async () => {
-    const mockInvoice = {
-      PRN: "66-22-11-00",
-      amount: 2000,
-      createdDate: "2022-02-22",
-      payerName: "John Doe",
-      payerAddress: "No 12, Lagos Street, Abuja",
-      TIN: "1234567890",
-      payerPhone: "08012345678",
-      payerEmail: "test@email.com",
-    };
-
     const _paymentRequestDetails = localStorage.getItem("paymentDetails");
     if (!_paymentRequestDetails) {
       toast.error("Please fill out the form leading here");
@@ -135,15 +123,11 @@ const PaymentPeriod = ({
 
     const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/invoice/Create`;
     const apiResponse = await AxiosPost(apiUrl, requestObject);
-    setInvoiceDetails(mockInvoice);
-    setPRN(mockInvoice.PRN);
-    storeInvoiceDetails(mockInvoice);
     if (apiResponse && apiResponse.Data) {
       const invoice = apiResponse.Data[0];
-
-      // setInvoiceDetails(invoice);
-      // setPRN(invoice.PRN);
-      // storeInvoiceDetails(invoice);
+      setInvoiceDetails(invoice);
+      setPRN(invoice.PRN);
+      storeInvoiceDetails(invoice);
     }
     return;
   };
