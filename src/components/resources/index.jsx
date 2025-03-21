@@ -25,9 +25,16 @@ const ResourcesPage = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openEditResourceModal, setOpenResourceEditModal] = useState(false);
-
   const [openResourceModal, setOpenResourceModal] = useState(false);
   const [authenticatedUser, setAuthenticatedUser] = useState({});
+
+  // Pagination States
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
+  const totalPages = Math.ceil(tableData.length / rowsPerPage);
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = tableData.slice(indexOfFirstRow, indexOfLastRow);
 
   const handleCreateResourceModal = async (newResourceURL) => {
     const newResourceData = {
@@ -57,7 +64,8 @@ const ResourcesPage = () => {
         Username: authenticatedUser.email,
         Type: newResourceURL.resourceType,
         ParentResourceId: 0,
-        resourceType: newResourceURL.resourceType == 1 ? MAIN_MENU : SUB_MENU,
+        resourceType:
+          newResourceURL.resourceType == 1 ? MAIN_MENU : SUB_MENU,
         dateCreated: new Date().toISOString().split("T")[0],
         ResourceId: createResourceResponse.Data.ResourseId,
       };
@@ -78,6 +86,7 @@ const ResourcesPage = () => {
       );
     }
   };
+
   const handleDelete = () => {
     setOpenDeleteModal(true);
   };
@@ -130,15 +139,12 @@ const ResourcesPage = () => {
 
     tableData.map((item) => (item.name = item.ResourceName));
     tableData.map((item) => (item.id = item.ResourceId));
-
     tableData.map((item) => (item.resourceType = item.ResourceTypeId));
     tableData.map(
       (item) =>
         (item.resourceType = item.ResourceTypeId == 1 ? MAIN_MENU : SUB_MENU)
     );
-
     tableData.map((item) => (item.resourceURL = item.URL));
-
     tableData.map(
       (item) =>
         (item.dateCreated = new Date(item.CreateDate)
@@ -175,11 +181,6 @@ const ResourcesPage = () => {
 
     toast.success("Resource updated");
     await fetchAllResources();
-    // setTableData((prevData) =>
-    //   prevData.map((item) =>
-    //     item.id === updatedItem.id ? { ...updatedItem, name: newRole } : item
-    //   )
-    // );
   };
 
   const handleOpenEditResourceModal = () => {
@@ -192,11 +193,20 @@ const ResourcesPage = () => {
     fetchAllResources();
   }, []);
 
+  // Pagination Handlers
+  const nextPage = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
   return (
     <DashboardLayout page="Resources">
       <section className="w-full">
-        <div className=" w-[90%] mx-auto py-5">
-          <div className=" w-full lg:mt-10">
+        <div className="w-[90%] mx-auto py-5">
+          <div className="w-full lg:mt-10">
             {/* Search bar and filter options */}
             <section className="w-full mb-3 flex justify-end items-center gap-5 lg:justify-start">
               <button
@@ -213,14 +223,12 @@ const ResourcesPage = () => {
             <CustomTable
               isResource={true}
               tableHeadings={tableHeadings}
-              tableData={tableData}
+              tableData={currentRows}
               isEllipseDropdwon={true}
               handleDelete={() => setOpenDeleteModal(true)}
               handleEdit={handleOpenEditResourceModal}
               openDeleteModal={openDeleteModal}
               setOpenDeleteModal={setOpenDeleteModal}
-              // setOpenEditModal={setOpenEditModal}
-              // openEditModal={openEditModal}
               setOpenEditResourceModal={setOpenResourceEditModal}
               openEditResourceModal={openEditResourceModal}
               handleDeleteItem={handleDeleteItem}
@@ -229,6 +237,35 @@ const ResourcesPage = () => {
               label="Resource name"
               heading="Update Resource"
             />
+
+            {/* Pagination Controls */}
+            <div className="flex justify-between items-center mt-4 px-4 py-2 bg-gray-100">
+              <button
+                onClick={prevPage}
+                disabled={currentPage === 1}
+                className={`px-4 py-2 text-sm font-medium rounded ${
+                  currentPage === 1
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-pumpkin text-white hover:bg-orange-600"
+                }`}
+              >
+                Previous
+              </button>
+              <span className="text-sm font-medium">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={nextPage}
+                disabled={currentPage >= totalPages}
+                className={`px-4 py-2 text-sm font-medium rounded ${
+                  currentPage >= totalPages
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-pumpkin text-white hover:bg-orange-600"
+                }`}
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
 
@@ -242,7 +279,13 @@ const ResourcesPage = () => {
       </section>
     </DashboardLayout>
   );
-  // };
 };
 
 export default ResourcesPage;
+
+
+
+
+
+
+
