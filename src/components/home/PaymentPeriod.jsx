@@ -97,6 +97,17 @@ const PaymentPeriod = ({
     setTableDetails((prev) => ({ ...prev, [name]: e.target.value }));
   };
 
+  const invoice = {
+    PRN: "66-22-11-00",
+    amount: 2000,
+    createdDate: "2022-02-22",
+    payerName: "John Doe",
+    payerAddress: "No 12, Lagos Street, Abuja",
+    TIN: "1234567890",
+    payerPhone: "08012345678",
+    payerEmail: "test@email.com",
+  };
+
   const createPaymentInvoice = async () => {
     const _paymentRequestDetails = localStorage.getItem("paymentDetails");
     if (!_paymentRequestDetails) {
