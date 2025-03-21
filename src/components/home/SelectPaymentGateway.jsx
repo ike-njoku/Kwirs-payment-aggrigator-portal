@@ -10,6 +10,7 @@ import flutterWave from "../../../public/images/Flutterwave-Logo.jpg";
 import PaymentButtons from "../shared-components/buttons/PaymentButtons";
 import PayWithFlutterWave from "../../utils/flutterwavePayment";
 import IcadPayModal from "./IcadPayModal";
+import PayWithCredoPayment from "@/utils/credoPayment";
 
 const SelectPaymentGateway = ({ showPreviousComponent }) => {
   const [selectedOption, setSelectedOption] = useState("nil");
@@ -20,31 +21,30 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
   useEffect(() => {
     const fetchInvoice = async () => {
       try {
-
         // getting the PRN number form the Local storage
         const storedData = localStorage.getItem("paymentDetails");
         console.log("Stored Data:", storedData); // Debugging
-    
+
         if (!storedData) {
           console.error("No payment details found in localStorage");
           return;
         }
-    
+
         const parsedData = JSON.parse(storedData);
-    
+
         if (!parsedData.invoice || !parsedData.invoice.PRN) {
           console.error("Invalid payment details structure");
           return;
         }
-    
+
         const prnNumber = parsedData.invoice.PRN; // Extract PRN dynamically
-    
+
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_BASE_URL}/api/invoice/GetSingleInvoice/${prnNumber}`
         );
-    
+
         const result = await response.json();
-    
+
         if (result.StatusCode === 200 && result.Data.length > 0) {
           setInvoiceData(result.Data[0]); // Store the first invoice object
           console.log("Invoice Data:", result.Data[0]); // Debugging
@@ -55,7 +55,6 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
         console.error("Error fetching invoice:", error);
       }
     };
-    
 
     fetchInvoice();
   }, []);
@@ -103,7 +102,7 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
           <PaymentButtons label="Pay with IcadPay" onClick={() => setShowModal(true)} />
         )}
       </div> */}
-{/* 
+      {/* 
       <div className="w-full flex justify-between gap-4 items-center mt-6">
         <PaymentButtons label="Back" onClick={showPreviousComponent} />
 
@@ -119,25 +118,34 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
       
     } */}
 
-
-<div className="w-full flex justify-between gap-4 items-center mt-6">
+      <div className="w-full flex justify-between gap-4 items-center mt-6">
         <PaymentButtons label="Back" onClick={showPreviousComponent} />
 
         {selectedOption === "icadpay" && invoiceData && (
-          <PaymentButtons label="Pay with IcadPay" onClick={() => setShowModal(true)} />
+          <PaymentButtons
+            label="Pay with IcadPay"
+            onClick={() => setShowModal(true)}
+          />
         )}
-
-{selectedOption === "flutterWave" && (
+        {selectedOption === "etranzact" && (
+          <>
+            <PayWithCredoPayment />
+          </>
+        )}
+        {selectedOption === "flutterWave" && (
           <>
             <PayWithFlutterWave />
           </>
         )}
       </div>
 
-      {showModal && <IcadPayModal isOpen={showModal} onClose={closeModal} invoiceData={invoiceData} />}
-   
-
-
+      {showModal && (
+        <IcadPayModal
+          isOpen={showModal}
+          onClose={closeModal}
+          invoiceData={invoiceData}
+        />
+      )}
     </section>
   );
 };
