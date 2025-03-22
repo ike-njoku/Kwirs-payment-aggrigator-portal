@@ -15,3 +15,13 @@ export const authenticateUser = () => {
 
   return authenticatedUser;
 };
+
+export const endSession = () => {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  // add the api call to end session here
+  window.localStorage.clear();
+  window.location.href = "/";
+};
