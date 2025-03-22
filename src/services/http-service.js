@@ -11,10 +11,10 @@ export const AxiosPost = async (url, parameters, headers) => {
     _headers = headers;
   }
 
-  //attach token
   if (localStorage.getItem("token")) {
     _headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
   }
+
   return await axios
     .post(url, parameters, {
       headers: _headers,
@@ -23,17 +23,12 @@ export const AxiosPost = async (url, parameters, headers) => {
     .catch((error) => showToastNotification(error.message));
 };
 
-export const AxiosGet = async (url, parameters, headers) => {
-  let _headers = {};
-  if (headers) {
-    _headers = headers;
-  }
-  //attach token
-  if (localStorage.getItem("token")) {
-    _headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
-  }
+export const AxiosGet = async (url) => {
+  const token = "Bearer".concat(" " + localStorage.getItem("token"));
   try {
-    const httpResponse = await axios.get(url, parameters, headers);
+    const httpResponse = await axios.get(url, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
     return {
       status: httpResponse.status,
       data: httpResponse.data,
