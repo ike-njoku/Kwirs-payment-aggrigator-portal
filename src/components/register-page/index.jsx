@@ -109,7 +109,7 @@ const RegisterPage = () => {
     setIsLoading(false);
     storeAuthDetailsLocally(registrationResponse);
     toast.success("Registration successful");
-    window.location.href = "/dashboard";
+    window.location.href = "/login";
   };
 
   useEffect(() => {

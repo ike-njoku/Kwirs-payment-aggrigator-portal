@@ -128,25 +128,26 @@ const PermissionPage = () => {
   );
 
 
-    const handleDeletePermission = async (permissionId) => {
-      if (!permissionId) {
-        toast.error("Invalid permission ID.");
-        return;
-      }
+  const handleDeletePermission = async (permissionId) => {
+    if (!permissionId) {
+      toast.error("Invalid permission ID.");
+      return;
+    }
   
-      try {
-        const response = await AxiosGet(`${API_BASE_URL}/api/Permissions/Delete/${permissionId}`);
-        if (response.data?.StatusCode === 200) {
-          toast.success("Permission deleted successfully!");
-          fetchPermissions(); // ✅ Refresh table after deletion
-        } else {
-          toast.error(response.data?.StatusMessage || "Failed to delete permission.");
-        }
-      } catch (error) {
-        console.error("Delete error:", error.response || error.message);
-        toast.error(error.response?.data?.StatusMessage || "Error deleting permission. Kindly contact the Admin.");
+    try {
+      const response = await AxiosGet(`${API_BASE_URL}/api/Permissions/Delete/${permissionId}`);
+      
+      if (response.data?.StatusCode === 200) {
+        toast.success("Permission deleted successfully!");
+        await fetchPermissions();
+      } else {
+        toast.error(response.data?.StatusMessage || "Failed to delete permission.");
       }
-    };
+    } catch (error) {
+      toast.error(error.response?.data?.StatusMessage || "Error deleting permission. Kindly contact the Admin.");
+    }
+  };
+  
 
 
     const handleEditPermission = async (permission) => {
@@ -182,7 +183,7 @@ const PermissionPage = () => {
   
 
   return (
-    <DashboardLayout page="Permission">
+    <DashboardLayout page="Create Permission">
       <section className="w-full">
         <div className="w-[90%] mx-auto py-5">
           <div className="w-full lg:mt-10">

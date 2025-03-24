@@ -20,6 +20,12 @@ const HomeNavigation = () => {
 
         <div className="flex gap-1 sm:gap-4">
           <Link
+            href="/"
+            className="text-pumpkin font-medium px-4 py-2 rounded-sm"
+          >
+            Make Payment
+          </Link>
+          <Link
             href="/login"
             className="text-pumpkin font-medium px-4 py-2 rounded-sm"
           >

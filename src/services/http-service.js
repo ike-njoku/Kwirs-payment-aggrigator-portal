@@ -3,21 +3,32 @@ import { showToastNotification } from "./notification-service";
 const axios = require("axios").default;
 showToastNotification;
 
-export const AxiosPost = async (url, parameters) => {
-  const headers = {
+export const AxiosPost = async (url, parameters, headers) => {
+  let _headers = {
     "Content-Type": "application/json",
   };
+  if (headers) {
+    _headers = headers;
+  }
+
+  if (localStorage.getItem("token")) {
+    _headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
+  }
+
   return await axios
     .post(url, parameters, {
-      headers: headers,
+      headers: _headers,
     })
     .then((response) => response.data)
     .catch((error) => showToastNotification(error.message));
 };
 
-export const AxiosGet = async (url, parameters) => {
+export const AxiosGet = async (url) => {
+  const token = "Bearer".concat(" " + localStorage.getItem("token"));
   try {
-    const httpResponse = await axios.get(url, parameters);
+    const httpResponse = await axios.get(url, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
     return {
       status: httpResponse.status,
       data: httpResponse.data,
