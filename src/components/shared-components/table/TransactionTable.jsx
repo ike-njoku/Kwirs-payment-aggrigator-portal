@@ -1,70 +1,77 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { IoTimeSharp } from "react-icons/io5";
 import TransactionDetails from "../modals/TransactionDetails";
+import { AxiosGet } from "../../../services/http-service";
+import { toast } from "react-toastify";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const TransactionTable = () => {
-  const tableData = [
-    {
-      title: "John Taxes",
-      dateOfPayment: "Today",
-      amount: 500,
-      status: "done",
-    },
-    {
-      title: "Jane Taxes",
-      dateOfPayment: "Today",
-      amount: 100,
-      status: "canceled",
-    },
-    {
-      title: "Joy Taxes",
-      dateOfPayment: "Today",
-      amount: 500,
-      status: "pending",
-    },
-    {
-      title: "John Taxes",
-      dateOfPayment: "Today",
-      amount: 500,
-      status: "done",
-    },
-    {
-      title: "Jane Taxes",
-      dateOfPayment: "Today",
-      amount: 100,
-      status: "canceled",
-    },
-    {
-      title: "Joy Taxes",
-      dateOfPayment: "Today",
-      amount: 500,
-      status: "pending",
-    },
-    {
-      title: "John Taxes",
-      dateOfPayment: "Today",
-      amount: 500,
-      status: "done",
-    },
-  ];
-  const tableHeadings = ["description", "date", "amount(₦)", "status"];
-
+  const [tableData, setTableData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState({});
+  const [userTIN, setUserTIN] = useState("");
 
+  // Fetch Logged-in User TIN
+  useEffect(() => {
+    try {
+      const authDetails = JSON.parse(localStorage.getItem("authDetails"));
+      console.log("Auth Details from localStorage:", authDetails);
+
+      if (authDetails?.tin) {
+        setUserTIN(authDetails.tin);
+        fetchTransactions(authDetails.tin);
+      } else {
+        toast.error("User TIN not found. Please log in again.");
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error retrieving TIN:", error);
+      toast.error("Error fetching user details.");
+      setLoading(false);
+    }
+  }, []);
+
+  // Fetch Transactions from API
+  const fetchTransactions = async (TIN) => {
+    console.log("Fetching transactions for TIN:", TIN);
+    try {
+      const response = await AxiosGet(`${API_BASE_URL}/api/Dashboard/GetDashboard/${TIN}`);
+      console.log("API Response:", response);
+
+      if (response?.data?.StatusCode === 200) {
+        setTableData(response.data.Data || []);
+      } else {
+        toast.error(response.data?.StatusMessage || "Could not fetch transactions.");
+      }
+    } catch (error) {
+      console.error("Fetch Error:", error);
+      toast.error("Error fetching transactions.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle Closing Modal
   const handleCloseModal = () => {
     setOpenModal(false);
   };
 
+  // Handle Opening Modal
   const handleOpenModal = (transaction) => {
     setSelectedTransaction(transaction);
     setOpenModal(true);
   };
+
+  // Table Headings
+  const tableHeadings = ["Narration", "PRN", "Date", "Amount (₦)", "Status"];
+
   return (
     <div className="relative overflow-x-auto h-auto shadow-md sm:rounded-lg">
-      <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 ">
+      <table className="w-full text-sm text-left text-gray-500">
         <thead className="text-xs text-white uppercase bg-pumpkin">
           <tr>
             {tableHeadings.map((heading, i) => (
@@ -75,67 +82,62 @@ const TransactionTable = () => {
           </tr>
         </thead>
         <tbody>
-          {tableData.length > 0 &&
-            tableData.map((tableInfo, i) => (
+          {loading ? (
+            <tr>
+              <td colSpan={tableHeadings.length} className="text-center py-5 text-gray-700">
+                Loading transactions...
+              </td>
+            </tr>
+          ) : tableData.length > 0 ? (
+            tableData.map((transaction, i) => (
               <tr
                 className="odd:bg-white even:bg-gray-100 border-b border-gray-200 text-sm"
                 key={i}
               >
-                <td
-                  scope="row"
-                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize text-sm"
-                >
-                  {tableInfo.title}
-                </td>
+                <td className="px-6 py-4 font-medium text-gray-900 capitalize">{transaction.narration}</td>
+                <td className="px-6 py-4 text-gray-900">{transaction.PRN}</td>
+                <td className="px-6 py-4 text-gray-900">{transaction.PaymentDate}</td>
+                <td className="px-6 py-4 text-gray-900">
+  {new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+  }).format(transaction.amount)}
+</td>
 
-                <td className="px-6 py-4 text-gray-900 capitalize text-sm">
-                  {tableInfo.dateOfPayment}
-                </td>
-
-                <td className="px-6 py-4 text-gray-900">{tableInfo.amount}</td>
-
-                <td className="px-6 py-4 text-gray-900 text-sm">
-                  {tableInfo.status === "done" && (
+                <td className="px-6 py-4 text-gray-900">
+                  {transaction.Status === "Paid" && (
                     <p className="flex capitalize gap-1 items-center text-green-500">
-                      <FaCheckCircle /> done
+                      <FaCheckCircle /> Paid
                     </p>
                   )}
-                  {tableInfo.status === "canceled" && (
+                  {transaction.Status === "Failed" && (
                     <p className="flex capitalize gap-1 items-center text-red-500">
-                      <FaTimesCircle /> failed
+                      <FaTimesCircle /> Failed
                     </p>
                   )}
-                  {tableInfo.status === "pending" && (
+                  {transaction.Status === "Pending" && (
                     <button
                       className="flex capitalize gap-1 items-center text-yellow-500"
-                      onClick={() => handleOpenModal(tableInfo)}
+                      onClick={() => handleOpenModal(transaction)}
                     >
-                      <IoTimeSharp /> pending
+                      <IoTimeSharp /> Pending
                     </button>
                   )}
                 </td>
               </tr>
-            ))}
-
-          {tableData.length === 0 && (
+            ))
+          ) : (
             <tr>
-              <td colSpan={tableHeadings.length} className="bg-white">
-                <h3 className="w-full font-semibold py-5 text-2xl text-center">
-                  No data available
-                </h3>
+              <td colSpan={tableHeadings.length} className="bg-white text-center py-5">
+                No transactions available
               </td>
             </tr>
           )}
         </tbody>
       </table>
-      {/* pagination needed */}
 
-      {openModal && (
-        <TransactionDetails
-          details={selectedTransaction}
-          handleCloseModal={handleCloseModal}
-        />
-      )}
+      {/* Transaction Details Modal */}
+      {openModal && <TransactionDetails details={selectedTransaction} handleCloseModal={handleCloseModal} />}
     </div>
   );
 };
