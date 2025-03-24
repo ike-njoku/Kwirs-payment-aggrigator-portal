@@ -5,6 +5,7 @@ export const PaymentRequest = createContext();
 
 const PaymentRequestDetails = ({ children }) => {
   const [paymentRequestDetails, setPaymentRequestDetails] = useState({});
+  const [paymentPRN, setPaymentPRN] = useState("");
 
   useEffect(() => {
     localStorage.setItem(
@@ -13,9 +14,15 @@ const PaymentRequestDetails = ({ children }) => {
     );
   }, [paymentRequestDetails]);
 
+  useEffect(() => {
+    localStorage.setItem("paymentPRN", paymentPRN);
+  }, [paymentPRN]);
+
   const contextValue = {
     paymentRequestDetails,
     setPaymentRequestDetails,
+    paymentPRN,
+    setPaymentPRN,
   };
 
   return (
