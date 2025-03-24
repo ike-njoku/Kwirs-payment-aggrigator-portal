@@ -85,8 +85,8 @@ const AssessmentNumberComponent = ({
         )}
         {loading && <p className="text-white">Fetching invoice...</p>}{" "}
         {/* ✅ Show loading state */}
-        {paymentPRN}
-        6446-2223-9604
+        {/* {paymentPRN}
+        6446-2223-9604 */}
         <AuthButtons
           label="Continue"
           isDisabled={false}
