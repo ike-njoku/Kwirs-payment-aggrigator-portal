@@ -5,7 +5,8 @@ const IcadPayModal = ({ isOpen, onClose, invoiceData }) => {
   useEffect(() => {
     if (isOpen) {
       const script = document.createElement("script");
-      script.src = "https://pay-service.icadpay.com/host/new-inline-stage-pay.js";
+      script.src =
+        "https://pay-service.icadpay.com/host/new-inline-stage-pay.js";
       script.async = true;
       document.body.appendChild(script);
 
@@ -16,7 +17,6 @@ const IcadPayModal = ({ isOpen, onClose, invoiceData }) => {
   }, [isOpen]);
 
   if (!isOpen || !invoiceData) return null; // Ensure data is available
-
 
   // Function to trigger IcadPay
   const iCadPay = () => {
@@ -38,7 +38,7 @@ const IcadPayModal = ({ isOpen, onClose, invoiceData }) => {
       onSuccess: (response) => {
         console.log("Success:", response);
         alert(`Success! Transaction ref: ${response.paymentReference}`);
-        
+
         // Send the notification after successful payment
         sendPaymentNotification(response);
       },
@@ -50,56 +50,84 @@ const IcadPayModal = ({ isOpen, onClose, invoiceData }) => {
         console.log("Payment window closed");
       },
     });
-
-   
   };
 
-    // Function to send payment notification
-    const sendPaymentNotification = async (paymentResponse) => {
-      if (paymentResponse.requestSuccessful && paymentResponse.responseCode === "00") {
-        const responseData = paymentResponse.responseData;
-  
-        const notificationPayload = {
-          PRN: responseData.merchantTransactionRef,
-          currency: "NGN",
-          transactionRef: responseData.transactionRef || responseData.merchantTransactionRef,
-          amount: responseData.amount,
-          transactionId: responseData.paymentId,
-          flw_ref: responseData.flw_ref || "",
-          paymentStatusId: 1, // Assuming '1' means successful
-          paymentMethodId: 1, // Assuming '1' refers to CARD
-          channel: "CARD",
-          transactionDate: new Date().toISOString(),
-        };
-  
-        try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/payment/Notification`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(notificationPayload),
-          });
-  
-          const result = await res.json();
-          if (res.ok) {
-            console.log("Payment notification sent successfully:", result);
-          } else {
-            console.error("Failed to send payment notification:", result);
-          }
-        } catch (error) {
-          console.error("Error sending payment notification:", error);
-        }
-      } else {
-        console.error("Payment was not successful:", paymentResponse);
-      }
+  const sendPaymentNotification = async (paymentResponse) => {
+    if (!paymentResponse || !paymentResponse.requestSuccessful) {
+      console.error("Invalid payment response:", paymentResponse);
+      return;
+    }
+
+    const responseData = paymentResponse.responseData;
+
+    // Determine payment status ID
+    let paymentStatusId;
+    switch (paymentResponse.responseCode) {
+      case "00":
+        paymentStatusId = 1; // Successful
+        break;
+      case "RR": // Pending payment (adjust based on iCade response codes)
+      case "PR":
+        paymentStatusId = 2; // Pending
+        break;
+      default:
+        paymentStatusId = 3; // Failed
+        break;
+    }
+
+    const notificationPayload = {
+      PRN: responseData.merchantTransactionRef,
+      currency: "NGN",
+      transactionRef:
+        responseData.transactionRef || responseData.merchantTransactionRef,
+      amount: responseData.amount,
+      transactionId: responseData.paymentId,
+      flw_ref: responseData.flw_ref || "",
+      paymentStatusId, // Dynamic status ID
+      paymentMethodId: 1, // Assuming '1' refers to CARD
+      channel: "CARD",
+      transactionDate: new Date().toISOString(),
     };
-  
+
+    // Log the payload before sending
+    console.log("Notification Payload:", notificationPayload);
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment/Notification`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(notificationPayload),
+        }
+      );
+
+      const result = await res.json();
+      if (res.ok) {
+        console.log("Payment notification sent successfully:", result);
+      } else {
+        console.error("Failed to send payment notification:", result);
+      }
+    } catch (error) {
+      console.error("Error sending payment notification:", error);
+    }
+  };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" onClick={onClose}>
-      <div className="bg-white rounded-lg p-6 w-full max-w-md relative" onClick={(e) => e.stopPropagation()}>
-        <button className="absolute top-3 right-3 text-black text-xl" onClick={onClose}>
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-lg p-6 w-full max-w-md relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          className="absolute top-3 right-3 text-black text-xl"
+          onClick={onClose}
+        >
           &times;
         </button>
 
@@ -107,31 +135,73 @@ const IcadPayModal = ({ isOpen, onClose, invoiceData }) => {
 
         <form className="flex flex-col gap-3" id="payment-form">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Payer Name</label>
-            <input type="text" className="border p-3 rounded-md w-full" value={invoiceData.payerName} readOnly />
+            <label className="block text-sm font-medium text-gray-700">
+              Payer Name
+            </label>
+            <input
+              type="text"
+              className="border p-3 rounded-md w-full"
+              value={invoiceData.payerName}
+              readOnly
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Payer Email</label>
-            <input type="text" className="border p-3 rounded-md w-full" value={invoiceData.payerEmail} readOnly />
+            <label className="block text-sm font-medium text-gray-700">
+              Payer Email
+            </label>
+            <input
+              type="text"
+              className="border p-3 rounded-md w-full"
+              value={invoiceData.payerEmail}
+              readOnly
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Payer Phone</label>
-            <input type="text" className="border p-3 rounded-md w-full" value={invoiceData.payerPhone} readOnly />
+            <label className="block text-sm font-medium text-gray-700">
+              Payer Phone
+            </label>
+            <input
+              type="text"
+              className="border p-3 rounded-md w-full"
+              value={invoiceData.payerPhone}
+              readOnly
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Narration</label>
-            <input type="text" className="border p-3 rounded-md w-full" value={invoiceData.narration} readOnly />
+            <label className="block text-sm font-medium text-gray-700">
+              Narration
+            </label>
+            <input
+              type="text"
+              className="border p-3 rounded-md w-full"
+              value={invoiceData.narration}
+              readOnly
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Amount</label>
-            <input type="text" className="border p-3 rounded-md w-full" value={invoiceData.amount} readOnly />
+            <label className="block text-sm font-medium text-gray-700">
+              Amount
+            </label>
+            <input
+              type="text"
+              className="border p-3 rounded-md w-full"
+              value={invoiceData.amount}
+              readOnly
+            />
           </div>
 
-          <button type="button" className="bg-orange-600 text-white p-3 rounded-md mt-4" onClick={() => { iCadPay(); onClose(); }}>
+          <button
+            type="button"
+            className="bg-orange-600 text-white p-3 rounded-md mt-4"
+            onClick={() => {
+              iCadPay();
+              onClose();
+            }}
+          >
             Submit Payment
           </button>
         </form>
