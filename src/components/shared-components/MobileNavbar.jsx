@@ -41,7 +41,7 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
         openNav ? "translate-x-0" : "translate-x-[1000px]"
       } fixed bg-[rgba(0,0,0,0.7)] top-0 left-0 right-0 bottom-0 transition-all z-[24]`}
     >
-      <div className="w-full max-w-[300px] h-full p-6 bg-white">
+      <div className="w-full max-w-[300px] h-full p-6 bg-white  overflow-auto">
         <div className="flex justify-end">
           <button className="text-pumpkin text-2xl" onClick={handleCloseNav}>
             <IoMdClose />

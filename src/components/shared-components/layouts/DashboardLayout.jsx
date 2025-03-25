@@ -10,11 +10,7 @@ import { authenticateUser } from "../../../services/auth-service";
 import { AxiosPost } from "../../../services/http-service";
 import { toast } from "react-toastify";
 
-const DashboardLayout = ({
-  page = "Dashboard",
-  subheading = "",
-  children,
-}) => {
+const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
   const pathname = usePathname();
   const [openNav, setOpenNav] = useState(false);
   const [authenticatedUser, setAuthenticatedUser] = useState({});
@@ -50,14 +46,17 @@ const DashboardLayout = ({
   };
   return (
     <section className="w-full ">
-      <div className="fixed max-w-[250px] w-full hidden lg:block top-0 left-0 bottom-0 bg-[rgba(32,32,32,1)]">
+      <div
+        className="fixed max-w-[250px] w-full hidden lg:block top-0 left-0 bottom-0 bg-[rgba(32,32,32,1)] overflow-auto"
+        style={{ scrollbarWidth: "none" }}
+      >
         <div className="w-full h-full py-6 text-white">
           <h3 className="w-full font-bold text-xl italic px-8 my-5">
             Quantum<span className="text-pumpkin">Gateway</span>
           </h3>
 
-          <div className="w-full py-5 mt-10">
-            <ul className="w-full flex flex-col gap-6">
+          <div className="w-full py-5 mt-10 overflow-auto">
+            <ul className="w-full flex flex-col gap-6 overflow-auto">
               {/* use _sidebarMenu to get menus from the backend */}
               {sidebarMenu.map((menu, i) => (
                 <li
