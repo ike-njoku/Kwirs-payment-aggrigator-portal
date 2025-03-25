@@ -29,7 +29,7 @@ const IcadPayModal = ({ isOpen, onClose, invoiceData }) => {
       last_name: "",
       phone_number: invoiceData.payerPhone,
       customerId: invoiceData.payerEmail,
-      ref: invoiceData.PRN,
+      ref: ` ${Math.floor(Math.random() * 1000000000 + 1)}`,
       narration: invoiceData.narration,
       callback_url: "",
       callback: (response) => {
@@ -76,7 +76,7 @@ const IcadPayModal = ({ isOpen, onClose, invoiceData }) => {
     }
 
     const notificationPayload = {
-      PRN: responseData.merchantTransactionRef,
+      PRN: invoiceData.PRN,
       currency: "NGN",
       transactionRef:
         responseData.transactionRef || responseData.merchantTransactionRef,

@@ -16,7 +16,10 @@ export const handleInterswitchPayment = (invoiceData) => {
   const fields = [
     { name: "merchant_code", value: "MX6072" },
     { name: "pay_item_id", value: "9405967" },
-    { name: "site_redirect_url", value: "" },
+    {
+      name: "site_redirect_url",
+      value: "https://example.com/payment-response",
+    },
     { name: "txn_ref", value: invoiceData.PRN },
     {
       name: "amount",
