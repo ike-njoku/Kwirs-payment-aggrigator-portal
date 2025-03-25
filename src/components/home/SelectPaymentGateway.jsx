@@ -12,6 +12,7 @@ import PaymentButtons from "../shared-components/buttons/PaymentButtons";
 import PayWithFlutterWave from "../../utils/flutterwavePayment";
 import IcadPayModal from "./IcadPayModal";
 import { handleInterswitchPayment } from "../../utils/interswitchPayment";
+import PayWithCredoPayment from "@/utils/credoPayment";
 
 const SelectPaymentGateway = ({ showPreviousComponent }) => {
   const [selectedOption, setSelectedOption] = useState("nil");
@@ -104,6 +105,12 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
           />
         )}
         {selectedOption === "flutterWave" && <PayWithFlutterWave />}
+
+        {selectedOption === "etranzact" && (
+          <>
+            <PayWithCredoPayment />
+          </>
+        )}
       </div>
 
       {showModal && (

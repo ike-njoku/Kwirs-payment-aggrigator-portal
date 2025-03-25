@@ -12,8 +12,12 @@ import { toast } from "react-toastify";
 
 const HomePage = () => {
   const [nextComponent, showNextComponent] = useState(0);
-  const { paymentRequestDetails, setPaymentRequestDetails } =
-    useContext(PaymentRequest);
+  const {
+    paymentRequestDetails,
+    setPaymentRequestDetails,
+    paymentPRN,
+    setPaymentPRN,
+  } = useContext(PaymentRequest);
 
   const handleSetPaymentAssessmentNumber = (paymentNumber) => {
     paymentRequestDetails.paymentAssessmentNumber = paymentNumber;
@@ -127,6 +131,9 @@ const HomePage = () => {
                   paymentAssessmentNumberment={handleSetPaymentAssessmentNumber}
                   showNextComponent={handleShowPayerDetails}
                   paymentRequestDetails={paymentRequestDetails}
+                  setPaymentPRN={setPaymentPRN}
+                  paymentPRN={paymentPRN}
+                  handleShowInvoice={handleShowInvoice}
                 />
               )}
               {/* 

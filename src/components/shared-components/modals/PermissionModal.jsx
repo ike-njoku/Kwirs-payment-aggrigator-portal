@@ -43,42 +43,56 @@ const PermissionModal = ({ isOpen, onClose, refreshPermissions }) => {
       toast.error("All fields are required.");
       return;
     }
-
+  
     try {
       setLoading(true);
+  
+      const token = localStorage.getItem("token"); 
+  
+      if (!token) {
+        toast.error("You are not authenticated. Please log in again.");
+        setLoading(false);
+        return;
+      }
+  
       const payload = {
         permissionCode,
         description,
         ResourceId: parseInt(selectedResourceId, 10),
       };
-
+  
       const response = await axios.post(
         `${API_BASE_URL}/api/Permissions/Create`,
         payload,
-        { headers: { "Content-Type": "application/json" } }
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`, 
+          },
+        }
       );
-
-      if (response.data.StatusCode === 200) {
+  
+      if (response?.data?.StatusCode === 200) {
         toast.success("Permission created successfully!");
-
         refreshPermissions();
-
         setPermissionCode("");
         setDescription("");
         setSelectedResourceId("");
-
+  
         setTimeout(() => {
           onClose();
         }, 1500);
       } else {
-        toast.error(response.data.StatusMessage || "Failed to create permission.");
+        toast.error(response.data?.StatusMessage || "Failed to create permission.");
       }
     } catch (error) {
-      toast.error("Error creating permission.");
+      toast.error(error?.response?.data?.Message || "Error creating permission.");
     } finally {
       setLoading(false);
     }
   };
+  
+  
 
    // Handle Delete Permission 
       const handleDeletePermission = async (permissionId) => {

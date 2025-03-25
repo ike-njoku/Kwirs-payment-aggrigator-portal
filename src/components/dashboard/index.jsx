@@ -34,7 +34,7 @@ const UserDashboard = () => {
               {/* create transaction */}
               <section className="w-full mb-3 flex justify-end items-center gap-5">
                 <Link
-                  href="/transactions/new"
+                  href="/"
                   id="dropdownBgHoverButton"
                   data-dropdown-toggle="dropdownBgHover"
                   className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center  relative  gap-2 border border-pumpkin"

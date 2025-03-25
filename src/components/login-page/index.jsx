@@ -6,6 +6,7 @@ import Link from "next/link";
 import AuthLayout from "../shared-components/auth-components/AuthLayout";
 import { AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
+import { generateAccessToken } from "../../services/auth-service";
 
 const LoginPage = () => {
   const [authenticationDetails, setAuthenticationDetails] = useState({
@@ -29,6 +30,19 @@ const LoginPage = () => {
   const authenticateUser = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+
+    const token = await generateAccessToken({
+      password: authenticationDetails.password,
+      username: "Admin",
+      grant_type: "password",
+    });
+
+    if (!token || !token?.access_token) {
+      toast.error("Could not generate access token");
+      setIsLoading(false);
+      return;
+    }
+
     const _authenticationDetails = {
       Password: authenticationDetails.password,
       UserName: authenticationDetails.tin,
