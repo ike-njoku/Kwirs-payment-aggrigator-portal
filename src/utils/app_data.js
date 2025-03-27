@@ -31,6 +31,12 @@ export const sidebarMenu = [
     icon: <FaUsers />,
     url: "/user-list",
   },
+
+  {
+    path: "Payment Method",
+    icon: <FaUsers />,
+    url: "/payment-method",
+  },
   {
     path: "resource allocation",
     icon: <FaTasks />,

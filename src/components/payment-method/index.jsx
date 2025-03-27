@@ -7,13 +7,20 @@ import { FaPlus } from "react-icons/fa";
 import CreateRoleModel from "../shared-components/modals/CreateRoleModel";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
+import CreatePaymentMethod from "../shared-components/modals/createPaymentMethod";
 
 const RolesPage = () => {
-  const tableHeadings = ["Name", "Date Created", "Actions"];
+  const tableHeadings = [
+    "Description",
+    "Payment Method",
+    "Created By",
+    "Authorization",
+    "Actions",
+  ];
   const [tableData, setTableData] = useState(roleTableData);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
-  const [openRoleModal, setOpenRoleModal] = useState(false);
+  const [openPaymentMethodModal, setOpenPaymentMethodModal] = useState(false);
   const [authenticatedUser, setAuthenticatedUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -52,6 +59,7 @@ const RolesPage = () => {
     setAuthenticatedUser(user);
   }, []);
 
+  // handle updating payment method
   const handleEditItem = async (updatedItem, newRole) => {
     if (newRole) {
       const selectedRole = tableData.find((item) => item.id === updatedItem.id);
@@ -69,15 +77,16 @@ const RolesPage = () => {
     }
   };
 
-  const handleCloseCreateRoleModal = () => {
-    setOpenRoleModal(false);
+  const handleCloseCreatePaymentMethodModal = () => {
+    setOpenPaymentMethodModal(false);
   };
 
-  const handleOpenCreateRoleModal = () => {
-    setOpenRoleModal(true);
+  const handleOpenCreatePaymentMethodModal = () => {
+    setOpenPaymentMethodModal(true);
   };
 
-  const handleCreateRoleModal = async (newRole) => {
+  // hand create payment method
+  const handleCreatePaymentMethod = async (newRole) => {
     setIsLoading(true);
     const newRoleData = {
       name: newRole,
@@ -103,26 +112,31 @@ const RolesPage = () => {
   };
 
   useEffect(() => {
-    getRoles();
+    getAllPaymentMethod();
   }, []);
 
-  const getRoles = async () => {
+  // getting all the payment method
+  const getAllPaymentMethod = async () => {
     const apiResponse = await AxiosGet(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/GetAllRoles`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/PaymentMethod/GetAllPaymentMethods`
     );
-    if (!apiResponse) toast.error("Could not fetch roles");
+    if (!apiResponse) toast.error("Could not fetch payment methods");
 
     const { data } = apiResponse;
+    console.log(data);
     const tableData = data.Data;
-    tableData.map((item) => (item.name = item.Name));
-    tableData.map((item) => (item.id = item.Id));
+    tableData.map((item) => (item.Description = item.description));
+    tableData.map((item) => (item.PaymentMethod = item.paymentMethodId));
+    tableData.map((item) => (item.CreatedBy = item.createdBy));
+    tableData.map((item) => (item.Authorization = item.requireAUthorization));
+    // tableData.map((item) => (item.id = item.Id));
 
-    tableData.map(
-      (item) =>
-        (item.dateCreated = new Date(item.UpdateDate)
-          .toISOString()
-          .split("T")[0])
-    );
+    // tableData.map(
+    //   (item) =>
+    //     (item.dateCreated = new Date(item.UpdateDate)
+    //       .toISOString()
+    //       .split("T")[0])
+    // );
     setTableData(tableData);
   };
   console.log("tableData", tableData);
@@ -139,18 +153,18 @@ const RolesPage = () => {
                 data-dropdown-toggle="dropdownBgHover"
                 className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center  relative  gap-2 border border-pumpkin"
                 type="button"
-                onClick={handleOpenCreateRoleModal}
+                onClick={handleOpenCreatePaymentMethodModal}
               >
-                Create Role
+                Create Payment Modal
                 <FaPlus />
               </button>
             </section>
             {/* table */}
             <CustomTable
               tableHeadings={tableHeadings}
-              tableType="roles"
               tableData={tableData}
               isEllipseDropdwon={true}
+              tableType="paymentMethod"
               handleDelete={handleDelete}
               handleEdit={handleEdit}
               openDeleteModal={openDeleteModal}
@@ -165,10 +179,10 @@ const RolesPage = () => {
           </div>
         </div>
 
-        {openRoleModal && (
-          <CreateRoleModel
-            handleCloseModal={handleCloseCreateRoleModal}
-            handleCreateModal={handleCreateRoleModal}
+        {openPaymentMethodModal && (
+          <CreatePaymentMethod
+            handleCloseModal={handleCloseCreatePaymentMethodModal}
+            handleCreateModal={handleCreatePaymentMethod}
             isLoading={isLoading}
           />
         )}

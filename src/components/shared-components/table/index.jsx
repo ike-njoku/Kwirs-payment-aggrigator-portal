@@ -24,6 +24,7 @@ const CustomTable = ({
   heading,
   label,
   isResource = false,
+  tableType = "default", // Add this new prop to differentiate table types
 }) => {
   const handleCloseDeleteModal = () => {
     setOpenDeleteModal(false);
@@ -38,141 +39,155 @@ const CustomTable = ({
   };
 
   const [selectedItem, setSelectedItem] = useState(0);
+
+  // Function to render table cells based on table type
+  const renderTableCell = (tableInfo, type) => {
+    switch (type) {
+      case "resource":
+        return (
+          <>
+            <td
+              scope="row"
+              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
+            >
+              {tableInfo.name}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.dateCreated}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.resourceType}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.resourceURL}
+            </td>
+          </>
+        );
+      case "roles": // Add your other table types here
+        return (
+          <>
+            <td
+              scope="row"
+              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
+            >
+              {tableInfo.name}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.dateCreated}
+            </td>
+          </>
+        );
+      case "paymentMethod": // Another table type
+        return (
+          <>
+            <td
+              scope="row"
+              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
+            >
+              {tableInfo.Description}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.PaymentMethod}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.CreatedBy}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.Authorization}
+            </td>
+          </>
+        );
+      case "type4": // Another table type
+        return (
+          <>
+            <td
+              scope="row"
+              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
+            >
+              {tableInfo.uniqueIdentifier}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.status}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.category}
+            </td>
+          </>
+        );
+      default: // Default table type
+        return (
+          <>
+            <td
+              scope="row"
+              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
+            >
+              {tableInfo.name}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.dateCreated}
+            </td>
+          </>
+        );
+    }
+  };
+
   return (
     <>
-      {isResource ? (
-        <div className="relative overflow-x-auto h-auto shadow-md sm:rounded-lg">
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 xl:table-fixed">
-            <thead className="text-xs text-white uppercase bg-pumpkin">
-              <tr>
-                {tableHeadings.map((heading, i) => (
-                  <th scope="col" className="px-6 py-3" key={i}>
-                    {heading}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {tableData.length > 0 &&
-                tableData.map((tableInfo, i) => (
-                  <tr
-                    className="odd:bg-white even:bg-gray-100 border-b border-gray-200"
-                    key={i}
-                  >
-                    <td
-                      scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
-                    >
-                      {tableInfo.name}
-                    </td>
-
-                    <td className="px-6 py-4 text-gray-900 capitalize">
-                      {tableInfo.dateCreated}
-                    </td>
-
-                    <td className="px-6 py-4 text-gray-900 capitalize">
-                      {tableInfo.resourceType}
-                    </td>
-
-                    <td className="px-6 py-4 text-gray-900 capitalize">
-                      {tableInfo.resourceURL}
-                    </td>
-
-                    <td className="px-6 py-4 text-gray-900">
-                      {isEllipseDropdwon ? (
-                        <EllipseDropdown
-                          handleDelete={handleDelete}
-                          handleEdit={handleEdit}
-                          setSelectedItem={setSelectedItem}
-                          id={tableInfo.id}
-                          item={tableInfo}
-                        />
-                      ) : (
-                        <SwitchIcon
-                          isActive={tableInfo.isActive}
-                          onToggle={toggleStatus}
-                          index={i}
-                        />
-                      )}
-                    </td>
-                  </tr>
-                ))}
-
-              {tableData.length === 0 && (
-                <tr>
-                  <td colSpan={tableHeadings.length} className="bg-white">
-                    <h3 className="w-full font-semibold py-5 text-2xl text-center">
-                      No data available
-                    </h3>
+      <div className="relative overflow-x-auto h-auto shadow-md sm:rounded-lg">
+        <table
+          className={`w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 ${
+            tableType === "resource" ? "xl:table-fixed" : "lg:table-fixed"
+          }`}
+        >
+          <thead className="text-xs text-white uppercase bg-pumpkin">
+            <tr>
+              {tableHeadings.map((heading, i) => (
+                <th scope="col" className="px-6 py-3" key={i}>
+                  {heading}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {tableData.length > 0 &&
+              tableData.map((tableInfo, i) => (
+                <tr
+                  className="odd:bg-white even:bg-gray-100 border-b border-gray-200"
+                  key={i}
+                >
+                  {renderTableCell(tableInfo, tableType)}
+                  <td className="px-6 py-4 text-gray-900">
+                    {isEllipseDropdwon ? (
+                      <EllipseDropdown
+                        handleDelete={handleDelete}
+                        handleEdit={handleEdit}
+                        setSelectedItem={setSelectedItem}
+                        id={tableInfo.id}
+                        item={tableInfo}
+                      />
+                    ) : (
+                      <SwitchIcon
+                        isActive={tableInfo.isActive}
+                        onToggle={toggleStatus}
+                        index={i}
+                      />
+                    )}
                   </td>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div className="relative overflow-x-auto h-auto shadow-md sm:rounded-lg">
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 lg:table-fixed">
-            <thead className="text-xs text-white uppercase bg-pumpkin">
+              ))}
+
+            {tableData.length === 0 && (
               <tr>
-                {tableHeadings.map((heading, i) => (
-                  <th scope="col" className="px-6 py-3" key={i}>
-                    {heading}
-                  </th>
-                ))}
+                <td colSpan={tableHeadings.length} className="bg-white">
+                  <h3 className="w-full font-semibold py-5 text-2xl text-center">
+                    No data available
+                  </h3>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {tableData.length > 0 &&
-                tableData.map((tableInfo, i) => (
-                  <tr
-                    className="odd:bg-white even:bg-gray-100 border-b border-gray-200"
-                    key={i}
-                  >
-                    <td
-                      scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
-                    >
-                      {tableInfo.name}
-                    </td>
-
-                    <td className="px-6 py-4 text-gray-900 capitalize">
-                      {tableInfo.dateCreated}
-                    </td>
-
-                    <td className="px-6 py-4 text-gray-900">
-                      {isEllipseDropdwon ? (
-                        <EllipseDropdown
-                          handleDelete={handleDelete}
-                          handleEdit={handleEdit}
-                          setSelectedItem={setSelectedItem}
-                          id={tableInfo.id}
-                          item={tableInfo}
-                        />
-                      ) : (
-                        <SwitchIcon
-                          isActive={tableInfo.isActive}
-                          onToggle={toggleStatus}
-                          index={i}
-                        />
-                      )}
-                    </td>
-                  </tr>
-                ))}
-
-              {tableData.length === 0 && (
-                <tr>
-                  <td colSpan={tableHeadings.length} className="bg-white">
-                    <h3 className="w-full font-semibold py-5 text-2xl text-center">
-                      No data available
-                    </h3>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {openDeleteModal && (
         <DeleteModal
