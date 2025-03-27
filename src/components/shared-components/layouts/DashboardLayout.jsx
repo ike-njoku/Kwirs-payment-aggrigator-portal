@@ -57,11 +57,11 @@ const DashboardLayout = ({
           </h3>
 
           <div className="w-full py-5 mt-10">
-            <ul className="w-full flex flex-col gap-6">
+            <ul className="w-full custom-scrollbar flex flex-col gap-6 max-h-[calc(100vh-150px)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700">
               {/* use _sidebarMenu to get menus from the backend */}
               {sidebarMenu.map((menu, i) => (
                 <li
-                  className={`w-full px-8 flex gap-2 items-center text-xl text-white capitalize py-2 ${
+                  className={`w-full px-8 flex gap-2 items-center text-sm text-white capitalize py-2 ${
                     pathname.includes(menu.url) && "bg-pumpkin"
                   }`}
                   key={i}
