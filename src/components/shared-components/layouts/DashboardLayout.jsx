@@ -10,11 +10,7 @@ import { authenticateUser } from "../../../services/auth-service";
 import { AxiosPost } from "../../../services/http-service";
 import { toast } from "react-toastify";
 
-const DashboardLayout = ({
-  page = "Dashboard",
-  subheading = "",
-  children,
-}) => {
+const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
   const pathname = usePathname();
   const [openNav, setOpenNav] = useState(false);
   const [authenticatedUser, setAuthenticatedUser] = useState({});
@@ -24,7 +20,7 @@ const DashboardLayout = ({
     const requestURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Menue/GetUserMenueItems`;
 
     const apiResponse = await AxiosPost(requestURL, {
-      UserName: authenticateUser?.tin,
+      UserName: authenticatesUser?.tin,
     });
 
     if (!apiResponse || apiResponse.StatusCode !== 200) {
@@ -38,8 +34,8 @@ const DashboardLayout = ({
   };
 
   useEffect(() => {
-    setAuthenticatedUser(authenticateUser);
-    // getUserMenuItems(); undo this comment when the time comes
+    setAuthenticatedUser(authenticateUser());
+    getUserMenuItems();
   }, []);
 
   const handleOpenNav = () => {
@@ -59,7 +55,7 @@ const DashboardLayout = ({
           <div className="w-full py-5 mt-10">
             <ul className="w-full flex flex-col gap-6">
               {/* use _sidebarMenu to get menus from the backend */}
-              {sidebarMenu.map((menu, i) => (
+              {_sidebarMenu.map((menu, i) => (
                 <li
                   className={`w-full px-8 flex gap-2 items-center text-xl text-white capitalize py-2 ${
                     pathname.includes(menu.url) && "bg-pumpkin"

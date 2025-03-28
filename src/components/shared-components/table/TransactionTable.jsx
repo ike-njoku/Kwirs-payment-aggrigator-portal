@@ -39,13 +39,16 @@ const TransactionTable = () => {
   const fetchTransactions = async (TIN) => {
     console.log("Fetching transactions for TIN:", TIN);
     try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/Dashboard/GetDashboard/${TIN}`);
-      console.log("API Response:", response);
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/Dashboard/GetDashboard/${TIN}`
+      );
 
       if (response?.data?.StatusCode === 200) {
         setTableData(response.data.Data || []);
       } else {
-        toast.error(response.data?.StatusMessage || "Could not fetch transactions.");
+        toast.error(
+          response.data?.StatusMessage || "Could not fetch transactions."
+        );
       }
     } catch (error) {
       console.error("Fetch Error:", error);
@@ -84,7 +87,10 @@ const TransactionTable = () => {
         <tbody>
           {loading ? (
             <tr>
-              <td colSpan={tableHeadings.length} className="text-center py-5 text-gray-700">
+              <td
+                colSpan={tableHeadings.length}
+                className="text-center py-5 text-gray-700"
+              >
                 Loading transactions...
               </td>
             </tr>
@@ -94,15 +100,19 @@ const TransactionTable = () => {
                 className="odd:bg-white even:bg-gray-100 border-b border-gray-200 text-sm"
                 key={i}
               >
-                <td className="px-6 py-4 font-medium text-gray-900 capitalize">{transaction.narration}</td>
+                <td className="px-6 py-4 font-medium text-gray-900 capitalize">
+                  {transaction.narration}
+                </td>
                 <td className="px-6 py-4 text-gray-900">{transaction.PRN}</td>
-                <td className="px-6 py-4 text-gray-900">{transaction.PaymentDate}</td>
                 <td className="px-6 py-4 text-gray-900">
-  {new Intl.NumberFormat("en-NG", {
-    style: "currency",
-    currency: "NGN",
-  }).format(transaction.amount)}
-</td>
+                  {transaction.PaymentDate}
+                </td>
+                <td className="px-6 py-4 text-gray-900">
+                  {new Intl.NumberFormat("en-NG", {
+                    style: "currency",
+                    currency: "NGN",
+                  }).format(transaction.amount)}
+                </td>
 
                 <td className="px-6 py-4 text-gray-900">
                   {transaction.Status === "Paid" && (
@@ -128,7 +138,10 @@ const TransactionTable = () => {
             ))
           ) : (
             <tr>
-              <td colSpan={tableHeadings.length} className="bg-white text-center py-5">
+              <td
+                colSpan={tableHeadings.length}
+                className="bg-white text-center py-5"
+              >
                 No transactions available
               </td>
             </tr>
@@ -137,11 +150,14 @@ const TransactionTable = () => {
       </table>
 
       {/* Transaction Details Modal */}
-      {openModal && <TransactionDetails details={selectedTransaction} handleCloseModal={handleCloseModal} />}
+      {openModal && (
+        <TransactionDetails
+          details={selectedTransaction}
+          handleCloseModal={handleCloseModal}
+        />
+      )}
     </div>
   );
 };
 
 export default TransactionTable;
-
-

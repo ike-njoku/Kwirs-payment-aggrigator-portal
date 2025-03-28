@@ -17,7 +17,7 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
     const requestURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Menue/GetUserMenueItems`;
 
     const apiResponse = await AxiosPost(requestURL, {
-      UserName: authenticateUser?.email,
+      UserName: authenticatesUser?.tin,
     });
 
     if (!apiResponse || apiResponse.StatusCode !== 200) {
@@ -32,7 +32,7 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
 
   useEffect(() => {
     setAuthenticatedUser(authenticateUser);
-    // getUserMenuItems();
+    getUserMenuItems();
   }, []);
 
   return (
@@ -67,7 +67,7 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
         <div className="w-full py-5 mt-10">
           <ul className="w-full flex flex-col gap-6">
             {/* use _sidebarMenu to get menus from the backend */}
-            {sidebarMenu.map((menu, i) => (
+            {_sidebarMenu.map((menu, i) => (
               <li
                 className={`w-full px-6 flex gap-2 items-center text-lg text-black capitalize py-2 ${
                   pathname.includes(menu.url) &&
