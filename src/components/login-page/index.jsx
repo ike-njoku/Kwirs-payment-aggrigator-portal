@@ -33,7 +33,7 @@ const LoginPage = () => {
 
     const token = await generateAccessToken({
       password: authenticationDetails.password,
-      username: "Admin",
+      username: authenticationDetails.tin,
       grant_type: "password",
     });
 
@@ -61,6 +61,7 @@ const LoginPage = () => {
     _authResponse.UserName = authenticationDetails.tin;
     _authResponse.email = authenticationDetails.tin;
     _authResponse.Username = authenticationDetails.tin;
+    _authResponse.Password = "";
 
     if (authResponse && authResponse.password) authResponse.password = "";
 
