@@ -82,58 +82,63 @@ const TransactionTable = () => {
           </tr>
         </thead>
         <tbody>
-          {loading ? (
-            <tr>
-              <td colSpan={tableHeadings.length} className="text-center py-5 text-gray-700">
-                Loading transactions...
-              </td>
-            </tr>
-          ) : tableData.length > 0 ? (
-            tableData.map((transaction, i) => (
-              <tr
-                className="odd:bg-white even:bg-gray-100 border-b border-gray-200 text-sm"
-                key={i}
-              >
-                <td className="px-6 py-4 font-medium text-gray-900 capitalize">{transaction.narration}</td>
-                <td className="px-6 py-4 text-gray-900">{transaction.PRN}</td>
-                <td className="px-6 py-4 text-gray-900">{transaction.PaymentDate}</td>
-                <td className="px-6 py-4 text-gray-900">
-  {new Intl.NumberFormat("en-NG", {
-    style: "currency",
-    currency: "NGN",
-  }).format(transaction.amount)}
-</td>
+  {loading ? (
+    <tr>
+      <td colSpan={tableHeadings.length} className="text-center py-5 text-gray-700">
+        Loading transactions...
+      </td>
+    </tr>
+  ) : tableData.length > 0 ? (
+    tableData.map((transaction, i) => {
+      const isPAYEFailed = transaction.narration?.toLowerCase().includes("paye") && transaction.status?.toLowerCase() === "failed";
 
-                <td className="px-6 py-4 text-gray-900">
-                  {transaction.Status === "Paid" && (
-                    <p className="flex capitalize gap-1 items-center text-green-500">
-                      <FaCheckCircle /> Paid
-                    </p>
-                  )}
-                  {transaction.Status === "Failed" && (
-                    <p className="flex capitalize gap-1 items-center text-red-500">
-                      <FaTimesCircle /> Failed
-                    </p>
-                  )}
-                  {transaction.Status === "Pending" && (
-                    <button
-                      className="flex capitalize gap-1 items-center text-yellow-500"
-                      onClick={() => handleOpenModal(transaction)}
-                    >
-                      <IoTimeSharp /> Pending
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={tableHeadings.length} className="bg-white text-center py-5">
-                No transactions available
-              </td>
-            </tr>
-          )}
-        </tbody>
+      return (
+        <tr
+          key={i}
+          className={`odd:bg-white even:bg-gray-100 border-b border-gray-200 text-sm ${
+            isPAYEFailed ? "text-red-500" : "text-gray-900"
+          }`}
+        >
+          <td className="px-6 py-4 font-medium capitalize">{transaction.narration}</td>
+          <td className="px-6 py-4 capitalize">{transaction.PaymentDate}</td>
+          <td className="px-6 py-4">
+            {new Intl.NumberFormat("en-NG", {
+              style: "currency",
+              currency: "NGN",
+            }).format(transaction.amount)}
+          </td>
+          <td className="px-6 py-4">
+            {transaction.Status.toLowerCase() === "paid" && (
+              <p className="flex capitalize gap-1 items-center text-green-500">
+                <FaCheckCircle /> Paid
+              </p>
+            )}
+            {transaction.Status.toLowerCase() === "failed" && (
+              <p className="flex capitalize gap-1 items-center text-red-500">
+                <FaTimesCircle /> Failed
+              </p>
+            )}
+            {transaction.Status.toLowerCase() === "pending" && (
+              <button
+                className="flex capitalize gap-1 items-center text-yellow-500"
+                onClick={() => handleOpenModal(transaction)}
+              >
+                <IoTimeSharp /> Pending
+              </button>
+            )}
+          </td>
+        </tr>
+      );
+    })
+  ) : (
+    <tr>
+      <td colSpan={tableHeadings.length} className="bg-white text-center py-5">
+        No transactions available
+      </td>
+    </tr>
+  )}
+</tbody>
+
       </table>
 
       {/* Transaction Details Modal */}

@@ -32,6 +32,11 @@ export const sidebarMenu = [
     url: "/user-list",
   },
   {
+    path: "agencies",
+    icon: <FaUsers />,
+    url: "/agency",
+  },
+  {
     path: "resource allocation",
     icon: <FaTasks />,
     url: "/resource-allocation",
