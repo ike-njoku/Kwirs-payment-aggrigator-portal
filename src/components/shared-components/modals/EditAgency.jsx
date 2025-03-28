@@ -5,7 +5,7 @@ import { AxiosGet, AxiosPost } from "../../../services/http-service";
 import { toast } from "react-toastify";
 import ModalLayout from "./ModalLayout";
 
-const EditAgency = ({ isOpen, onClose, selectedAgencyId }) => {
+const EditAgency = ({ isOpen, onClose, AgencyId }) => {
   const [agencyCode, setAgencyCode] = useState("");
   const [description, setDsecription] = useState("");
   const [updatedBy, setUpdatedBy] = useState("");
@@ -14,7 +14,7 @@ const EditAgency = ({ isOpen, onClose, selectedAgencyId }) => {
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-  console.log("🟢 Received selectedAgencyId:", selectedAgencyId);
+  console.log("🟢 Received AgencyId:", AgencyId);
 
   // Auto-populate updatedBy from localStorage
   useEffect(() => {
@@ -40,22 +40,23 @@ const EditAgency = ({ isOpen, onClose, selectedAgencyId }) => {
 
   // Fetch selected agency details when modal opens
   useEffect(() => {
-    const fetchAgencyDetails = async () => {
-      if (!selectedAgencyId) {
-        console.warn("⚠️ No selectedAgencyId provided, skipping API call.");
-        return;
-      }
-
-      setLoading(true);
-      try {
-        const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/GetAgencyById/${selectedAgencyId}`);
-        console.log("🔍 Agency Details Response:", response.data);
-
-        if (response?.status === 200 && response.data?.StatusCode === 200) {
+    console.log("🔄 useEffect Triggered: AgencyId =", AgencyId);
+  
+    if (!AgencyId) {
+      console.warn("⚠️ No AgencyId provided, skipping API call.");
+      return;
+    }
+  
+    console.log("🔄 Fetching agency details...");
+    setLoading(true);
+    AxiosGet(`${API_BASE_URL}/api/Agencies/GetAllAgenciesPBYID/${AgencyId}`)
+      .then((response) => {
+        console.log("🔍 API Response:", response.data);
+        if (response.status === 200 && response.data?.StatusCode === 200) {
           const agency = response.data?.Data;
           if (agency) {
             setAgencyCode(agency.AgencyCode || "");
-            setDsecription(agency.Dsecription || "");
+            setDsecription(agency.Description || ""); // Ensure correct key
             setIsActive(agency.isActive ?? true);
           } else {
             toast.error("Agency data is missing from the response.");
@@ -63,17 +64,14 @@ const EditAgency = ({ isOpen, onClose, selectedAgencyId }) => {
         } else {
           toast.error(response.data?.StatusMessage || "Failed to fetch agency details.");
         }
-      } catch (error) {
+      })
+      .catch((error) => {
+        console.error("❌ Error fetching agency details:", error);
         toast.error("Error fetching agency details.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (isOpen) {
-      fetchAgencyDetails();
-    }
-  }, [isOpen, selectedAgencyId]);
+      })
+      .finally(() => setLoading(false));
+  }, [isOpen, AgencyId]);
+  
 
   // Handle update request
   const handleUpdateAgency = async (e) => {
@@ -87,7 +85,7 @@ const EditAgency = ({ isOpen, onClose, selectedAgencyId }) => {
       return;
     }
 
-    if (!selectedAgencyId) {
+    if (!AgencyId) {
       toast.error("Invalid agency selected.");
       setLoading(false);
       return;
@@ -100,7 +98,7 @@ const EditAgency = ({ isOpen, onClose, selectedAgencyId }) => {
     }
 
     const payload = {
-      AgencyID: selectedAgencyId,
+      AgencyID: AgencyId,
       UpdatedBy: updatedBy,
       Dsecription: description,
       isActive: isActive,

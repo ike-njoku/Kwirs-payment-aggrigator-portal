@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { displayDate } from "../../utils/functions";
 import { AxiosGet } from "../../services/http-service";
@@ -25,16 +26,16 @@ const DashCard = ({ TIN }) => {
         const response = await AxiosGet(`${API_BASE_URL}/api/Dashboard/GetDashboard/${TIN}`);
         console.log("Dashboard API Full Response:", response.data);
 
-        if (response?.data?.StatusCode === 200) {
+        if (response?.data?.StatusCode === 1) { // Updated check
           setDashboardData(response.data); // Store the full response
         } else {
           toast.error(response.data?.StatusMessage || "Could not fetch dashboard data.");
-          setDashboardData({}); // Prevent errors in rendering
+          setDashboardData(null); // Ensure no incorrect state
         }
       } catch (error) {
         console.error("Fetch Dashboard Data Error:", error);
         toast.error("Error fetching dashboard data.");
-        setDashboardData({});
+        setDashboardData(null);
       } finally {
         setLoading(false);
       }
@@ -49,7 +50,7 @@ const DashCard = ({ TIN }) => {
     <div className="bg-customGradient rounded-[25px] p-6 text-white mt-3 w-[373px] lg:w-full">
       {loading ? (
         <p className="text-center text-white">Loading...</p>
-      ) : dashboardData ? (
+      ) : dashboardData && dashboardData.TIN ? (
         <>
           <article className="flex justify-between gap-3">
             <h3 className="w-full text-sm sm:text-base font-medium capitalize">
@@ -59,7 +60,7 @@ const DashCard = ({ TIN }) => {
               quantum<span className="text-pumpkin">Gateway</span>
             </h3>
           </article>
-
+  
           <h4 className="font-semibold mt-5 text-white flex justify-start gap-1">
             <span className="text-2xl">&#8358;</span>
             <span className="text-[30px] lg:text-5xl">
@@ -69,7 +70,7 @@ const DashCard = ({ TIN }) => {
             </span>
             <span className="text-2xl font-normal mt-3">.00</span>
           </h4>
-
+  
           <div className="mt-10 flex justify-between items-end gap-3">
             <article className="text-white">
               <h4 className="text-sm font-normal leading-normal">
@@ -82,7 +83,7 @@ const DashCard = ({ TIN }) => {
                 {dashboardData?.Email || "N/A"}
               </p>
             </article>
-
+  
             <h3 className="font-normal text-sm">{date || "N/A"}</h3>
           </div>
         </>
@@ -91,9 +92,11 @@ const DashCard = ({ TIN }) => {
       )}
     </div>
   );
+  
 };
 
 export default DashCard;
+
 
 
 

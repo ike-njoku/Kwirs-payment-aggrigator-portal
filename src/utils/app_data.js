@@ -37,6 +37,11 @@ export const sidebarMenu = [
     url: "/agency",
   },
   {
+    path: "authorizations",
+    icon: <FaTasks />,
+    url: "/authorizations",
+  },
+  {
     path: "resource allocation",
     icon: <FaTasks />,
     url: "/resource-allocation",
