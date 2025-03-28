@@ -37,6 +37,8 @@ export const authenticateUser = () => {
     return false;
   }
 
+  console.table(authenticatedUser);
+
   return authenticatedUser;
 };
 
