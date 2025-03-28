@@ -11,8 +11,6 @@ export const AxiosPost = async (url, parameters, headers) => {
     _headers = headers;
   }
 
-  console.log("REQUEST PARAMETERS ----->>> ", parameters);
-
   if (localStorage.getItem("token")) {
     _headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
   }

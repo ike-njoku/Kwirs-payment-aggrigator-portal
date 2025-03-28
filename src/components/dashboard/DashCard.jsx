@@ -6,43 +6,7 @@ import { toast } from "react-toastify";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-const DashCard = ({ TIN }) => {
-  const [dashboardData, setDashboardData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  // Fetch Dashboard Data from API
-  useEffect(() => {
-    if (!TIN) {
-      toast.error("User TIN not provided.");
-      setLoading(false);
-      return;
-    }
-
-    const fetchDashboardData = async () => {
-      try {
-        console.log(`Fetching: ${API_BASE_URL}/api/Dashboard/GetDashboard/${TIN}`);
-
-        const response = await AxiosGet(`${API_BASE_URL}/api/Dashboard/GetDashboard/${TIN}`);
-        console.log("Dashboard API Full Response:", response.data);
-
-        if (response?.data?.StatusCode === 200) {
-          setDashboardData(response.data); // Store the full response
-        } else {
-          toast.error(response.data?.StatusMessage || "Could not fetch dashboard data.");
-          setDashboardData({}); // Prevent errors in rendering
-        }
-      } catch (error) {
-        console.error("Fetch Dashboard Data Error:", error);
-        toast.error("Error fetching dashboard data.");
-        setDashboardData({});
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDashboardData();
-  }, [TIN]);
-
+const DashCard = ({ TIN, loading, dashboardData }) => {
   const date = displayDate();
 
   return (
@@ -78,9 +42,7 @@ const DashCard = ({ TIN }) => {
               <p className="text-base font-semibold">
                 {dashboardData?.TIN || "N/A"}
               </p>
-              <p className="text-sm italic">
-                {dashboardData?.Email || "N/A"}
-              </p>
+              <p className="text-sm italic">{dashboardData?.Email || "N/A"}</p>
             </article>
 
             <h3 className="font-normal text-sm">{date || "N/A"}</h3>
@@ -94,7 +56,3 @@ const DashCard = ({ TIN }) => {
 };
 
 export default DashCard;
-
-
-
-
