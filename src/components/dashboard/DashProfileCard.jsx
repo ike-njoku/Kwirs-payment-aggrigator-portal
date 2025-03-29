@@ -6,29 +6,26 @@ import ProfileDetails from "../shared-components/modals/ProfileDetails";
 import { AxiosGet } from "../../services/http-service";
 import { toast } from "react-toastify";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
 const DashProfileCard = ({ TIN, loading, profileData }) => {
-  const [currentDate, setCurrentDate] = useState(displayDate());
+   const [currentDate, setCurrentDate] = useState("");
   const [openModal, setOpenModal] = useState(false);
 
-  // Update date at midnight daily
-  useEffect(() => {
-    const updateDate = () => setCurrentDate(displayDate());
-    // Get current time and calculate time until next midnight
+ // Function to get the current date and time
+  const updateDateTime = () => {
     const now = new Date();
-    const midnight = new Date(now);
-    midnight.setHours(24, 0, 0, 0); // Set time to midnight
-    const timeUntilMidnight = midnight - now;
+    const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+    const formattedDate = now.toLocaleDateString("en-US", options);
+    setCurrentDate(formattedDate);
+  };
 
-    // Set timeout to update date at midnight
-    const timer = setTimeout(() => {
-      updateDate();
-      setInterval(updateDate, 24 * 60 * 60 * 1000); // Update every 24 hours
-    }, timeUntilMidnight);
+  // Update date in real-time
+  useEffect(() => {
+    updateDateTime(); // Set the initial date
+    const interval = setInterval(updateDateTime, 1000); // Update every second
 
-    return () => clearTimeout(timer);
+    return () => clearInterval(interval); // Cleanup on unmount
   }, []);
+
 
   return (
     <>
@@ -83,3 +80,4 @@ const DashProfileCard = ({ TIN, loading, profileData }) => {
 };
 
 export default DashProfileCard;
+

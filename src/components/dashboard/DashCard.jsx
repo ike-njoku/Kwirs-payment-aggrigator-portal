@@ -1,14 +1,29 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { displayDate } from "../../utils/functions";
 import { AxiosGet } from "../../services/http-service";
 import { toast } from "react-toastify";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const DashCard = ({ TIN, loading, dashboardData }) => {
-  const date = displayDate();
+  const [currentDate, setCurrentDate] = useState("");
+
+  // Function to get the current date and time
+  const updateDateTime = () => {
+    const now = new Date();
+    const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+    const formattedDate = now.toLocaleDateString("en-US", options);
+    setCurrentDate(formattedDate);
+  };
+
+  // Update date in real-time
+  useEffect(() => {
+    updateDateTime(); // Set the initial date
+    const interval = setInterval(updateDateTime, 1000); // Update every second
+
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
 
   return (
     <div className="bg-customGradient rounded-[25px] p-6 text-white mt-3 w-[373px] lg:w-full">
@@ -24,7 +39,7 @@ const DashCard = ({ TIN, loading, dashboardData }) => {
               quantum<span className="text-pumpkin">Gateway</span>
             </h3>
           </article>
-  
+
           <h4 className="font-semibold mt-5 text-white flex justify-start gap-1">
             <span className="text-2xl">&#8358;</span>
             <span className="text-[30px] lg:text-5xl">
@@ -34,7 +49,7 @@ const DashCard = ({ TIN, loading, dashboardData }) => {
             </span>
             <span className="text-2xl font-normal mt-3">.00</span>
           </h4>
-  
+
           <div className="mt-10 flex justify-between items-end gap-3">
             <article className="text-white">
               <h4 className="text-sm font-normal leading-normal">
@@ -45,8 +60,8 @@ const DashCard = ({ TIN, loading, dashboardData }) => {
               </p>
               <p className="text-sm italic">{dashboardData?.Email || "N/A"}</p>
             </article>
-  
-            <h3 className="font-normal text-sm">{date || "N/A"}</h3>
+
+            <h3 className="font-normal text-sm">{currentDate || "N/A"}</h3>
           </div>
         </>
       ) : (
@@ -54,7 +69,7 @@ const DashCard = ({ TIN, loading, dashboardData }) => {
       )}
     </div>
   );
-  
 };
 
 export default DashCard;
+

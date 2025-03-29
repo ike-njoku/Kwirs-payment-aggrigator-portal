@@ -13,25 +13,21 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const AgenciesPage = ({ user }) => {
   const tableHeadings = ["Created By", "Description", "Action"];
   const [loading, setLoading] = useState(false);
-  const [selectedAgencyId, setSelectedAgencyId] = useState(null);
+  const [selectedAgency, setSelectedAgency] = useState(null);
   const [agencies, setAgencies] = useState([]);
   const [openAgencyModal, setOpenAgencyModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
-  const [selectedAgency, setSelectedAgency] = useState(null);
   const [error, setError] = useState("");
   const [activeAgencies, setActiveAgencies] = useState([]);
-  const [pbyidAgencies, setPbyidAgencies] = useState([]);
-
-
 
   useEffect(() => {
     const fetchAllAgencies = async () => {
       try {
         setLoading(true);
         const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/GetAllAgencies`);
-  
-        console.log("API Response:", response.data); // ✅ Log full response
-  
+
+        console.log("✅ API Response (All Agencies):", response.data);
+
         if (response?.status === 200 && response.data?.StatusCode === 200) {
           setAgencies(response.data?.Data ?? []);
         } else {
@@ -43,113 +39,53 @@ const AgenciesPage = ({ user }) => {
         setLoading(false);
       }
     };
-  
+
     fetchAllAgencies();
   }, []);
-  
-
-  // Fetch active agencies and filter them
-  const fetchActiveAgencies = async () => {
-    try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/GetActiveAgencies`);
-      
-      console.log("Full API Response:", response); // Debugging step
-  
-      if (response?.status === 200 && response.data?.StatusCode === 200) {
-        const agencies = response.data?.Data ?? []; // Safely access Data array
-  
-        // ✅ Filter active agencies
-        const filteredAgencies = agencies.filter((agency) => agency.isActive);
-  
-        console.log("Filtered Active Agencies:", filteredAgencies); // Debugging step
-  
-        setActiveAgencies(filteredAgencies);
-      } else {
-        console.error("Unexpected response format:", response);
-        toast.error("Failed to fetch active agencies.");
-      }
-    } catch (error) {
-      console.error("Error fetching active agencies:", error);
-      toast.error("Error fetching active agencies.");
-    }
-  };
-
-
-  const fetchPBYIDAgencies = async (agencyId) => {
-    if (!agencyId) {
-      console.log("No AgencyId selected. Skipping API call.");
-      return;
-    }
-  
-    try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/GetAllAgenciesPBYID/${agencyId}`);
-      console.log("API Response for PBYID Agencies:", response);
-  
-      if (response?.status === 200 && response.data?.StatusCode === 200) {
-        const agencies = response.data?.Data ?? [];
-        console.log("Fetched PBYID Agencies:", agencies);
-        setPbyidAgencies(agencies);
-      } else {
-        console.error("Unexpected API response format:", response);
-        toast.error("Failed to fetch PBYID agencies.");
-      }
-    } catch (error) {
-      console.error("Error fetching PBYID agencies:", error);
-      toast.error("Error fetching PBYID agencies.");
-    }
-  };
-  
-  
-  
-  // Fetch when agency is selected
-  useEffect(() => {
-    if (selectedAgencyId) {
-      fetchPBYIDAgencies(selectedAgencyId);
-    }
-  }, [selectedAgencyId]);
-  
-   
 
   useEffect(() => {
+    const fetchActiveAgencies = async () => {
+      try {
+        const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/GetActiveAgencies`);
+        console.log("✅ API Response (Active Agencies):", response);
+
+        if (response?.status === 200 && response.data?.StatusCode === 200) {
+          setActiveAgencies(response.data?.Data ?? []);
+        } else {
+          toast.error("Failed to fetch active agencies.");
+        }
+      } catch (error) {
+        toast.error("Error fetching active agencies.");
+      }
+    };
+
     fetchActiveAgencies();
   }, []);
 
+  // Handle Delete Click
   const handleDelete = async (agencyId) => {
     if (!agencyId) {
       toast.error("Invalid agency selected.");
       return;
     }
-  
-    if (window.confirm("Are you sure you want to delete this agency?")) {
-      try {
-        const token = localStorage.getItem("authToken");
-        if (!token) {
-          toast.error("Session expired. Please log in again.");
-          return;
-        }
-  
-        // ✅ Using GET request for deletion
-        const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/Delete/${agencyId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-  
-        // ✅ Handle API response
-        if (response?.data?.StatusCode === 200) {
-          toast.success(response?.data?.StatusMessage || "Agency deleted successfully!");
-          
-          // ✅ Remove deleted agency from UI without refresh
-          setAgencies((prev) => prev.filter((item) => item.AgencyId !== agencyId));
-        } else {
-          toast.error(response?.data?.StatusMessage || "Delete failed.");
-        }
-      } catch (error) {
-        toast.error("Error deleting agency. Please try again.");
+
+    try {
+      console.log(`🚀 Sending DELETE request for AgencyId: ${agencyId}`);
+
+      const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/Delete/${agencyId}`);
+      console.log("✅ Full API Response:", response);
+
+      if (response?.data?.StatusCode === 200) {
+        toast.success(response.data.StatusMessage || "Agency deleted successfully!");
+        setAgencies((prev) => prev.filter((item) => item.AgencyId !== agencyId));
+      } else {
+        toast.error(response.data.StatusMessage || "Delete failed.");
       }
+    } catch (error) {
+      console.error("❌ Error deleting agency:", error);
+      toast.error("An error occurred. Please try again.");
     }
   };
-  
 
   return (
     <DashboardLayout page="Agencies">
@@ -165,47 +101,29 @@ const AgenciesPage = ({ user }) => {
               <FaPlus />
             </button>
 
-            {/* Active Agencies Dropdown (Displaying Description Name) */}
+            {/* Active Agencies Dropdown */}
             <div className="relative">
-  <select
-    className="text-gray focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
-    onChange={(e) => setSelectedAgencyId(e.target.value)}
-    value={selectedAgencyId || ""}
-  >
-    <option value="">Active Agencies</option>
-    {activeAgencies.length > 0 ? (
-      activeAgencies.map((agency) => (
-        <option key={agency.AgencyId} value={agency.AgencyId}>
-          {agency.description}
-        </option>
-      ))
-    ) : (
-      <option disabled>Loading agencies...</option>
-    )}
-  </select>
-</div>
-
-{/* <div className="relative">
-  <select
-    className="text-gray focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
-    onChange={(e) => setSelectedAgencyId(e.target.value)}
-    value={selectedAgencyId || ""}
-  >
-    <option value="">PBYID Agencies</option>
-    {pbyidAgencies.length > 0 ? (
-      pbyidAgencies.map((agency) => (
-        <option key={agency.AgencyId} value={agency.AgencyId}>
-          {agency.description}
-        </option>
-      ))
-    ) : (
-      <option disabled>No agencies found</option>
-    )}
-  </select>
-</div> */}
-
-
-
+              <select
+                className="text-gray focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
+                onChange={(e) => {
+                  const agencyId = Number(e.target.value);
+                  const agency = agencies.find((a) => a.AgencyId === agencyId);
+                  setSelectedAgency(agency);
+                }}
+                value={selectedAgency?.AgencyId || ""}
+              >
+                <option value="">Active Agencies</option>
+                {activeAgencies.length > 0 ? (
+                  activeAgencies.map((agency) => (
+                    <option key={agency.AgencyId} value={agency.AgencyId}>
+                      {agency.description}
+                    </option>
+                  ))
+                ) : (
+                  <option disabled>Loading agencies...</option>
+                )}
+              </select>
+            </div>
           </div>
         </div>
 
@@ -219,12 +137,12 @@ const AgenciesPage = ({ user }) => {
               tableHeadings={tableHeadings}
               tableData={agencies}
               handleEdit={(AgencyId) => {
-  setSelectedAgency(AgencyId);
-  setOpenEditModal(true);
-}}
-
-handleDelete={handleDelete} // ✅ Correctly passing the function
-
+                const agency = agencies.find((a) => a.AgencyId === AgencyId);
+                console.log("🟢 Selected Agency for Editing:", agency);
+                setSelectedAgency(agency);
+                setOpenEditModal(true);
+              }}
+              handleDelete={handleDelete} // Ensure delete works
               loading={loading}
               error={error}
             />
@@ -232,26 +150,25 @@ handleDelete={handleDelete} // ✅ Correctly passing the function
         </div>
 
         {openAgencyModal && (
-          <AgencyModal
-            isOpen={openAgencyModal}
-            onClose={() => setOpenAgencyModal(false)}
-          />
+          <AgencyModal isOpen={openAgencyModal} onClose={() => setOpenAgencyModal(false)} />
         )}
 
-{openEditModal && selectedAgency && (
-  <EditAgency
-    isOpen={openEditModal}
-    onClose={() => setOpenEditModal(false)}
-    selectedAgencyId={selectedAgency?.id} 
-  />
-)}
-
+        {openEditModal && selectedAgency && (
+          <EditAgency
+            isOpen={openEditModal}
+            onClose={() => setOpenEditModal(false)}
+            selectedAgencyId={selectedAgency?.AgencyId} // ✅ Fixed prop name
+          />
+        )}
       </section>
     </DashboardLayout>
   );
 };
 
 export default AgenciesPage;
+
+
+
 
 
 
