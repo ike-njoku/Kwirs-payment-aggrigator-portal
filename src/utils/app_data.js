@@ -6,76 +6,71 @@ import { MdPayment } from "react-icons/md";
 import { AxiosGet } from "../services/http-service";
 
 export const sidebarMenu = [
-  {
-    path: "dashboard",
-    icon: <MdSpaceDashboard />,
-    url: "/dashboard",
-  },
   // {
-  //   path: "profile",
-  //   icon: <FaUser />,
-  //   url: "/profile",
+  //   path: "dashboard",
+  //   icon: <MdSpaceDashboard />,
+  //   url: "/dashboard",
   // },
-  {
-    path: "settings",
-    icon: <IoSettings />,
-    url: "/settings",
-  },
-  {
-    path: "notifications",
-    icon: <IoNotifications />,
-    url: "/notifications",
-  },
-  {
-    path: "users",
-    icon: <FaUsers />,
-    url: "/user-list",
-  },
-  {
-    path: "agencies",
-    icon: <FaUsers />,
-    url: "/agency",
-  },
-  {
-    path: "authorizations",
-    icon: <FaTasks />,
-    url: "/authorizations",
-  },
-  {
-    path: "resource allocation",
-    icon: <FaTasks />,
-    url: "/resource-allocation",
-  },
-  {
-    path: "resources",
-    icon: <FaTasks />,
-    url: "/resources",
-  },
-  {
-    path: "permission",
-    icon: <FaTasks />,
-    url: "/permission",
-  },
-  {
-    path: "role permission",
-    icon: <FaTasks />,
-    url: "/role-permission",
-  },
-  {
-    path: "role allocation",
-    icon: <FaTasks />,
-    url: "/role-allocation",
-  },
-  {
-    path: "roles",
-    icon: <FaUserTie />,
-    url: "/roles",
-  },
-  {
-    path: "transactions",
-    icon: <MdPayment />,
-    url: "/transactions",
-  },
+  // // {
+  // //   path: "profile",
+  // //   icon: <FaUser />,
+  // //   url: "/profile",
+  // // },
+  // {
+  //   path: "settings",
+  //   icon: <IoSettings />,
+  //   url: "/settings",
+  // },
+  // {
+  //   path: "notifications",
+  //   icon: <IoNotifications />,
+  //   url: "/notifications",
+  // },
+  // {
+  //   path: "users",
+  //   icon: <FaUsers />,
+  //   url: "/user-list",
+  // },
+  // {
+  //   path: "agencies",
+  //   icon: <FaUsers />,
+  //   url: "/agency",
+  // },
+  // {
+  //   path: "resource allocation",
+  //   icon: <FaTasks />,
+  //   url: "/resource-allocation",
+  // },
+  // {
+  //   path: "resources",
+  //   icon: <FaTasks />,
+  //   url: "/resources",
+  // },
+  // {
+  //   path: "permission",
+  //   icon: <FaTasks />,
+  //   url: "/permission",
+  // },
+  // {
+  //   path: "role permission",
+  //   icon: <FaTasks />,
+  //   url: "/role-permission",
+  // },
+  // {
+  //   path: "role allocation",
+  //   icon: <FaTasks />,
+  //   url: "/role-allocation",
+  // },
+  // {
+  //   path: "roles",
+  //   icon: <FaUserTie />,
+  //   url: "/roles",
+  // },
+  // {
+  //   path: "transactions",
+  //   icon: <MdPayment />,
+  //   url: "/transactions",
+  // },
 ];
 
 export const usersList = [];

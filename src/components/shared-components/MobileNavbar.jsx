@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { authenticateUser } from "../../services/auth-service";
 import { AxiosPost } from "../../services/http-service";
+import { toast } from "react-toastify";
 
 const MobileNavbar = ({ openNav, handleCloseNav }) => {
   const pathname = usePathname();
@@ -17,8 +18,10 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
     const requestURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Menue/GetUserMenueItems`;
 
     const apiResponse = await AxiosPost(requestURL, {
-      UserName: authenticatesUser?.tin,
+      UserName: authenticateUser()?.tin,
     });
+
+    console.log("API RESPONSE ----------------------->>> ", apiResponse);
 
     if (!apiResponse || apiResponse.StatusCode !== 200) {
       toast.error("Could not fetch Menu Items. Please reload the page");
@@ -31,7 +34,7 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
   };
 
   useEffect(() => {
-    setAuthenticatedUser(authenticateUser);
+    setAuthenticatedUser(authenticateUser());
     getUserMenuItems();
   }, []);
 
@@ -75,7 +78,13 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
                 }`}
                 key={i}
               >
-                {menu.icon} <Link href={menu.url}>{menu.path}</Link>
+                {menu?.MainMenu}
+                {menu?.submenu?.map((subMenu, j) => (
+                  <>
+                    {subMenu.icon}{" "}
+                    <Link href={subMenu?.URL}>{subMenu?.ResourceName}</Link>
+                  </>
+                ))}
               </li>
             ))}
           </ul>

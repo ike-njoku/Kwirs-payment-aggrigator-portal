@@ -26,7 +26,7 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
     const requestURL = `${API_BASE_URL}/api/Menue/GetUserMenueItems`;
 
     const apiResponse = await AxiosPost(requestURL, {
-      UserName: authenticatesUser?.tin,
+      UserName: authenticateUser()?.tin,
     });
     try {
       const apiResponse = await AxiosPost(requestURL, { UserName: TIN });
@@ -47,12 +47,16 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
     if (!TIN) return;
 
     try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/Dashboard/GetDashboard/${TIN}`);
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/Dashboard/GetDashboard/${TIN}`
+      );
 
       if (response?.data?.StatusCode === 200) {
         setUserData(response.data.Data);
       } else {
-        toast.error(response.data?.StatusMessage || "Could not fetch user data.");
+        toast.error(
+          response.data?.StatusMessage || "Could not fetch user data."
+        );
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -67,7 +71,6 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
     getUserMenuItems();
     setAuthenticatedUser(authenticateUser);
     fetchUserData();
-    // getUserMenuItems(); // Uncomment this when needed
   }, []);
 
   const handleOpenNav = () => setOpenNav(true);
@@ -109,7 +112,9 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
                 <h4 className="text-4xl capitalize text-pumpkin font-semibold">
                   {page}
                 </h4>
-                <p className="text-pumpkin font-light text-base">{subheading}</p>
+                <p className="text-pumpkin font-light text-base">
+                  {subheading}
+                </p>
               </article>
 
               {/* User Profile (Updated with API Data) */}
@@ -149,10 +154,16 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
                   Quantum<span className="text-pumpkin">Gateway</span>
                 </h3>
 
-                <button className="text-pumpkin text-2xl" onClick={handleOpenNav}>
+                <button
+                  className="text-pumpkin text-2xl"
+                  onClick={handleOpenNav}
+                >
                   <FaBars />
                 </button>
-                <MobileNavbar openNav={openNav} handleCloseNav={handleCloseNav} />
+                <MobileNavbar
+                  openNav={openNav}
+                  handleCloseNav={handleCloseNav}
+                />
               </article>
             </div>
           </div>
@@ -172,4 +183,3 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
 };
 
 export default DashboardLayout;
-

@@ -1,5 +1,4 @@
 "use client";
-import React, { useState, useEffect } from "react";
 import ModalLayout from "./ModalLayout";
 import Image from "next/image";
 import { AxiosGet } from "../../../services/http-service";
@@ -8,42 +7,7 @@ import ProifileInfo from "../../dashboard/ProifileInfo";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-const ProfileDetails = ({ handleCloseModal, TIN }) => {
-  const [profileData, setProfileData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!TIN) {
-      toast.error("User TIN not provided.");
-      setLoading(false);
-      return;
-    }
-
-    const fetchProfileData = async () => {
-      try {
-        console.log(`Fetching Profile Data: ${API_BASE_URL}/api/Dashboard/GetDashboard/${TIN}`);
-
-        const response = await AxiosGet(`${API_BASE_URL}/api/Dashboard/GetDashboard/${TIN}`);
-        console.log("Profile API Response:", response?.data);
-
-        if (response?.data?.StatusCode === 200) {
-          setProfileData(response.data.Data || {});
-        } else {
-          toast.error(response.data?.StatusMessage || "Could not fetch profile data.");
-          setProfileData({});
-        }
-      } catch (error) {
-        console.error("Fetch Profile Data Error:", error);
-        toast.error("Error fetching profile data.");
-        setProfileData({});
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProfileData();
-  }, [TIN]);
-
+const ProfileDetails = ({ handleCloseModal, TIN, profileData }) => {
   return (
     <ModalLayout handleCloseModal={handleCloseModal}>
       <div className="w-full p-6">
@@ -75,8 +39,14 @@ const ProfileDetails = ({ handleCloseModal, TIN }) => {
             </div>
 
             <ul className="w-full flex flex-col gap-4 my-6">
-              <ProifileInfo propertyKeysName="email" value={profileData?.Email || "N/A"} />
-              <ProifileInfo propertyKeysName="tin" value={profileData?.TIN || "N/A"} />
+              <ProifileInfo
+                propertyKeysName="email"
+                value={profileData?.Email || "N/A"}
+              />
+              <ProifileInfo
+                propertyKeysName="tin"
+                value={profileData?.TIN || "N/A"}
+              />
               {/* <ProifileInfo propertyKeysName="status" value={profileData?.Status || "N/A"} /> */}
               {/* <ProifileInfo propertyKeysName="tax office" value={profileData?.TaxOffice || "N/A"} /> */}
             </ul>
@@ -90,4 +60,3 @@ const ProfileDetails = ({ handleCloseModal, TIN }) => {
 };
 
 export default ProfileDetails;
-

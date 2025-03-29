@@ -8,48 +8,13 @@ import { toast } from "react-toastify";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-const DashProfileCard = ({ TIN }) => {
+const DashProfileCard = ({ TIN, loading, profileData }) => {
   const [currentDate, setCurrentDate] = useState(displayDate());
   const [openModal, setOpenModal] = useState(false);
-  const [profileData, setProfileData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!TIN) {
-      toast.error("User TIN not provided.");
-      setLoading(false);
-      return;
-    }
-
-    const fetchProfileData = async () => {
-      try {
-        console.log(`Fetching Profile Data: ${API_BASE_URL}/api/Dashboard/GetDashboard/${TIN}`);
-
-        const response = await AxiosGet(`${API_BASE_URL}/api/Dashboard/GetDashboard/${TIN}`);
-        console.log("Profile API Response:", response?.data);
-
-        if (response?.data?.StatusCode === 200) {
-          setProfileData(response.data);
-        } else {
-          toast.error(response.data?.StatusMessage || "Could not fetch profile data.");
-          setProfileData({});
-        }
-      } catch (error) {
-        console.error("Fetch Profile Data Error:", error);
-        toast.error("Error fetching profile data.");
-        setProfileData({});
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProfileData();
-  }, [TIN]);
 
   // Update date at midnight daily
   useEffect(() => {
     const updateDate = () => setCurrentDate(displayDate());
-
     // Get current time and calculate time until next midnight
     const now = new Date();
     const midnight = new Date(now);
@@ -110,10 +75,11 @@ const DashProfileCard = ({ TIN }) => {
         )}
       </div>
 
-      {openModal && <ProfileDetails handleCloseModal={() => setOpenModal(false)} />}
+      {openModal && (
+        <ProfileDetails handleCloseModal={() => setOpenModal(false)} />
+      )}
     </>
   );
 };
 
 export default DashProfileCard;
-
