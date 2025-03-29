@@ -2,11 +2,11 @@ import React from "react";
 import TransactionTable from "../shared-components/table/TransactionTable";
 import { FaPrint, FaShareNodes } from "react-icons/fa6";
 
-const TransctionComponent = () => {
+const TransctionComponent = (transactions, loading) => {
   return (
     <>
       <section className="my-6">
-        <TransactionTable />
+        <TransactionTable transactions={transactions} loading={loading} />
         <section className="w-full flex justify-end gap-4 mt-6">
           <button
             id="dropdownBgHoverButton"

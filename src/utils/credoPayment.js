@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useCredoPayment } from "react-credo";
+// import { useCredoPayment } from "react-credo";
 import { PaymentRequest } from "@/context/PaymentRequestDetails";
 
 const PayWithCredoPayment = () => {

@@ -8,55 +8,11 @@ import { toast } from "react-toastify";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-const TransactionTable = () => {
+const TransactionTable = ({ transactions, loading }) => {
   const [tableData, setTableData] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState({});
   const [userTIN, setUserTIN] = useState("");
-
-  // Fetch Logged-in User TIN
-  useEffect(() => {
-    try {
-      const authDetails = JSON.parse(localStorage.getItem("authDetails"));
-      console.log("Auth Details from localStorage:", authDetails);
-
-      if (authDetails?.tin) {
-        setUserTIN(authDetails.tin);
-        fetchTransactions(authDetails.tin);
-      } else {
-        toast.error("User TIN not found. Please log in again.");
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error("Error retrieving TIN:", error);
-      toast.error("Error fetching user details.");
-      setLoading(false);
-    }
-  }, []);
-
-  // Fetch Transactions from API
-  const fetchTransactions = async (TIN) => {
-    console.log("Fetching transactions for TIN:", TIN);
-    try {
-      const response = await AxiosGet(
-        `${API_BASE_URL}/api/Dashboard/GetDashboard/${TIN}`
-      );
-
-      if (response?.data?.StatusCode === 200) {
-        setTableData(response.data.Data || []);
-      } else {
-        toast.error(
-          response.data?.StatusMessage || "Could not fetch transactions."
-        );
-      }
-    } catch (error) {
-      console.error("Fetch Error:", error);
-      toast.error("Error fetching transactions.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Handle Closing Modal
   const handleCloseModal = () => {
@@ -94,8 +50,8 @@ const TransactionTable = () => {
                 Loading transactions...
               </td>
             </tr>
-          ) : tableData.length > 0 ? (
-            tableData.map((transaction, i) => (
+          ) : transactions.transactions.length > 0 ? (
+            transactions?.transactions.map((transaction, i) => (
               <tr
                 className="odd:bg-white even:bg-gray-100 border-b border-gray-200 text-sm"
                 key={i}
