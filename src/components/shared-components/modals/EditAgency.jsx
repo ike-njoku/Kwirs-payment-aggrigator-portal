@@ -5,29 +5,32 @@ import { AxiosGet, AxiosPost } from "../../../services/http-service";
 import { toast } from "react-toastify";
 import ModalLayout from "./ModalLayout";
 
-const EditAgency = ({ isOpen, onClose, selectedAgencyId }) => {
+const EditAgency = ({ isOpen, onClose, AgencyId }) => {
   const [agencyCode, setAgencyCode] = useState("");
-  const [description, setDsecription] = useState("");
+  const [description, setDescription] = useState("");
   const [updatedBy, setUpdatedBy] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [loading, setLoading] = useState(false);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-  console.log("🟢 Received selectedAgencyId:", selectedAgencyId);
+  // ✅ Log AgencyId for debugging
+  useEffect(() => {
+    console.log("🟢 Inside EditAgency - Received AgencyId:", AgencyId);
+  }, [AgencyId]);
 
-  // Auto-populate updatedBy from localStorage
+  // ✅ Fetch TIN (UpdatedBy) from localStorage on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
         const storedUser = localStorage.getItem("authDetails");
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
-          const loggedInUserId = parsedUser?.UserName || parsedUser?.tin || parsedUser?.email;
-          if (loggedInUserId) {
-            setUpdatedBy(loggedInUserId);
+          const loggedInTin = parsedUser?.tin;
+          if (loggedInTin) {
+            setUpdatedBy(loggedInTin);
           } else {
-            toast.error("User identifier not found.");
+            toast.error("TIN not found. Please log in again.");
           }
         } else {
           toast.error("User data not found. Please log in again.");
@@ -38,89 +41,91 @@ const EditAgency = ({ isOpen, onClose, selectedAgencyId }) => {
     }
   }, []);
 
-  // Fetch selected agency details when modal opens
+  // ✅ Fetch agency details when modal is open & AgencyId is valid
   useEffect(() => {
+    if (!isOpen || !AgencyId) return;
+
+    const agencyIdNumber = Number(AgencyId); // Convert to number
+    if (!agencyIdNumber) {
+      console.error("❌ Invalid AgencyId:", AgencyId);
+      return;
+    }
+
+    console.log("🔄 Fetching agency details for AgencyId:", agencyIdNumber);
+    setLoading(true);
+
     const fetchAgencyDetails = async () => {
-      if (!selectedAgencyId) {
-        console.warn("⚠️ No selectedAgencyId provided, skipping API call.");
-        return;
-      }
-
-      setLoading(true);
       try {
-        const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/GetAgencyById/${selectedAgencyId}`);
-        console.log("🔍 Agency Details Response:", response.data);
+        const response = await AxiosGet(
+          `${API_BASE_URL}/api/Agencies/GetAllAgenciesPBYID/${agencyIdNumber}`
+        );
 
-        if (response?.status === 200 && response.data?.StatusCode === 200) {
-          const agency = response.data?.Data;
+        console.log("🔍 Full API Response Data:", response?.data);
+
+        if (response?.data?.StatusCode === 200 && response?.data?.Data?.length > 0) {
+          const agency = response.data?.Data[0]; // ✅ Extract first agency object
+          console.log("🔍 Extracted Agency Object:", agency);
+
           if (agency) {
-            setAgencyCode(agency.AgencyCode || "");
-            setDsecription(agency.Dsecription || "");
-            setIsActive(agency.isActive ?? true);
-          } else {
-            toast.error("Agency data is missing from the response.");
+            setAgencyCode(agency?.agencyCode || "");
+            setDescription(agency?.description || "");
+            setIsActive(agency?.isActive ?? true);
           }
         } else {
-          toast.error(response.data?.StatusMessage || "Failed to fetch agency details.");
+          toast.error("No agency data found.");
         }
       } catch (error) {
+        console.error("❌ Error fetching agency details:", error);
         toast.error("Error fetching agency details.");
       } finally {
         setLoading(false);
       }
     };
 
-    if (isOpen) {
-      fetchAgencyDetails();
-    }
-  }, [isOpen, selectedAgencyId]);
+    fetchAgencyDetails();
+  }, [isOpen, AgencyId]);
 
-  // Handle update request
+  // ✅ Handle update request
   const handleUpdateAgency = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      toast.error("Session expired. Please log in again.");
-      setLoading(false);
-      return;
-    }
-
-    if (!selectedAgencyId) {
+    const agencyIdNumber = Number(AgencyId);
+    if (!agencyIdNumber) {
       toast.error("Invalid agency selected.");
       setLoading(false);
       return;
     }
 
-    if (!updatedBy || !description) {
+    if (!updatedBy || !description || !agencyCode) {
       toast.error("All fields are required.");
       setLoading(false);
       return;
     }
 
     const payload = {
-      AgencyID: selectedAgencyId,
-      UpdatedBy: updatedBy,
-      Dsecription: description,
+      AgencyId: agencyIdNumber,
+      UpdatedBY: updatedBy,
+      AgencyCode: agencyCode,
+      Dsecription: description, // ✅ Ensure correct spelling matches API
       isActive: isActive,
     };
 
-    try {
-      const response = await AxiosPost(`${API_BASE_URL}/api/Agencies/Update`, payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+    console.log("📤 Sending update request to:", `${API_BASE_URL}/api/Agencies/Update`);
+    console.log("📤 Payload:", JSON.stringify(payload, null, 2));
 
-      if (response?.data?.StatusCode === 200) {
+    try {
+      const response = await AxiosPost(`${API_BASE_URL}/api/Agencies/Update`, payload);
+      console.log("📩 Update Response:", response?.data);
+
+      if (response?.status === 200 && response.data?.StatusCode === 200) {
         toast.success(response.data.StatusMessage || "Agency updated successfully!");
-        onClose();
+        onClose(); // Close modal on success
       } else {
         toast.error(response?.data?.StatusMessage || "Update failed.");
       }
     } catch (error) {
+      console.error("❌ Update error:", error);
       toast.error("An error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -135,22 +140,49 @@ const EditAgency = ({ isOpen, onClose, selectedAgencyId }) => {
         </h3>
 
         <form className="w-full mt-4" onSubmit={handleUpdateAgency}>
-
-          <input type="text" value={updatedBy} readOnly />
-
+          {/* ✅ Read-only field for UpdatedBy */}
           <div className="w-full mb-4">
-            <label className="text-base font-medium text-gray-700">Description</label>
+            <label className="text-base font-medium text-gray-700">
+              Updated By (TIN)
+            </label>
             <input
               type="text"
               className="w-full border-b-2 border-gray-300 h-[45px] bg-gray-100 px-3 focus:outline-none text-gray-700"
-              value={description}
-              onChange={(e) => setDsecription(e.target.value)}
+              value={updatedBy}
+              readOnly
+            />
+          </div>
+
+          {/* ✅ Agency Code Input */}
+          <div className="w-full mb-4">
+            <label className="text-base font-medium text-gray-700">
+              Agency Code
+            </label>
+            <input
+              type="text"
+              className="w-full border-b-2 border-gray-300 h-[45px] bg-gray-100 px-3 focus:outline-none text-gray-700"
+              value={agencyCode}
+              onChange={(e) => setAgencyCode(e.target.value)}
               required
             />
           </div>
 
-            {/* Is Active Toggle Switch */}
-            <div className="w-full mb-4 flex items-center justify-between">
+          {/* ✅ Description Input */}
+          <div className="w-full mb-4">
+            <label className="text-base font-medium text-gray-700">
+              Description
+            </label>
+            <input
+              type="text"
+              className="w-full border-b-2 border-gray-300 h-[45px] bg-gray-100 px-3 focus:outline-none text-gray-700"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* ✅ IsActive Toggle Switch */}
+          <div className="w-full mb-4 flex items-center justify-between">
             <span className="text-base font-medium text-gray-700">
               {isActive ? "Active" : "Inactive"}
             </span>
@@ -159,6 +191,7 @@ const EditAgency = ({ isOpen, onClose, selectedAgencyId }) => {
                 isActive ? "bg-pumpkin" : "bg-gray-400"
               }`}
               onClick={() => setIsActive(!isActive)}
+              aria-label="Toggle Active Status"
             >
               <div
                 className={`bg-white w-6 h-6 rounded-full shadow-md transform duration-300 ${
@@ -168,6 +201,7 @@ const EditAgency = ({ isOpen, onClose, selectedAgencyId }) => {
             </div>
           </div>
 
+          {/* ✅ Update Button */}
           <button
             type="submit"
             className="w-full py-2 bg-pumpkin text-white font-semibold rounded-md"
@@ -182,6 +216,13 @@ const EditAgency = ({ isOpen, onClose, selectedAgencyId }) => {
 };
 
 export default EditAgency;
+
+
+
+
+
+
+
 
 
 

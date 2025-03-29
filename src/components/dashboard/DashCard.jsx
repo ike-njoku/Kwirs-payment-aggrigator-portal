@@ -1,19 +1,35 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
-import { displayDate } from "../../utils/functions";
 import { AxiosGet } from "../../services/http-service";
 import { toast } from "react-toastify";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const DashCard = ({ TIN, loading, dashboardData }) => {
-  const date = displayDate();
+  const [currentDate, setCurrentDate] = useState("");
+
+  // Function to get the current date and time
+  const updateDateTime = () => {
+    const now = new Date();
+    const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+    const formattedDate = now.toLocaleDateString("en-US", options);
+    setCurrentDate(formattedDate);
+  };
+
+  // Update date in real-time
+  useEffect(() => {
+    updateDateTime(); // Set the initial date
+    const interval = setInterval(updateDateTime, 1000); // Update every second
+
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
 
   return (
     <div className="bg-customGradient rounded-[25px] p-6 text-white mt-3 w-[373px] lg:w-full">
       {loading ? (
         <p className="text-center text-white">Loading...</p>
-      ) : dashboardData ? (
+      ) : dashboardData && dashboardData.TIN ? (
         <>
           <article className="flex justify-between gap-3">
             <h3 className="w-full text-sm sm:text-base font-medium capitalize">
@@ -45,7 +61,7 @@ const DashCard = ({ TIN, loading, dashboardData }) => {
               <p className="text-sm italic">{dashboardData?.Email || "N/A"}</p>
             </article>
 
-            <h3 className="font-normal text-sm">{date || "N/A"}</h3>
+            <h3 className="font-normal text-sm">{currentDate || "N/A"}</h3>
           </div>
         </>
       ) : (
@@ -56,3 +72,4 @@ const DashCard = ({ TIN, loading, dashboardData }) => {
 };
 
 export default DashCard;
+
