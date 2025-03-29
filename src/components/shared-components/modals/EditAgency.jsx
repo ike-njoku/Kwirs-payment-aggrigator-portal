@@ -5,7 +5,7 @@ import { AxiosGet, AxiosPost } from "../../../services/http-service";
 import { toast } from "react-toastify";
 import ModalLayout from "./ModalLayout";
 
-const EditAgency = ({ isOpen, onClose, AgencyId }) => {
+const EditAgency = ({ isOpen, onClose, AgencyId, fetchAllAgencies }) => {
   const [agencyCode, setAgencyCode] = useState("");
   const [description, setDescription] = useState("");
   const [updatedBy, setUpdatedBy] = useState("");
@@ -116,13 +116,14 @@ const EditAgency = ({ isOpen, onClose, AgencyId }) => {
 
     try {
       const response = await AxiosPost(`${API_BASE_URL}/api/Agencies/Update`, payload);
-      console.log("📩 Update Response:", response?.data);
+      console.log("📩 Update Response:", response?.Data);
 
-      if (response?.status === 200 && response.data?.StatusCode === 200) {
-        toast.success(response.data.StatusMessage || "Agency updated successfully!");
+      if (response?.Status === 200 || response.StatusCode === 200) {
+        toast.success(response.StatusMessage || "Agency updated successfully!");
         onClose(); // Close modal on success
+        fetchAllAgencies();
       } else {
-        toast.error(response?.data?.StatusMessage || "Update failed.");
+        toast.error(response.StatusMessage || "Update failed.");
       }
     } catch (error) {
       console.error("❌ Update error:", error);

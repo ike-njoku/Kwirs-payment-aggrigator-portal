@@ -3,7 +3,7 @@ import ModalLayout from "./ModalLayout";
 import { AxiosPost, AxiosGet } from "../../../services/http-service";
 import { toast } from "react-toastify";
 
-const AgencyModal = ({ onClose, refreshAgencies }) => {
+const AgencyModal = ({ onClose, fetchAllAgencies }) => {
   const [agencyCode, setAgencyCode] = useState("");
   const [description, setDescription] = useState("");
   const [createdBy, setCreatedBy] = useState("");
@@ -97,7 +97,7 @@ const AgencyModal = ({ onClose, refreshAgencies }) => {
       // ✅ Ensure the latest data is fetched
       // await fetchAgencies();
 
-      fetchAgencies();
+      fetchAllAgencies();
 
 
       // ✅ Call refresh function if provided (triggers parent update)

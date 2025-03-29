@@ -20,26 +20,26 @@ const AgenciesPage = ({ user }) => {
   const [error, setError] = useState("");
   const [activeAgencies, setActiveAgencies] = useState([]);
 
-  useEffect(() => {
-    const fetchAllAgencies = async () => {
-      try {
-        setLoading(true);
-        const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/GetAllAgencies`);
+  const fetchAllAgencies = async () => {
+    try {
+      setLoading(true);
+      const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/GetAllAgencies`);
 
-        console.log("✅ API Response (All Agencies):", response.data);
+      console.log("✅ API Response (All Agencies):", response.data);
 
-        if (response?.status === 200 && response.data?.StatusCode === 200) {
-          setAgencies(response.data?.Data ?? []);
-        } else {
-          toast.error("Failed to fetch agencies.");
-        }
-      } catch (error) {
-        toast.error("Error fetching agencies.");
-      } finally {
-        setLoading(false);
+      if (response?.status === 200 && response.data?.StatusCode === 200) {
+        setAgencies(response.data?.Data ?? []);
+      } else {
+        toast.error("Failed to fetch agencies.");
       }
-    };
+    } catch (error) {
+      toast.error("Error fetching agencies.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchAllAgencies();
   }, []);
 
@@ -150,14 +150,18 @@ const AgenciesPage = ({ user }) => {
         </div>
 
         {openAgencyModal && (
-          <AgencyModal isOpen={openAgencyModal} onClose={() => setOpenAgencyModal(false)} />
+          <AgencyModal isOpen={openAgencyModal} 
+          onClose={() => setOpenAgencyModal(false)} 
+          fetchAllAgencies={ fetchAllAgencies }
+          />
         )}
 
         {openEditModal && selectedAgency && (
           <EditAgency
             isOpen={openEditModal}
             onClose={() => setOpenEditModal(false)}
-            selectedAgencyId={selectedAgency?.AgencyId} // ✅ Fixed prop name
+            fetchAllAgencies={ fetchAllAgencies }
+            AgencyId={selectedAgency?.AgencyId} // ✅ Fixed prop name
           />
         )}
       </section>
