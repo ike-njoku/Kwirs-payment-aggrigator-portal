@@ -4,7 +4,7 @@ import { sidebarMenu } from "../../../utils/app_data";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { FaBars } from "react-icons/fa6";
+import { FaBars, FaCaretDown } from "react-icons/fa6";
 import MobileNavbar from "../MobileNavbar";
 import { authenticateUser } from "../../../services/auth-service";
 import { AxiosGet, AxiosPost } from "../../../services/http-service";
@@ -17,6 +17,7 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
   const [_sidebarMenu, setSideBarMenu] = useState(sidebarMenu);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showDropdown, setDropdown] = useState(false);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
   const TIN = authenticateUser?.tin;
@@ -29,7 +30,7 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
       UserName: authenticateUser()?.tin,
     });
     try {
-      const apiResponse = await AxiosPost(requestURL, { UserName: TIN });
+      // const apiResponse = await AxiosPost(requestURL, { UserName: TIN });
 
       if (!apiResponse || apiResponse.StatusCode !== 200) {
         toast.error("Could not fetch menu items. Please reload the page.");
@@ -76,6 +77,10 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
   const handleOpenNav = () => setOpenNav(true);
   const handleCloseNav = () => setOpenNav(false);
 
+  const handleToggleDropdown = () => {
+    setDropdown((prev) => !prev);
+  };
+
   return (
     <section className="w-full">
       {/* Sidebar */}
@@ -88,14 +93,49 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
           <div className="w-full py-5 mt-10">
             <ul className="w-full flex flex-col gap-6">
               {/* use _sidebarMenu to get menus from the backend */}
+
               {_sidebarMenu.map((menu, i) => (
                 <li
-                  className={`w-full px-8 flex gap-2 items-center text-xl text-white capitalize py-2 ${
-                    pathname.includes(menu.url) && "bg-pumpkin"
-                  }`}
+                  className={`w-full px-8 text-xl text-white capitalize py-2 `}
                   key={i}
                 >
-                  {menu.icon} <Link href={menu.url}>{menu.path}</Link>
+                  {/* $
+                  {
+                    // pathname.includes(menu.url) && "bg-pumpkin"
+                  } */}
+                  <span
+                    className={`flex items-center gap-1 ${
+                      showDropdown && "text-pumpkin"
+                    }`}
+                  >
+                    {menu?.MainMenu}{" "}
+                    <button
+                      className={`${
+                        showDropdown && "rotate-180"
+                      } transition-all`}
+                      onClick={handleToggleDropdown}
+                    >
+                      <FaCaretDown />
+                    </button>
+                  </span>
+                  {/* {menu.icon} <Link href={menu.url}>{menu.path}</Link> */}
+                  {showDropdown && (
+                    <ul className="flex flex-col gap-2 w-full">
+                      {menu?.submenu?.map((subMenu, j) => (
+                        <li
+                          key={j}
+                          className={`w-full px-2 flex gap-2 items-center text-lg text-white capitalize`}
+                        >
+                          <Link
+                            href={subMenu?.URL}
+                            className="hover:text-pumpkin"
+                          >
+                            {subMenu?.ResourceName}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </li>
               ))}
             </ul>
