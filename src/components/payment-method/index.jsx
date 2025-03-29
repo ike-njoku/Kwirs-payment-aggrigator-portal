@@ -14,12 +14,12 @@ const RolesPage = () => {
     "Description",
     "Payment Method",
     "Created By",
-    "Authorization",
+    // "Authorization",
     "Actions",
   ];
   const [tableData, setTableData] = useState(roleTableData);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [openEditModal, setOpenEditModal] = useState(false);
+  const [openEditPaymentModal, setOpenEditModal] = useState(false);
   const [openPaymentMethodModal, setOpenPaymentMethodModal] = useState(false);
   const [authenticatedUser, setAuthenticatedUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -32,25 +32,32 @@ const RolesPage = () => {
     setOpenEditModal(true);
   };
 
-  const handleDeleteItem = async (RoleId) => {
+  // deleting items
+  const handleDeleteItem = async (paymentMethodId) => {
     try {
-      const deleteResponse = await AxiosPost(
-        1`${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/Remove/${RoleId}`
+      const deleteResponse = await AxiosGet(
+        // Use AxiosDelete if API supports DELETE
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/PaymentMethod/Delete/${paymentMethodId}`
       );
+      console.log("delete response:", deleteResponse);
+      if (
+        deleteResponse?.status === 200 ||
+        deleteResponse?.StatusCode === 200
+      ) {
+        toast.success("Payment method deleted successfully");
 
-      if (deleteResponse?.StatusCode === 200) {
-        toast.success("Role deleted successfully");
-
+        // Update state to remove the deleted payment method
         setTableData((prevData) =>
-          prevData.filter((item) => item.id !== RoleId)
+          prevData.filter((item) => item.PaymentMethod !== paymentMethodId)
         );
+
         setOpenDeleteModal(false);
       } else {
-        toast.error("Could not delete role");
+        toast.error("Could not delete payment method");
       }
     } catch (error) {
       console.error("Delete Error:", error.response?.data || error);
-      toast.error("An error occurred while deleting the role");
+      toast.error("An error occurred while deleting the payment method");
     }
   };
 
@@ -59,21 +66,57 @@ const RolesPage = () => {
     setAuthenticatedUser(user);
   }, []);
 
-  // handle updating payment method
-  const handleEditItem = async (updatedItem, newRole) => {
-    if (newRole) {
-      const selectedRole = tableData.find((item) => item.id === updatedItem.id);
-      selectedRole.name = newRole;
-      selectedRole.RoleId = selectedRole.Id;
-      selectedRole.UserName = authenticatedUser.tin;
+  const handleEditItem = async (
+    updateBy = "Admin",
+    description,
+    requireAuthorization,
+    paymentMethodId
+  ) => {
+    if (!paymentMethodId) {
+      toast.error("Payment method ID is required");
+      console.error("Error: Payment method ID is missing");
+      return;
+    }
 
+    // Find the payment method in tableData
+    const selectedPaymentMethod = tableData.find(
+      (item) => item.paymentMethodId === paymentMethodId
+    );
+
+    if (!selectedPaymentMethod) {
+      toast.error("Payment method not found");
+      console.error("Error: Payment method not found in tableData");
+      return;
+    }
+
+    // Create a copy to avoid modifying the original object
+    const updatedPaymentMethod = { ...selectedPaymentMethod };
+
+    // Update the fields only if they are provided
+    if (description !== undefined)
+      updatedPaymentMethod.Description = description;
+    if (requireAuthorization !== undefined)
+      updatedPaymentMethod.Authorization = requireAuthorization;
+    if (updateBy !== undefined) updatedPaymentMethod.CreatedBy = updateBy;
+    updatedPaymentMethod.PaymentMethod = paymentMethodId;
+
+    console.log("Updated Payload:", updatedPaymentMethod);
+
+    try {
       const updateRoleResponse = await AxiosPost(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/Update`,
-        selectedRole
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/PaymentMethod/Update`,
+        updatedPaymentMethod
       );
 
-      if (updateRoleResponse.StatusCode == 200) toast.success("Role Updated");
-      else toast.error("Could not update role");
+      if (updateRoleResponse.StatusCode === 200) {
+        toast.success("Payment Method Updated");
+      } else {
+        toast.error("Could not update Payment Method");
+        console.error("Update Failed:", updateRoleResponse);
+      }
+    } catch (error) {
+      console.error("Error updating payment method:", error);
+      toast.error("An error occurred while updating the Payment Method");
     }
   };
 
@@ -86,60 +129,72 @@ const RolesPage = () => {
   };
 
   // hand create payment method
-  const handleCreatePaymentMethod = async (newRole) => {
+  const handleCreatePaymentMethod = async (
+    description,
+    requireAuthorization,
+    createdBy = "admin"
+  ) => {
     setIsLoading(true);
-    const newRoleData = {
-      name: newRole,
-      isActive: true,
+
+    const newPaymentMethod = {
+      Description: description,
+      CreatedBy: createdBy,
+      Authorization: requireAuthorization,
     };
+    newPaymentMethod.Description = description;
+    newPaymentMethod.CreatedBy = createdBy;
+    newPaymentMethod.Authorization = requireAuthorization;
 
-    newRoleData.Name = newRole;
-    newRoleData.UserName = authenticatedUser.tin;
-
-    const createRoleResponse = await AxiosPost(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/Create`,
-      newRoleData
+    const createPaymentMethod = await AxiosPost(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/PaymentMethod/Create`,
+      newPaymentMethod
     );
+    console.log("create response:", createPaymentMethod);
 
-    if (createRoleResponse.StatusCode !== 200) {
+    if (createPaymentMethod.StatusCode !== 200) {
       toast.error("Could not create role");
       return;
     }
     setIsLoading(false);
-    toast.success("Role created successfully");
-    newRoleData.dateCreated = new Date().toISOString().split("T")[0];
-    setTableData([...tableData, newRoleData]);
+    toast.success(" created successfully");
+    newPaymentMethod.dateCreated = new Date().toISOString().split("T")[0];
+    setTableData([...tableData, newPaymentMethod]);
   };
 
   useEffect(() => {
     getAllPaymentMethod();
   }, []);
 
-  // getting all the payment method
+  // get all payment method
   const getAllPaymentMethod = async () => {
-    const apiResponse = await AxiosGet(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/PaymentMethod/GetAllPaymentMethods`
-    );
-    if (!apiResponse) toast.error("Could not fetch payment methods");
+    try {
+      const apiResponse = await AxiosGet(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/PaymentMethod/GetAllPaymentMethods`
+      );
 
-    const { data } = apiResponse;
-    console.log(data);
-    const tableData = data.Data;
-    tableData.map((item) => (item.Description = item.description));
-    tableData.map((item) => (item.PaymentMethod = item.paymentMethodId));
-    tableData.map((item) => (item.CreatedBy = item.createdBy));
-    tableData.map((item) => (item.Authorization = item.requireAUthorization));
-    // tableData.map((item) => (item.id = item.Id));
+      if (!apiResponse || !apiResponse.data) {
+        toast.error("Could not fetch payment methods");
+        return;
+      }
 
-    // tableData.map(
-    //   (item) =>
-    //     (item.dateCreated = new Date(item.UpdateDate)
-    //       .toISOString()
-    //       .split("T")[0])
-    // );
-    setTableData(tableData);
+      let tableData = apiResponse.data.Data.map((item) => ({
+        ...item,
+        Description: item.description,
+        PaymentMethod: item.paymentMethodId,
+        CreatedBy: item.createdBy,
+        Authorization: item.requireAUthorization,
+        dateCreated: item.UpdateDate
+          ? new Date(item.UpdateDate).toISOString().split("T")[0]
+          : null,
+      }));
+
+      setTableData(tableData);
+      console.log("tableData", tableData);
+    } catch (error) {
+      toast.error("An error occurred while fetching payment methods");
+      console.error("Fetch error:", error);
+    }
   };
-  console.log("tableData", tableData);
 
   return (
     <DashboardLayout page="Roles">
@@ -170,11 +225,13 @@ const RolesPage = () => {
               openDeleteModal={openDeleteModal}
               setOpenDeleteModal={setOpenDeleteModal}
               setOpenEditModal={setOpenEditModal}
-              openEditModal={openEditModal}
+              // openEditModal={openEditPaymentModal}
+              openEditPaymentModal={openEditPaymentModal}
+              setOpenEditPaymentModal={setOpenEditModal}
               handleDeleteItem={handleDeleteItem}
               handleEditItem={handleEditItem}
-              label="Role name"
-              heading="Upate Roles"
+              label="me"
+              heading="Update PaymentMethod"
             />
           </div>
         </div>

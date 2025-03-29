@@ -4,6 +4,7 @@ import EllipseDropdown from "./EllipseDropdown";
 import DeleteModal from "../modals/DeleteModal";
 import EditModal from "../modals/EditModal";
 import EditResourceModal from "../modals/EditResourceModal";
+import EditPaymentMethodModal from "../modals/EditPaymentMethodModal";
 
 const CustomTable = ({
   tableData,
@@ -17,6 +18,7 @@ const CustomTable = ({
   setOpenEditResourceModal,
   openEditResourceModal,
   openEditModal,
+  openEditPaymentModal,
   setOpenEditModal,
   handleDeleteItem,
   handleEditItem,
@@ -37,6 +39,13 @@ const CustomTable = ({
   const handleCloseEditModal = () => {
     setOpenEditModal(false);
   };
+
+  const handleClosePaymentMethodModal = () => {
+    setOpenEditModal(false);
+  };
+
+  console.log("tableData1", tableData);
+  const [paymentMethodId, setPaymentMethodId] = useState(0);
 
   const [selectedItem, setSelectedItem] = useState(0);
 
@@ -92,26 +101,42 @@ const CustomTable = ({
             <td className="px-6 py-4 text-gray-900 capitalize">
               {tableInfo.CreatedBy}
             </td>
-            <td className="px-6 py-4 text-gray-900 capitalize">
+            {/* <td className="px-6 py-4 text-gray-900 capitalize">
               {tableInfo.Authorization}
-            </td>
+            </td> */}
           </>
         );
-      case "type4": // Another table type
+      case "tax-office": // Another table type
         return (
           <>
             <td
               scope="row"
               className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
             >
-              {tableInfo.uniqueIdentifier}
+              {tableInfo.TaxOfficeName}
             </td>
             <td className="px-6 py-4 text-gray-900 capitalize">
-              {tableInfo.status}
+              {tableInfo.RegionName}
             </td>
             <td className="px-6 py-4 text-gray-900 capitalize">
-              {tableInfo.category}
+              {tableInfo.TaxOfficeTypeName}
             </td>
+            {/* <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.CreatedBy}
+            </td> */}
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.TaxOfficerPhone || "null"}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.City || "null"}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.LGAName || "null"}
+            </td>
+
+            {/* <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.IsActive}
+            </td> */}
           </>
         );
       default: // Default table type
@@ -162,7 +187,7 @@ const CustomTable = ({
                         handleDelete={handleDelete}
                         handleEdit={handleEdit}
                         setSelectedItem={setSelectedItem}
-                        id={tableInfo.id}
+                        id={tableInfo.paymentMethodId}
                         item={tableInfo}
                       />
                     ) : (
@@ -206,6 +231,17 @@ const CustomTable = ({
           label={label}
         />
       )}
+
+      {openEditPaymentModal && (
+        <EditPaymentMethodModal
+          handleCloseModal={handleClosePaymentMethodModal}
+          index={paymentMethodId}
+          handleEditModal={handleEditItem}
+          heading={heading}
+          label={label}
+        />
+      )}
+
       {openEditResourceModal && (
         <EditResourceModal
           handleCloseModal={handleCloseEditResourceModal}

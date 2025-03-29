@@ -1,38 +1,44 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
 
-const CreatePaymentMethod = ({
+const EditPaymentMethodModal = ({
   handleCloseModal,
-  handleCreateModal,
-  isLoading,
+  index, // Ensure this is being passed correctly
+  handleEditModal,
+  label,
+  heading,
 }) => {
-  const [description, setDescription] = useState("");
-  const [authorization, setAuthorization] = useState("");
+  const [description, setDescription] = useState(index?.description || "");
+  const [authorization, setAuthorization] = useState(
+    index?.authorization === true ? "true" : "false"
+  );
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault(); // Prevent default form submission
-
-    // Ensure description is not empty
-    if (!description.trim()) {
-      alert("Please enter a description");
-      return;
+  // Update state if `index` changes
+  useEffect(() => {
+    if (index) {
+      setDescription(index.description || "s");
+      setAuthorization(index.authorization === true ? "true" : "false");
     }
+  }, [index]);
 
-    // Call the function to create the payment method
-    handleCreateModal(description, authorization);
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
 
-    // Reset form fields
-    setDescription("");
-    setAuthorization("true");
+    await handleEditModal(index, description, authorization === "true");
+
+    setIsLoading(false);
+    handleCloseModal();
   };
 
   return (
     <ModalLayout handleCloseModal={handleCloseModal}>
-      <div className="w-full p-5">
+      <div className="w-full p-5 ">
         <h3 className="my-5 text-lg font-semibold pb-4 border-b border-b-gray-500 text-gray-700">
-          Create Payment Method
+          {heading}
         </h3>
         <form className="w-full" onSubmit={handleFormSubmit}>
           {/* Description Field */}
@@ -74,9 +80,8 @@ const CreatePaymentMethod = ({
             </div>
           </div>
 
-          {/* Submit Button */}
           <AuthButtons
-            label="Create"
+            label="Update"
             textColor="text-white"
             isLoading={isLoading}
           />
@@ -86,4 +91,4 @@ const CreatePaymentMethod = ({
   );
 };
 
-export default CreatePaymentMethod;
+export default EditPaymentMethodModal;
