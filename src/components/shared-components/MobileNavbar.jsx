@@ -72,18 +72,23 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
             {/* use _sidebarMenu to get menus from the backend */}
             {_sidebarMenu.map((menu, i) => (
               <li
-                className={`w-full px-6 flex gap-2 items-center text-lg text-black capitalize py-2 ${
+                key={i}
+                className={`w-full px-6 flex gap-2 items-center text-lg text-black flex-col capitalize py-2 ${
                   pathname.includes(menu.url) &&
                   "bg-pumpkin text-white rounded-[30px]"
                 }`}
-                key={i}
               >
                 {menu?.MainMenu}
                 {menu?.submenu?.map((subMenu, j) => (
-                  <>
-                    {subMenu.icon}{" "}
-                    <Link href={subMenu?.URL}>{subMenu?.ResourceName}</Link>
-                  </>
+                  <li key={j}>
+                    {subMenu?.ResourceName}
+                    {/* {menu?.submenu?.map((subMenu, j) => (
+                    <>
+                      {subMenu.icon}{" "}
+                      <Link href={subMenu?.URL}>{subMenu?.ResourceName}</Link>
+                    </>
+                  ))} */}
+                  </li>
                 ))}
               </li>
             ))}
