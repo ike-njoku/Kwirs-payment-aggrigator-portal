@@ -66,10 +66,11 @@ const RolesPage = () => {
     setAuthenticatedUser(user);
   }, []);
 
+  // handle edit item
   const handleEditItem = async (
-    updateBy = "Admin",
     description,
     requireAuthorization,
+    updateBy = "admin",
     paymentMethodId
   ) => {
     if (!paymentMethodId) {
@@ -78,29 +79,18 @@ const RolesPage = () => {
       return;
     }
 
-    // Find the payment method in tableData
-    const selectedPaymentMethod = tableData.find(
-      (item) => item.paymentMethodId === paymentMethodId
-    );
+    console.log("Editing Payment Method ID:", paymentMethodId);
+    console.log("Update By:", updateBy); // Log to verify
 
-    if (!selectedPaymentMethod) {
-      toast.error("Payment method not found");
-      console.error("Error: Payment method not found in tableData");
-      return;
-    }
+    // Prepare the payload to match backend expectations
+    const updatedPaymentMethod = {
+      updateBy, // Ensure "admin" is passed correctly
+      description,
+      requireAuthorization,
+      paymentMethodId,
+    };
 
-    // Create a copy to avoid modifying the original object
-    const updatedPaymentMethod = { ...selectedPaymentMethod };
-
-    // Update the fields only if they are provided
-    if (description !== undefined)
-      updatedPaymentMethod.Description = description;
-    if (requireAuthorization !== undefined)
-      updatedPaymentMethod.Authorization = requireAuthorization;
-    if (updateBy !== undefined) updatedPaymentMethod.CreatedBy = updateBy;
-    updatedPaymentMethod.PaymentMethod = paymentMethodId;
-
-    console.log("Updated Payload:", updatedPaymentMethod);
+    console.log("Updated Payload Sent to API:", updatedPaymentMethod); // Debugging log
 
     try {
       const updateRoleResponse = await AxiosPost(
@@ -108,14 +98,19 @@ const RolesPage = () => {
         updatedPaymentMethod
       );
 
+      console.log("API Response:", updateRoleResponse); // Log full API response
+
       if (updateRoleResponse.StatusCode === 200) {
         toast.success("Payment Method Updated");
+        getAllPaymentMethod();
       } else {
-        toast.error("Could not update Payment Method");
+        toast.error(
+          updateRoleResponse.StatusMessage || "Could not update Payment Method"
+        );
         console.error("Update Failed:", updateRoleResponse);
       }
     } catch (error) {
-      console.error("Error updating payment method:", error);
+      console.error("API Error:", error.response?.data || error.message);
       toast.error("An error occurred while updating the Payment Method");
     }
   };
@@ -159,6 +154,7 @@ const RolesPage = () => {
     toast.success(" created successfully");
     newPaymentMethod.dateCreated = new Date().toISOString().split("T")[0];
     setTableData([...tableData, newPaymentMethod]);
+    getAllPaymentMethod();
   };
 
   useEffect(() => {

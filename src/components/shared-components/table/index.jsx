@@ -235,7 +235,7 @@ const CustomTable = ({
       {openEditPaymentModal && (
         <EditPaymentMethodModal
           handleCloseModal={handleClosePaymentMethodModal}
-          index={paymentMethodId}
+          index={selectedItem}
           handleEditModal={handleEditItem}
           heading={heading}
           label={label}

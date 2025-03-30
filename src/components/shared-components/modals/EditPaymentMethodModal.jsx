@@ -1,34 +1,34 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
 
 const EditPaymentMethodModal = ({
   handleCloseModal,
-  index, // Ensure this is being passed correctly
+  index,
   handleEditModal,
   label,
   heading,
 }) => {
-  const [description, setDescription] = useState(index?.description || "");
+  // Initialize state directly instead of using useEffect
+  const [description, setDescription] = useState(index?.Description || "");
   const [authorization, setAuthorization] = useState(
-    index?.authorization === true ? "true" : "false"
+    index?.Authorization === true ? "true" : "false"
   );
+  // console.log("Edit Modal Index:", index);
+  // console.log("Payment Method ID:", index?.paymentMethodId);
+
   const [isLoading, setIsLoading] = useState(false);
-
-  // Update state if `index` changes
-  useEffect(() => {
-    if (index) {
-      setDescription(index.description || "s");
-      setAuthorization(index.authorization === true ? "true" : "false");
-    }
-  }, [index]);
-
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
-    await handleEditModal(index, description, authorization === "true");
+    await handleEditModal(
+      description,
+      authorization === "true",
+      "admin", // updateBy
+      index?.paymentMethodId // Ensure paymentMethodId is passed correctly
+    );
 
     setIsLoading(false);
     handleCloseModal();
@@ -36,7 +36,7 @@ const EditPaymentMethodModal = ({
 
   return (
     <ModalLayout handleCloseModal={handleCloseModal}>
-      <div className="w-full p-5 ">
+      <div className="w-full p-5">
         <h3 className="my-5 text-lg font-semibold pb-4 border-b border-b-gray-500 text-gray-700">
           {heading}
         </h3>
@@ -84,6 +84,7 @@ const EditPaymentMethodModal = ({
             label="Update"
             textColor="text-white"
             isLoading={isLoading}
+            onClick={handleFormSubmit} // Ensure it's triggering properly
           />
         </form>
       </div>
