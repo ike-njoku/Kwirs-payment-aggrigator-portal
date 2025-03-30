@@ -207,7 +207,7 @@ const TaxTypePage = () => {
     setTableData(formattedData);
   };
 
-  const handleEditItem = async (updatedItem, updateParameters) => {
+  const handleEditItem = async (updateParameters) => {
     const {
       taxTypeId,
       createdBy,
@@ -220,15 +220,22 @@ const TaxTypePage = () => {
 
     const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/TaxTypes/Update`;
 
+  //    "taxTypeId": "PAYE",
+  // "createdBy": "1000000826",
+  // "headCode": "10001-001",
+  // "subHeadCode": "1000",
+  // "agencyId": 1,
+  // "serviceId": "",
+  // "Dsecription": "PAYED"
+
     const payLoad = {
-      psspId: updatedItem.id,
       taxTypeId: taxTypeId,
       createdBy: createdBy,
       headCode: headCode,
       subHeadCode: subHeadCode,
-      agencyId: agencyId,
+      agencyId: 1,
       serviceId: serviceId,
-      Dsecription: Dsecription,
+      Dsecription: "PAYED",
     };
 
     console.log("Payload sent:", payLoad);

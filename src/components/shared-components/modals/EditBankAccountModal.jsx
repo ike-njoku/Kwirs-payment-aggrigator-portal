@@ -14,7 +14,7 @@ const EditBankAccountModal = ({
   const [accountname, setaccountname] = useState(index.accountname);
   const [bankName, setbankName] = useState(index.bankName);
   const [accountNumber, setaccountNumber] = useState(index.accountNumber);
-  const [agencyId, setagencyId] = useState(index.agencyId);
+  const [agencyId, setagencyId] = useState("1");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFormSubmit = (e) => {

@@ -53,15 +53,40 @@ const BankAccountPage = () => {
       return;
     }
 
+    //  {
+    //             "account": "0987654322",
+    //             "accountName": "Dayo",
+    //             "BankaccountId": 2,
+    //             "createdDate": "2025-03-29T21:19:59.383",
+    //             "createdBy": "Admin",
+    //             "bankName": "Shutter Bank",
+    //             "Agency": "TEST AGENCY"
+    //         },
+
+    // Agency: "TEST AGENCY";
+    // BankaccountId: 2;
+    // account: "0987654322";
+    // accountName: "Dayo";
+    // bankName: "Shutter Bank";
+    // createdBy: "Admin";
+    // createdDate: "2025-03-29T21:19:59.383";
+
+  //     "CreatedBy": "Tax Officer 3",
+  // "accountname": "Dayo",
+  // "bankName": "Shutter Bank",
+  // "accountNumber": " 0987654321",
+  // "agencyId": 5
+
     const newResourceData = {
       CreatedBy: newResourceURL.CreatedBy,
       accountname: newResourceURL.accountname,
       bankName: newResourceURL.bankName,
       accountNumber: newResourceURL.accountNumber,
       agencyId: newResourceURL.agencyId,
+      // Agency: "TEST AGENCY",
     };
 
-    console.log("Formatted newResourceData:", newResourceData);
+    console.log("newResourceData:", newResourceData);
 
     try {
       console.log("Sending request to create resource...");
@@ -122,6 +147,8 @@ const BankAccountPage = () => {
   };
 
   const handleDeleteItem = async (ResourceId) => {
+    console.log("Deleting Resource with ID:", ResourceId); // Debugging log
+
     try {
       const deleteResponse = await AxiosGet(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/Banks/Delete/${ResourceId}`
@@ -148,6 +175,7 @@ const BankAccountPage = () => {
     const apiResponse = await AxiosGet(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/Banks/GetAllBankAccounts`
     );
+    console.log("data1:", apiResponse);
 
     if (!apiResponse) {
       toast.error("Could not fetch resources");
@@ -157,6 +185,8 @@ const BankAccountPage = () => {
     const { data } = apiResponse;
     const tableData = data.Data || data.resources || [];
 
+    console.log("data2:", apiResponse);
+
     if (!tableData.length) {
       toast.warn("No resources found");
       setTableData([]);
@@ -165,12 +195,13 @@ const BankAccountPage = () => {
 
     // Ensure correct key mapping
     const formattedData = tableData.map((item) => ({
-      CreatedBy: item.CreatedBy,
-      accountname: item.accountname,
+      CreatedBy: item.createdBy,
+      accountname: item.accountName,
       bankName: item.bankName,
       dateCreated: item.createdDate,
-      accountNumber: item.accountNumber,
-      agencyId: item.agencyId,
+      accountNumber: item.account,
+      agencyId: item.Agency,
+      BankaccountId: item.BankaccountId,
     }));
 
     console.log("Updated Table Data State:", formattedData);
@@ -179,39 +210,17 @@ const BankAccountPage = () => {
   };
 
   const handleEditItem = async (updatedItem, updateParameters) => {
-    const {
-      // taxTypeId,
-      // createdBy,
-      // headCode,
-      // subHeadCode,
-      // serviceId,
-      // Dsecription,
+    const { CreatedBy, accountname, bankName, agencyId, accountNumber } =
+      updateParameters;
+
+    const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Banks/Update`;
+
+    const payLoad = {
       CreatedBy,
       accountname,
       bankName,
-      agencyId,
-      dateCreated,
       accountNumber,
-    } = updateParameters;
-
-    const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/TaxTypes/Update`;
-
-    const payLoad = {
-      // psspId: updatedItem.id,
-      // taxTypeId: taxTypeId,
-      // createdBy: createdBy,
-      // headCode: headCode,
-      // subHeadCode: subHeadCode,
-      // agencyId: agencyId,
-      // serviceId: serviceId,
-      // Dsecription: Dsecription,
-
-      CreatedBy: CreatedBy,
-      accountname: accountname,
-      bankName: bankName,
-      dateCreated: createdDate,
-      accountNumber: accountNumber,
-      agencyId: agencyId,
+      agencyId,
     };
 
     console.log("Payload sent:", payLoad);
@@ -222,18 +231,23 @@ const BankAccountPage = () => {
         payLoad
       );
 
-      if (updateResourceResponse?.StatusCode !== 200) {
-        toast.error("Could not update Resource at this time");
-        return;
+      if (
+        !updateResourceResponse ||
+        updateResourceResponse?.StatusCode !== 200
+      ) {
+        throw new Error(
+          "Failed to update resource. Unexpected response from server."
+        );
       }
 
-      toast.success("Resource updated");
+      toast.success("Resource updated successfully!");
       await fetchAllResources();
     } catch (error) {
-      console.error("Error updating resource:", error);
-      toast.error("Failed to update resource.");
+      console.error("Error updating resource:", error.message || error);
+      toast.error("Failed to update resource. Please try again later.");
     }
   };
+
 
   const handleOpenEditResourceModal = () => {
     setOpenResourceEditModal(true);
@@ -266,7 +280,7 @@ const BankAccountPage = () => {
                 type="button"
                 onClick={() => setOpenResourceModal(true)}
               >
-                Create Bank Account 
+                Create Bank Account
                 <FaPlus />
               </button>
             </section>

@@ -96,14 +96,13 @@ const CustomTable = ({
                     {tableInfo.agencyId}
                   </td>
 
-                 
                   <td className="px-6 py-4 text-gray-900">
                     {isEllipseDropdwon ? (
                       <EllipseDropdown
                         handleDelete={handleDelete}
                         handleEdit={handleEdit}
                         setSelectedItem={setSelectedItem}
-                        id={tableInfo.id}
+                        id={tableInfo.BankaccountId}
                         item={tableInfo}
                       />
                     ) : (
