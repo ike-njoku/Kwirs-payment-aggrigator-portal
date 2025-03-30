@@ -35,25 +35,35 @@ const Tax_office = () => {
     setOpenEditModal(true);
   };
 
-  const handleDeleteItem = async (RoleId) => {
+  // handle tax office delete
+  const handleDeleteItem = async (TaxOfficeId) => {
+    console.log("Deleting Tax Office ID:", TaxOfficeId); // Debugging
+    if (!TaxOfficeId) {
+      toast.error("Invalid Tax Office ID");
+      return;
+    }
+
     try {
-      const deleteResponse = await AxiosPost(
-        1`${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/Remove/${RoleId}`
+      const deleteResponse = await AxiosGet(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/taxOffice/Delete/${TaxOfficeId}`
       );
 
-      if (deleteResponse?.StatusCode === 200) {
-        toast.success("Role deleted successfully");
+      if (
+        deleteResponse?.status === 200 ||
+        deleteResponse?.StatusCode === 200
+      ) {
+        toast.success("Tax office deleted successfully");
 
         setTableData((prevData) =>
-          prevData.filter((item) => item.id !== RoleId)
+          prevData.filter((item) => item.taxOfficeId !== TaxOfficeId)
         );
         setOpenDeleteModal(false);
       } else {
-        toast.error("Could not delete role");
+        toast.error("Could not delete Tax office");
       }
     } catch (error) {
       console.error("Delete Error:", error.response?.data || error);
-      toast.error("An error occurred while deleting the role");
+      toast.error("An error occurred while deleting the Tax office");
     }
   };
 
@@ -129,28 +139,23 @@ const Tax_office = () => {
 
     let tableData = apiResponse.data.Data.map((item) => ({
       ...item,
-      TaxOfficeName: item.TaxOfficeName,
-      RegionName: item.RegionName,
-      TaxOfficeTypeName: item.TaxOfficeTypeName,
-      CreatedBy: item.CreatedBy,
-      TaxOfficerPhone: item.TaxOfficerPhone,
-      City: item.City,
-      LGAName: item.LGAName,
-      IsActive: item.IsActive,
+      taxOfficeId: item.TaxOfficeId,
+      taxOfficeName: item.TaxOfficeName,
+      regionName: item.RegionName,
+      taxOfficeTypeName: item.TaxOfficeTypeName,
+      createdBy: item.CreatedBy,
+      taxOfficerPhone: item.TaxOfficerPhone,
+      city: item.City,
+      lGAName: item.LGAName,
+      isActive: item.IsActive,
       dateCreated: item.UpdateDate
         ? new Date(item.UpdateDate).toISOString().split("T")[0]
         : null,
     }));
 
-    // tableData.map(
-    //   (item) =>
-    //     (item.dateCreated = new Date(item.UpdateDate)
-    //       .toISOString()
-    //       .split("T")[0])
-    // );
     setTableData(tableData);
+    console.log("tableDatasss", tableData);
   };
-  console.log("a", tableData);
 
   return (
     <DashboardLayout page="Tax Office">

@@ -44,7 +44,6 @@ const CustomTable = ({
     setOpenEditModal(false);
   };
 
-  console.log("tableData1", tableData);
   const [paymentMethodId, setPaymentMethodId] = useState(0);
 
   const [selectedItem, setSelectedItem] = useState(0);
@@ -113,25 +112,25 @@ const CustomTable = ({
               scope="row"
               className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
             >
-              {tableInfo.TaxOfficeName}
+              {tableInfo.taxOfficeName}
             </td>
             <td className="px-6 py-4 text-gray-900 capitalize">
-              {tableInfo.RegionName}
+              {tableInfo.regionName}
             </td>
             <td className="px-6 py-4 text-gray-900 capitalize">
-              {tableInfo.TaxOfficeTypeName}
+              {tableInfo.taxOfficeTypeName}
             </td>
             {/* <td className="px-6 py-4 text-gray-900 capitalize">
               {tableInfo.CreatedBy}
             </td> */}
             <td className="px-6 py-4 text-gray-900 capitalize">
-              {tableInfo.TaxOfficerPhone || "null"}
+              {tableInfo.taxOfficerPhone || "null"}
             </td>
             <td className="px-6 py-4 text-gray-900 capitalize">
-              {tableInfo.City || "null"}
+              {tableInfo.city || "null"}
             </td>
             <td className="px-6 py-4 text-gray-900 capitalize">
-              {tableInfo.LGAName || "null"}
+              {tableInfo.lGAName || "null"}
             </td>
 
             {/* <td className="px-6 py-4 text-gray-900 capitalize">
@@ -187,7 +186,7 @@ const CustomTable = ({
                         handleDelete={handleDelete}
                         handleEdit={handleEdit}
                         setSelectedItem={setSelectedItem}
-                        id={tableInfo.paymentMethodId}
+                        id={tableInfo.TaxOfficeId || tableInfo.paymentMethodId}
                         item={tableInfo}
                       />
                     ) : (

@@ -185,6 +185,7 @@ const RolesPage = () => {
       }));
 
       setTableData(tableData);
+
       console.log("tableData", tableData);
     } catch (error) {
       toast.error("An error occurred while fetching payment methods");
