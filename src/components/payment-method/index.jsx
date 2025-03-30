@@ -197,7 +197,7 @@ const RolesPage = () => {
   };
 
   return (
-    <DashboardLayout page="Roles">
+    <DashboardLayout page="Payment Method">
       <section className="w-full">
         <div className=" w-[90%] mx-auto py-5">
           <div className=" w-full lg:mt-10">

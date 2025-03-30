@@ -153,7 +153,7 @@ const Tax_office = () => {
   console.log("a", tableData);
 
   return (
-    <DashboardLayout page="Roles">
+    <DashboardLayout page="Tax Office">
       <section className="w-full">
         <div className=" w-[90%] mx-auto py-5">
           <div className=" w-full lg:mt-10">

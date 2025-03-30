@@ -19,7 +19,7 @@ const CreatePaymentMethod = ({
       alert("Please enter a description");
       return;
     }
-
+    handleCloseModal();
     // Call the function to create the payment method
     handleCreateModal(description, authorization);
 
