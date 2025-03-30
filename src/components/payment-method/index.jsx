@@ -136,18 +136,18 @@ const RolesPage = () => {
       CreatedBy: createdBy,
       Authorization: requireAuthorization,
     };
-    newPaymentMethod.Description = description;
-    newPaymentMethod.CreatedBy = createdBy;
-    newPaymentMethod.Authorization = requireAuthorization;
+    // newPaymentMethod.Description = description;
+    // newPaymentMethod.CreatedBy = createdBy;
+    // newPaymentMethod.Authorization = requireAuthorization;
 
     const createPaymentMethod = await AxiosPost(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/PaymentMethod/Create`,
       newPaymentMethod
     );
-    console.log("create response:", createPaymentMethod);
+    console.log("create response:s", createPaymentMethod);
 
     if (createPaymentMethod.StatusCode !== 200) {
-      toast.error("Could not create role");
+      toast.error("Could not create Payment method");
       return;
     }
     setIsLoading(false);

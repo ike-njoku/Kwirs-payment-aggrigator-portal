@@ -5,6 +5,7 @@ import DeleteModal from "../modals/DeleteModal";
 import EditModal from "../modals/EditModal";
 import EditResourceModal from "../modals/EditResourceModal";
 import EditPaymentMethodModal from "../modals/EditPaymentMethodModal";
+import EditTaxOfficeModal from "../modals/EditTaxofficeModal";
 
 const CustomTable = ({
   tableData,
@@ -13,6 +14,7 @@ const CustomTable = ({
   toggleStatus,
   handleDelete,
   handleEdit,
+  openEditTaxOfficeModal,
   openDeleteModal,
   setOpenDeleteModal,
   setOpenEditResourceModal,
@@ -233,6 +235,16 @@ const CustomTable = ({
 
       {openEditPaymentModal && (
         <EditPaymentMethodModal
+          handleCloseModal={handleClosePaymentMethodModal}
+          index={selectedItem}
+          handleEditModal={handleEditItem}
+          heading={heading}
+          label={label}
+        />
+      )}
+
+      {openEditTaxOfficeModal && (
+        <EditTaxOfficeModal
           handleCloseModal={handleClosePaymentMethodModal}
           index={selectedItem}
           handleEditModal={handleEditItem}

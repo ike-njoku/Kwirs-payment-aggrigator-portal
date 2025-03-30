@@ -7,6 +7,7 @@ import { FaPlus } from "react-icons/fa";
 import CreateRoleModel from "../shared-components/modals/CreateRoleModel";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
+import CreateTaxOffices from "../shared-components/modals/CreateTaxOffices";
 
 const Tax_office = () => {
   const tableHeadings = [
@@ -89,37 +90,92 @@ const Tax_office = () => {
     }
   };
 
-  const handleCloseCreateRoleModal = () => {
+  const handleCloseCreateTaxOffice = () => {
     setOpenRoleModal(false);
   };
 
-  const handleOpenCreateRoleModal = () => {
+  const handleOpenCreateTaxOffice = () => {
     setOpenRoleModal(true);
   };
 
-  const handleCreateRoleModal = async (newRole) => {
+  // // Create tax office
+  // const handleCreateTaxOffice = async (newRole) => {
+  //   setIsLoading(true);
+  //   const newRoleData = {
+  //     name: newRole,
+  //     isActive: true,
+  //   };
+
+  //   newRoleData.Name = newRole;
+  //   newRoleData.UserName = authenticatedUser.tin;
+
+  //   const createRoleResponse = await AxiosPost(
+  //     `${process.env.NEXT_PUBLIC_BASE_URL}/api/taxOffice/Create`,
+  //     newRoleData
+  //   );
+
+  //   if (createRoleResponse.StatusCode !== 200) {
+  //     toast.error("Could not create role");
+  //     return;
+  //   }
+  //   setIsLoading(false);
+  //   toast.success("Role created successfully");
+  //   newRoleData.dateCreated = new Date().toISOString().split("T")[0];
+  //   setTableData([...tableData, newRoleData]);
+  // };
+
+  // hand create payment method
+  const handleCreateTaxOffice = async (formData) => {
     setIsLoading(true);
-    const newRoleData = {
-      name: newRole,
-      isActive: true,
+
+    const newTaxOffice = {
+      TaxOfficeId: formData.TaxOfficeId,
+      TaxOfficeName: formData.TaxOfficeName,
+      TaxOfficeTypeId: formData.TaxOfficeTypeId,
+      RegionId: formData.RegionId,
+      Street: formData.Street,
+      City: formData.City,
+      LGAId: formData.LGAId,
+      Telephone: formData.Telephone,
+      TaxOfficerName: formData.TaxOfficerName,
+      TaxOfficerPhone: formData.TaxOfficerPhone,
+      isActive: formData.isActive,
     };
 
-    newRoleData.Name = newRole;
-    newRoleData.UserName = authenticatedUser.tin;
+    console.log("newtaxoffice:", newTaxOffice);
 
-    const createRoleResponse = await AxiosPost(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/Create`,
-      newRoleData
-    );
+    try {
+      const createResponse = await AxiosPost(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/taxOffice/Create`,
+        newTaxOffice
+      );
 
-    if (createRoleResponse.StatusCode !== 200) {
-      toast.error("Could not create role");
-      return;
+      console.log("Create response:", createResponse);
+
+      if (createResponse?.StatusCode !== 200) {
+        toast.error("Could not create tax office");
+        return;
+      }
+
+      setIsLoading(false);
+      toast.success("Tax office created successfully");
+
+      // Update table data with the new tax office
+      setTableData([
+        ...tableData,
+        {
+          ...newTaxOffice,
+          dateCreated: new Date().toISOString().split("T")[0],
+        },
+      ]);
+
+      getAllTaxOffices(); // Refresh the list
+    } catch (error) {
+      console.error("Create Error:", error.response?.data || error);
+      toast.error("An error occurred while creating the tax office");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
-    toast.success("Role created successfully");
-    newRoleData.dateCreated = new Date().toISOString().split("T")[0];
-    setTableData([...tableData, newRoleData]);
   };
 
   useEffect(() => {
@@ -169,7 +225,7 @@ const Tax_office = () => {
                 data-dropdown-toggle="dropdownBgHover"
                 className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center  relative  gap-2 border border-pumpkin"
                 type="button"
-                onClick={handleOpenCreateRoleModal}
+                onClick={handleOpenCreateTaxOffice}
               >
                 Create Tax office
                 <FaPlus />
@@ -186,7 +242,8 @@ const Tax_office = () => {
               openDeleteModal={openDeleteModal}
               setOpenDeleteModal={setOpenDeleteModal}
               setOpenEditModal={setOpenEditModal}
-              openEditModal={openEditModal}
+              // openEditModal={openEditModal}
+              openEditTaxOfficeModal={openEditModal}
               handleDeleteItem={handleDeleteItem}
               handleEditItem={handleEditItem}
               label="Role name"
@@ -196,9 +253,9 @@ const Tax_office = () => {
         </div>
 
         {openRoleModal && (
-          <CreateRoleModel
-            handleCloseModal={handleCloseCreateRoleModal}
-            handleCreateModal={handleCreateRoleModal}
+          <CreateTaxOffices
+            handleCloseModal={handleCloseCreateTaxOffice}
+            handleCreateModal={handleCreateTaxOffice}
             isLoading={isLoading}
           />
         )}
