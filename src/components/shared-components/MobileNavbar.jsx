@@ -65,7 +65,7 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
         </div>
 
         <div className="w-full py-5 mt-10">
-          <ul className="w-full flex flex-col gap-6">
+          <ul className="w-full flex flex-col custom-scrollbar max-h-[calc(100vh-150px)] overflow-y-auto gap-6">
             {/* use _sidebarMenu to get menus from the backend */}
             {sidebarMenu.map((menu, i) => (
               <li

@@ -42,7 +42,7 @@ const EditPSSPModal = ({
                 type="text"
                 value={resourceName}
                 onChange={(e) => setResourceName(e.target.value)}
-                placeholder="Enter resource name"
+                placeholder="Enter  name"
                 required
               />
             </div>
@@ -61,7 +61,7 @@ const EditPSSPModal = ({
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
                 value={resourceUrl}
                 onChange={(e) => setResourceUrl(e.target.value)}
-                placeholder="Eg. https://url.com"
+                placeholder="PSSP Code"
                 required
               />
             </div>
@@ -78,7 +78,7 @@ const EditPSSPModal = ({
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
                 value={resourceDes}
                 onChange={(e) => setResourceDes(e.target.value)}
-                placeholder="Eg. https://url.com"
+                placeholder="Description"
                 required
               />
             </div>

@@ -47,6 +47,17 @@ export const sidebarMenu = [
     url: "/pssp-management",
   },
   {
+    path: "Tax Type",
+    icon: <FaTasks />,
+    url: "/tax-type",
+  },
+  {
+    path: "Bank Accounts",
+    icon: <FaTasks />,
+    url: "/bank-accounts",
+  },
+
+  {
     path: "Tin request",
     icon: <FaTasks />,
     url: "/tin-request",

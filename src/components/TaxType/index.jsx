@@ -1,20 +1,29 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../shared-components/layouts/DashboardLayout";
-import CustomTable from "../shared-components/table/PSSPTable";
+import CustomTable from "../shared-components/table/TaxTextTable";
 import { resourcesTableData } from "../../utils/table_data";
 import { FaPlus } from "react-icons/fa";
-import CreatePSSPModal from "../shared-components/modals/CreatePSSPModal";
+import CreateTaxTypeModal from "../shared-components/modals/CreateTaxTypeModal";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { authenticateUser } from "../../services/auth-service";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { MAIN_MENU, SUB_MENU } from "../../utils/constants";
 
-const ResourcesPage = () => {
+const TaxTypePage = () => {
   const router = useRouter();
 
-  const tableHeadings = ["Name", "Date", "PSSP Code", "Description", "Actions"];
+  const tableHeadings = [
+    "Tax Type Id",
+    "Created By",
+    "Head Code",
+    "Sub Head Code",
+    "Agency Id",
+    "Service Id",
+    "Description",
+    "Actions",
+  ];
   const [tableData, setTableData] = useState(resourcesTableData);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -30,74 +39,87 @@ const ResourcesPage = () => {
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = tableData.slice(indexOfFirstRow, indexOfLastRow);
 
- 
+  const handleCreateResourceModal = async (newResourceURL) => {
+    console.log("Function called with newResourceURL:", newResourceURL);
 
-const handleCreateResourceModal = async (newResourceURL) => {
-  console.log("Function called with newResourceURL:", newResourceURL);
-
-  if (
-    !newResourceURL?.CreatedBy ||
-    !newResourceURL?.psspCode ||
-    !newResourceURL?.Description
-  ) {
-    console.error("Missing required fields:", newResourceURL);
-    toast.error("Please provide all required fields.");
-    return;
-  }
-
-  const newResourceData = {
-    CreatedBy: newResourceURL.CreatedBy,
-    psspCode: newResourceURL.psspCode,
-    Dsecription: newResourceURL.Description,
-  };
-
-  console.log("Formatted newResourceData:", newResourceData);
-
-  try {
-    console.log("Sending request to create resource...");
-    const createResourceResponse = await AxiosPost(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/PSSP/Create`,
-      newResourceData
-    );
-
-    console.log("Received response:", createResourceResponse);
-
-    if (!createResourceResponse || createResourceResponse.StatusCode !== 200) {
-      console.error("Error: Response status not 200", createResourceResponse);
-      toast.error("Could not create resource.");
+    // Ensure all required fields are present
+    if (
+      !newResourceURL?.taxTypeId ||
+      !newResourceURL?.createdBy ||
+      !newResourceURL?.headCode ||
+      !newResourceURL?.subHeadCode ||
+      !newResourceURL?.agencyId ||
+      // !newResourceURL?.serviceId ||
+      !newResourceURL?.Dsecription
+    ) {
+      console.error("Missing required fields:", newResourceURL);
+      toast.error("Please provide all required fields.");
       return;
     }
 
-    console.log("Resource creation successful, proceeding...");
+    const newResourceData = {
+      taxTypeId: newResourceURL.taxTypeId,
+      createdBy: newResourceURL.createdBy,
+      headCode: newResourceURL.headCode,
+      subHeadCode: newResourceURL.subHeadCode,
+      agencyId: newResourceURL.agencyId,
+      serviceId: newResourceURL.serviceId,
+      Dsecription: newResourceURL.Dsecription,
+    };
 
-    const createdDataRepresentation = {
-      CreatedBy: newResourceURL.CreatedBy,
-      psspCode: newResourceURL.psspCode,
-      Dsecription: newResourceURL.Description,
+    console.log("Formatted newResourceData:", newResourceData);
+
+    try {
+      console.log("Sending request to create resource...");
+      const createResourceResponse = await AxiosPost(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/TaxTypes/Create`,
+        newResourceData
+      );
+
+      console.log("Received response:", createResourceResponse);
+
+      if (
+        !createResourceResponse ||
+        createResourceResponse.StatusCode !== 200
+      ) {
+        console.error("Error: Response status not 200", createResourceResponse);
+        toast.error("Could not create resource.");
+        return;
+      }
+
+      console.log("Resource creation successful, proceeding...");
+
+      const createdDataRepresentation = {
+        taxTypeId: newResourceURL.taxTypeId,
+        createdBy: newResourceURL.createdBy,
+        headCode: newResourceURL.headCode,
+        subHeadCode: newResourceURL.subHeadCode,
+        agencyId: newResourceURL.agencyId,
+        serviceId: newResourceURL.serviceId,
+        Dsecription: newResourceURL.Dsecription,
       };
 
-    console.log(
-      "Formatted createdDataRepresentation:",
-      createdDataRepresentation
-    );
+      console.log(
+        "Formatted createdDataRepresentation:",
+        createdDataRepresentation
+      );
 
-    setTableData((prevData) => [createdDataRepresentation, ...prevData]);
+      setTableData((prevData) => [createdDataRepresentation, ...prevData]);
 
-    console.log("Updated table data with new resource.");
-    toast.success("Resource created successfully");
-  } catch (error) {
-    console.error(
-      "Create Resource Error:",
-      error?.response?.data || error?.message || error
-    );
-    toast.error(
-      `An error occurred: ${error?.response?.data?.message || "Request failed"}`
-    );
-  }
-};
-
-
-
+      console.log("Updated table data with new resource.");
+      toast.success("Resource created successfully");
+    } catch (error) {
+      console.error(
+        "Create Resource Error:",
+        error?.response?.data || error?.message || error
+      );
+      toast.error(
+        `An error occurred: ${
+          error?.response?.data?.message || "Request failed"
+        }`
+      );
+    }
+  };
 
   const handleDelete = () => {
     setOpenDeleteModal(true);
@@ -110,7 +132,7 @@ const handleCreateResourceModal = async (newResourceURL) => {
   const handleDeleteItem = async (ResourceId) => {
     try {
       const deleteResponse = await AxiosGet(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/PSSP/Delete/${ResourceId}`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/TaxTypes/Delete/${ResourceId}`
       );
 
       if (deleteResponse?.data?.StatusCode === 200) {
@@ -132,7 +154,7 @@ const handleCreateResourceModal = async (newResourceURL) => {
 
   const fetchAllResources = async () => {
     const apiResponse = await AxiosGet(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/PSSP/GetAllPSSPs`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/TaxTypes/GetAllTaxTypes`
     );
 
     if (!apiResponse) {
@@ -148,54 +170,87 @@ const handleCreateResourceModal = async (newResourceURL) => {
       setTableData([]);
       return;
     }
+      // taxTypeId: newResourceURL.taxTypeId,
+      //   createdBy: newResourceURL.createdBy,
+      //   headCode: newResourceURL.headCode,
+      //   subHeadCode: newResourceURL.subHeadCode,
+      //   agencyId: newResourceURL.agencyId,
+      //   serviceId: newResourceURL.serviceId,
+    //   Dsecription: newResourceURL.Dsecription,
+    
+    // Agency: "TEST AGENCY";
+    // createdBy: "Admin";
+    // createdDate: "2025-03-29T20:12:45.143";
+    // description: "WHT";
+    // headCode: "10001-001";
+    // isActive: true;
+    // serviceId: "";
+    // subHeadCode: "1003";
+    // taxtypeId: "DA";
 
     // Ensure correct key mapping
     const formattedData = tableData.map((item) => ({
-      CreatedBy: item.createdBy, // Ensure this matches your API response
-      psspCode: item.code,
-      Dsecription: item.description, // Fix possible typo: should be "Description"
+      createdBy: item.createdBy,
+      taxTypeId: item.taxtypeId,
+      headCode: item.headCode,
+      subHeadCode: item.subHeadCode,
+      agencyId: item.Agency,
+      serviceId: item.serviceId,
+      Dsecription: item.description,
       dateCreated: item.createdDate,
-      // Ensure this is present in the API response
-      id: item.PSSPId, // Ensure this is set if used in the table
-      isActive: item.isActive ?? true, // Provide a default value if missing
+      id: item.taxtypeId,
+      isActive: item.isActive ?? true,
     }));
 
-    console.log("Updated Table Data State:", formattedData);
+    console.log("Updated Table Data State:", tableData);
 
     setTableData(formattedData);
   };
 
-
   const handleEditItem = async (updatedItem, updateParameters) => {
-  const { resourceName, resourceUrl, resourceDes } = updateParameters;
+    const {
+      taxTypeId,
+      createdBy,
+      headCode,
+      subHeadCode,
+      agencyId,
+      serviceId,
+      Dsecription,
+    } = updateParameters;
 
-  const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/PSSP/Update`;
+    const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/TaxTypes/Update`;
 
-  const payLoad = {
-    psspId: updatedItem.id, // ✅ Matches the expected key
-    updatedBy: resourceName, // ✅ Matches "updatedBy"
-    psspCode: resourceUrl, // ✅ Matches "psspCode"
-    Dsecription: resourceDes, // ✅ Fix typo (was "Dsecription")
-  };
+    const payLoad = {
+      psspId: updatedItem.id,
+      taxTypeId: taxTypeId,
+      createdBy: createdBy,
+      headCode: headCode,
+      subHeadCode: subHeadCode,
+      agencyId: agencyId,
+      serviceId: serviceId,
+      Dsecription: Dsecription,
+    };
 
-  console.log("Payload sent:", payLoad);
+    console.log("Payload sent:", payLoad);
 
-  try {
-    const updateResourceResponse = await AxiosPost(updateResourceURL, payLoad);
+    try {
+      const updateResourceResponse = await AxiosPost(
+        updateResourceURL,
+        payLoad
+      );
 
-    if (updateResourceResponse?.StatusCode !== 200) {
-      toast.error("Could not update Resource at this time");
-      return;
+      if (updateResourceResponse?.StatusCode !== 200) {
+        toast.error("Could not update Resource at this time");
+        return;
+      }
+
+      toast.success("Resource updated");
+      await fetchAllResources();
+    } catch (error) {
+      console.error("Error updating resource:", error);
+      toast.error("Failed to update resource.");
     }
-
-    toast.success("Resource updated");
-    await fetchAllResources();
-  } catch (error) {
-    console.error("Error updating resource:", error);
-    toast.error("Failed to update resource.");
-  }
-};
-
+  };
 
   const handleOpenEditResourceModal = () => {
     setOpenResourceEditModal(true);
@@ -217,7 +272,7 @@ const handleCreateResourceModal = async (newResourceURL) => {
   };
 
   return (
-    <DashboardLayout page="PSSP Management">
+    <DashboardLayout page="Tax Type">
       <section className="w-full">
         <div className="w-[90%] mx-auto py-5">
           <div className="w-full lg:mt-10">
@@ -228,7 +283,7 @@ const handleCreateResourceModal = async (newResourceURL) => {
                 type="button"
                 onClick={() => setOpenResourceModal(true)}
               >
-                Create PSSP
+                Create Tax Type
                 <FaPlus />
               </button>
             </section>
@@ -249,7 +304,7 @@ const handleCreateResourceModal = async (newResourceURL) => {
               handleEditItem={handleEditItem}
               text="Are you sure you want to delete this resource?"
               label="Resource name"
-              heading="Update PSSP"
+              heading="Update Tax Type"
             />
 
             {/* Pagination Controls */}
@@ -285,7 +340,7 @@ const handleCreateResourceModal = async (newResourceURL) => {
 
         {/* Modal */}
         {openResourceModal && (
-          <CreatePSSPModal
+          <CreateTaxTypeModal
             handleCloseModal={() => setOpenResourceModal(false)}
             handleCreateModal={handleCreateResourceModal}
           />
@@ -295,11 +350,4 @@ const handleCreateResourceModal = async (newResourceURL) => {
   );
 };
 
-export default ResourcesPage;
-
-
-
-
-
-
-
+export default TaxTypePage;
