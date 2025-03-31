@@ -57,9 +57,9 @@ const CustomTable = ({ tableHeadings, tableData = [], handleEdit, handleDelete, 
         {/* <td className="px-5 py-3 text-sm text-gray-700">{auth.createdBy || "N/A"}</td>
         <td className="px-5 py-3 text-sm text-gray-700">{new Date(auth.createdDate).toLocaleString() || "N/A"}</td> */}
           <td className="px-5 py-3 text-sm text-gray-700 flex gap-2">
-                          {/* <button onClick={() => handleEdit(auth.authorizationId)}>
+                          <button onClick={() => handleEdit(auth.authorizationId)}>
                             <FaEdit />
-                          </button> */}
+                          </button>
                           <button onClick={() => handleDelete(auth.authorizationId)}>
                             <FaTrashAlt className="text-red-500" />
                           </button>

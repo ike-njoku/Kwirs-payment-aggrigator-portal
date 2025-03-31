@@ -160,7 +160,7 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
               {/* User Profile (Updated with API Data) */}
               <div className="flex items-center gap-2 justify-end">
                 {loading ? (
-                  <p className="text-gray-600">Loading...</p>
+                  <p className="text-gray-600"></p>
                 ) : userData ? (
                   <>
                     <article className="flex flex-col gap-1 items-end">

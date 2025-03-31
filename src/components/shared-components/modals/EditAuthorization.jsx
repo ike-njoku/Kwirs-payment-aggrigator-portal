@@ -7,6 +7,7 @@ const EditAuthorization = ({ isOpen, onClose, fetchAuthorizations, authorization
   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
   const [loading, setLoading] = useState(false);
+  const [updatedBy, setUpdatedBy] = useState("");
   const [authorizationData, setAuthorizationData] = useState({
     authorizationCode: "",
     taxpayerTIN: "",
@@ -16,6 +17,31 @@ const EditAuthorization = ({ isOpen, onClose, fetchAuthorizations, authorization
 
   const [agencies, setAgencies] = useState([]);
   const [selectedAgencyId, setSelectedAgencyId] = useState("");
+
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const storedUser = localStorage.getItem("authDetails");
+  
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          const loggedInUserTIN = parsedUser?.tin;
+  
+          if (loggedInUserTIN) {
+            setUpdatedBy(loggedInUserTIN); // ✅ Correct function name
+          } else {
+            toast.error("User TIN not found. Please log in again.");
+          }
+        } else {
+          toast.error("User data not found. Please log in again.");
+        }
+      } catch (error) {
+        toast.error("Invalid user data. Please log in again.");
+      }
+    }
+  }, []);
+  
 
   useEffect(() => {
     if (!isOpen || !authorizationId) {
@@ -93,36 +119,48 @@ const EditAuthorization = ({ isOpen, onClose, fetchAuthorizations, authorization
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("🚀 Updating Authorization with Data:", {
-      ...authorizationData,
-      agencyId: selectedAgencyId,
-    });
-
+    
+    const payload = {
+      authorizationId,
+      authorizationCode: authorizationData.authorizationCode,
+      TIN: authorizationData.taxpayerTIN,
+      taxpayername: authorizationData.taxpayerName,
+      agencyId: parseInt(selectedAgencyId, 10),
+      updatedBy,
+    };
+  
+    console.log("🚀 Updating Authorization with Data:", payload);
+  
     try {
       setLoading(true);
+      
       const response = await AxiosPost(
         `${API_BASE_URL}/api/DLAuthorization/Update`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          data: JSON.stringify({ authorizationId, ...authorizationData, agencyId: selectedAgencyId }),
-        }
+        payload
       );
-
-      if (response?.data?.StatusCode === 200) {
-        toast.success("Authorization updated successfully!");
-        fetchAuthorizations();
+  
+      console.log("🔍 Full API Response:", response);
+      console.log("🔍 API StatusMessage:", response?.data?.StatusMessage);
+  
+      if (response?.Status === 200 || response.StatusCode === 200) {
+        toast.success(response.StatusMessage || "Authorization updated successfully!");
         onClose();
+        fetchAuthorizations();
       } else {
-        toast.error("Failed to update authorization.");
+        console.log("🔴 API Error Response:", response?.data);
+        toast.error(response.StatusMessage || "Failed to update authorization.");
       }
     } catch (error) {
       console.error("❌ Error updating authorization:", error);
-      toast.error("Error updating authorization.");
+      toast.error( "Error updating authorization.");
     } finally {
       setLoading(false);
     }
   };
+  
+  
+  
+  
 
   return (
     isOpen && (

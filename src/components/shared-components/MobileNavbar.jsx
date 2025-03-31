@@ -61,7 +61,7 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
             <Image
               fill
               alt="user-pic"
-              src="/images/avatar.jpeg"
+              src="/images/icon-7797704_1280.png"
               className="object-cover"
             />
           </figure>
