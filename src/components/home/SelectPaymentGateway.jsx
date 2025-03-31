@@ -11,6 +11,9 @@ import PaymentButtons from "../shared-components/buttons/PaymentButtons";
 import PayWithFlutterWave from "../../utils/flutterwavePayment";
 import IcadPayModal from "./IcadPayModal";
 import PayWithCredoPayment from "@/utils/credoPayment";
+import PayWithInterswitch from "@/utils/interswitchPayment";
+import InterswitchScriptProvider from "@/context/InterswitchScriptProvider";
+import PayWithInterswitchRedirect from "@/utils/interswitchWebRedirect";
 
 const SelectPaymentGateway = ({ showPreviousComponent }) => {
   const [selectedOption, setSelectedOption] = useState("nil");
@@ -75,6 +78,12 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
     { name: "flutterWave", img: flutterWave },
   ];
 
+  const InterswitchPaymentButton = () => (
+    <InterswitchScriptProvider>
+      <PayWithInterswitch />
+    </InterswitchScriptProvider>
+  );
+
   return (
     <section className="w-full md:max-w-[450px] sm:mx-auto md:mx-0 md:ml-auto pt-8 pb-5 px-8 md:px-10 rounded-[28px] border border-pumpkin mt-10">
       <h3 className="font-bold sm:text-3xl capitalize text-center text-2xl text-white">
@@ -130,6 +139,14 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
         {selectedOption === "etranzact" && (
           <>
             <PayWithCredoPayment />
+          </>
+        )}
+
+        {selectedOption === "interswitch" && (
+          <>
+            <InterswitchPaymentButton />
+            {/* <PayWithInterswitchRedirect /> */}
+            {/* <InterswitchPaymentForm/> */}
           </>
         )}
         {selectedOption === "flutterWave" && (

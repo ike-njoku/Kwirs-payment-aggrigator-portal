@@ -35,6 +35,7 @@ export default function RootLayout({ children }) {
         src="https://pay-service.icadpay.com/host/new-inline-stage-pay.js"
         strategy="lazyOnload"
       />
+
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -44,6 +45,11 @@ export default function RootLayout({ children }) {
             src="https://pay-service.icadpay.com/host/new-inline-stage-pay.js"
             strategy="lazyOnload"
           />
+          {/* <Script
+            src="https://newwebpay.qa.interswitchng.com/inline-checkout.js"
+            strategy="beforeInteractive"
+          /> */}
+
           {children}
         </PaymentRequestDetails>
       </body>
