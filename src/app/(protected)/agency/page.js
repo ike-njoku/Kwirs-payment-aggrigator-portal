@@ -1,8 +1,8 @@
 import React from "react";
-import Agencies from "@/components/Agency";
+import AgenciesPage from "../../../components/agency";
 
 const page = () => {
-  return <Agencies />;
+  return <AgenciesPage />;
 };
 
 export default page;
