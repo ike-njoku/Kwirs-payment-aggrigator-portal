@@ -134,6 +134,7 @@ const TaxTypePage = () => {
       const deleteResponse = await AxiosGet(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/TaxTypes/Delete/${ResourceId}`
       );
+      console.error("ResourceId :", ResourceId);
 
       if (deleteResponse?.data?.StatusCode === 200) {
         toast.success("Resource deleted successfully");
@@ -194,7 +195,7 @@ const TaxTypePage = () => {
       taxTypeId: item.taxtypeId,
       headCode: item.headCode,
       subHeadCode: item.subHeadCode,
-      agencyId: item.Agency,
+      agencyId: item.agencyId,
       serviceId: item.serviceId,
       Dsecription: item.description,
       dateCreated: item.createdDate,
@@ -254,8 +255,8 @@ const TaxTypePage = () => {
       toast.success("Resource updated");
       await fetchAllResources();
     } catch (error) {
-      console.error("Error updating resource:", error);
-      toast.error("Failed to update resource.");
+      console.error("Error updating resource:", updateResourceResponse, error);
+      // toast.error("Failed to update resource.");
     }
   };
 

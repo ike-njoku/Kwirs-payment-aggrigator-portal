@@ -1,27 +1,20 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../shared-components/layouts/DashboardLayout";
-import CustomTable from "../shared-components/table/BankAccountTable";
+import CustomTable from "../shared-components/table/PSSPTable";
 import { resourcesTableData } from "../../utils/table_data";
 import { FaPlus } from "react-icons/fa";
-import CreateBankAccountModal from "../shared-components/modals/CreateBankAccountModal";
+import CreatePSSPModal from "../shared-components/modals/CreatePSSPModal";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { authenticateUser } from "../../services/auth-service";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { MAIN_MENU, SUB_MENU } from "../../utils/constants";
 
-const BankAccountPage = () => {
+const ResourcesPage = () => {
   const router = useRouter();
 
-  const tableHeadings = [
-    "Created By",
-    "Account Name",
-    "Bank Name",
-    "Account Number",
-    "Agency Id",
-    "Actions",
-  ];
+  const tableHeadings = ["Name", "Date", "PSSP Code", "Description", "Actions"];
   const [tableData, setTableData] = useState(resourcesTableData);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -37,106 +30,74 @@ const BankAccountPage = () => {
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = tableData.slice(indexOfFirstRow, indexOfLastRow);
 
-  const handleCreateResourceModal = async (newResourceURL) => {
-    console.log("Function called with newResourceURL:", newResourceURL);
+ 
 
-    // Ensure all required fields are present
-    if (
-      !newResourceURL?.CreatedBy ||
-      !newResourceURL?.accountname ||
-      !newResourceURL?.bankName ||
-      !newResourceURL?.accountNumber ||
-      !newResourceURL?.agencyId
-    ) {
-      console.error("Missing required fields:", newResourceURL);
-      toast.error("Please provide all required fields.");
+const handleCreateResourceModal = async (newResourceURL) => {
+  console.log("Function called with newResourceURL:", newResourceURL);
+
+  if (
+    !newResourceURL?.CreatedBy ||
+    !newResourceURL?.psspCode ||
+    !newResourceURL?.Description
+  ) {
+    console.error("Missing required fields:", newResourceURL);
+    toast.error("Please provide all required fields.");
+    return;
+  }
+
+  const newResourceData = {
+    CreatedBy: newResourceURL.CreatedBy,
+    psspCode: newResourceURL.psspCode,
+    Dsecription: newResourceURL.Description,
+  };
+
+  console.log("Formatted newResourceData:", newResourceData);
+
+  try {
+    console.log("Sending request to create resource...");
+    const createResourceResponse = await AxiosPost(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/PSSP/Create`,
+      newResourceData
+    );
+
+    console.log("Received response:", createResourceResponse);
+
+    if (!createResourceResponse || createResourceResponse.StatusCode !== 200) {
+      console.error("Error: Response status not 200", createResourceResponse);
+      toast.error("Could not create resource.");
       return;
     }
 
-    //  {
-    //             "account": "0987654322",
-    //             "accountName": "Dayo",
-    //             "BankaccountId": 2,
-    //             "createdDate": "2025-03-29T21:19:59.383",
-    //             "createdBy": "Admin",
-    //             "bankName": "Shutter Bank",
-    //             "Agency": "TEST AGENCY"
-    //         },
+    console.log("Resource creation successful, proceeding...");
 
-    // Agency: "TEST AGENCY";
-    // BankaccountId: 2;
-    // account: "0987654322";
-    // accountName: "Dayo";
-    // bankName: "Shutter Bank";
-    // createdBy: "Admin";
-    // createdDate: "2025-03-29T21:19:59.383";
-
-  //     "CreatedBy": "Tax Officer 3",
-  // "accountname": "Dayo",
-  // "bankName": "Shutter Bank",
-  // "accountNumber": " 0987654321",
-  // "agencyId": 5
-
-    const newResourceData = {
+    const createdDataRepresentation = {
       CreatedBy: newResourceURL.CreatedBy,
-      accountname: newResourceURL.accountname,
-      bankName: newResourceURL.bankName,
-      accountNumber: newResourceURL.accountNumber,
-      agencyId: newResourceURL.agencyId,
-      // Agency: "TEST AGENCY",
-    };
-
-    console.log("newResourceData:", newResourceData);
-
-    try {
-      console.log("Sending request to create resource...");
-      const createResourceResponse = await AxiosPost(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Banks/Create`,
-        newResourceData
-      );
-
-      console.log("Received response:", createResourceResponse);
-
-      if (
-        !createResourceResponse ||
-        createResourceResponse.StatusCode !== 200
-      ) {
-        console.error("Error: Response status not 200", createResourceResponse);
-        toast.error("Could not create resource.");
-        return;
-      }
-
-      console.log("Resource creation successful, proceeding...");
-
-      const createdDataRepresentation = {
-        CreatedBy: newResourceURL.CreatedBy,
-        accountname: newResourceURL.accountname,
-        bankName: newResourceURL.bankName,
-        accountNumber: newResourceURL.accountNumber,
-        agencyId: newResourceURL.agencyId,
+      psspCode: newResourceURL.psspCode,
+      Dsecription: newResourceURL.Description,
       };
 
-      console.log(
-        "Formatted createdDataRepresentation:",
-        createdDataRepresentation
-      );
+    console.log(
+      "Formatted createdDataRepresentation:",
+      createdDataRepresentation
+    );
 
-      setTableData((prevData) => [createdDataRepresentation, ...prevData]);
+    setTableData((prevData) => [createdDataRepresentation, ...prevData]);
 
-      console.log("Updated table data with new resource.");
-      toast.success("Resource created successfully");
-    } catch (error) {
-      console.error(
-        "Create Resource Error:",
-        error?.response?.data || error?.message || error
-      );
-      toast.error(
-        `An error occurred: ${
-          error?.response?.data?.message || "Request failed"
-        }`
-      );
-    }
-  };
+    console.log("Updated table data with new resource.");
+    toast.success("Resource created successfully");
+  } catch (error) {
+    console.error(
+      "Create Resource Error:",
+      error?.response?.data || error?.message || error
+    );
+    toast.error(
+      `An error occurred: ${error?.response?.data?.message || "Request failed"}`
+    );
+  }
+};
+
+
+
 
   const handleDelete = () => {
     setOpenDeleteModal(true);
@@ -147,18 +108,16 @@ const BankAccountPage = () => {
   };
 
   const handleDeleteItem = async (ResourceId) => {
-    console.log("Deleting Resource with ID:", ResourceId); // Debugging log
-
     try {
       const deleteResponse = await AxiosGet(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Banks/Delete/${ResourceId}`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/PSSP/Delete/${ResourceId}`
       );
 
       if (deleteResponse?.data?.StatusCode === 200) {
         toast.success("Resource deleted successfully");
 
         setTableData((prevData) =>
-          prevData.filter((item) => item.BankaccountId !== ResourceId)
+          prevData.filter((item) => item.id !== ResourceId)
         );
 
         setOpenDeleteModal(false);
@@ -173,9 +132,8 @@ const BankAccountPage = () => {
 
   const fetchAllResources = async () => {
     const apiResponse = await AxiosGet(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Banks/GetAllBankAccounts`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/PSSP/GetAllPSSPs`
     );
-    console.log("data1:", apiResponse);
 
     if (!apiResponse) {
       toast.error("Could not fetch resources");
@@ -185,8 +143,6 @@ const BankAccountPage = () => {
     const { data } = apiResponse;
     const tableData = data.Data || data.resources || [];
 
-    console.log("data2:", apiResponse);
-
     if (!tableData.length) {
       toast.warn("No resources found");
       setTableData([]);
@@ -195,13 +151,13 @@ const BankAccountPage = () => {
 
     // Ensure correct key mapping
     const formattedData = tableData.map((item) => ({
-      CreatedBy: item.createdBy,
-      accountname: item.accountName,
-      bankName: item.bankName,
+      CreatedBy: item.createdBy, // Ensure this matches your API response
+      psspCode: item.code,
+      Dsecription: item.description, // Fix possible typo: should be "Description"
       dateCreated: item.createdDate,
-      accountNumber: item.account,
-      agencyId: item.BankaccountId,
-      BankaccountId: item.BankaccountId,
+      // Ensure this is present in the API response
+      id: item.PSSPId, // Ensure this is set if used in the table
+      isActive: item.isActive ?? true, // Provide a default value if missing
     }));
 
     console.log("Updated Table Data State:", formattedData);
@@ -209,45 +165,36 @@ const BankAccountPage = () => {
     setTableData(formattedData);
   };
 
+
   const handleEditItem = async (updatedItem, updateParameters) => {
-    const { CreatedBy, accountname, bankName, agencyId, accountNumber } =
-      updateParameters;
+  const { resourceName, resourceUrl, resourceDes } = updateParameters;
 
-    const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Banks/Update`;
+  const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/PSSP/Update`;
 
-    const payLoad = {
-      BankaccountId: updatedItem.BankaccountId,
-      CreatedBy,
-      accountname,
-      bankName,
-      accountNumber,
-      agencyId,
-    };
-
-    console.log("Payload sent:", payLoad);
-
-    try {
-      const updateResourceResponse = await AxiosPost(
-        updateResourceURL,
-        payLoad
-      );
-
-      if (
-        !updateResourceResponse ||
-        updateResourceResponse?.StatusCode !== 200
-      ) {
-        throw new Error(
-          "Failed to update resource. Unexpected response from server."
-        );
-      }
-
-      toast.success("Resource updated successfully!");
-      await fetchAllResources();
-    } catch (error) {
-      console.error("Error updating resource:", error.message || error);
-      // toast.error("Failed to update resource. Please try again later.");
-    }
+  const payLoad = {
+    psspId: updatedItem.id, // ✅ Matches the expected key
+    updatedBy: resourceName, // ✅ Matches "updatedBy"
+    psspCode: resourceUrl, // ✅ Matches "psspCode"
+    Dsecription: resourceDes, // ✅ Fix typo (was "Dsecription")
   };
+
+  console.log("Payload sent:", payLoad);
+
+  try {
+    const updateResourceResponse = await AxiosPost(updateResourceURL, payLoad);
+
+    if (updateResourceResponse?.StatusCode !== 200) {
+      toast.error("Could not update Resource at this time");
+      return;
+    }
+
+    toast.success("Resource updated");
+    await fetchAllResources();
+  } catch (error) {
+    console.error("Error updating resource:", error);
+    toast.error("Failed to update resource.");
+  }
+};
 
 
   const handleOpenEditResourceModal = () => {
@@ -270,7 +217,7 @@ const BankAccountPage = () => {
   };
 
   return (
-    <DashboardLayout page="Bank Accounts">
+    <DashboardLayout page="PSSP Management">
       <section className="w-full">
         <div className="w-[90%] mx-auto py-5">
           <div className="w-full lg:mt-10">
@@ -281,7 +228,7 @@ const BankAccountPage = () => {
                 type="button"
                 onClick={() => setOpenResourceModal(true)}
               >
-                Create Bank Account
+                Create PSSP
                 <FaPlus />
               </button>
             </section>
@@ -302,7 +249,7 @@ const BankAccountPage = () => {
               handleEditItem={handleEditItem}
               text="Are you sure you want to delete this resource?"
               label="Resource name"
-              heading="Update Bank Account"
+              heading="Update PSSP"
             />
 
             {/* Pagination Controls */}
@@ -338,7 +285,7 @@ const BankAccountPage = () => {
 
         {/* Modal */}
         {openResourceModal && (
-          <CreateBankAccountModal
+          <CreatePSSPModal
             handleCloseModal={() => setOpenResourceModal(false)}
             handleCreateModal={handleCreateResourceModal}
           />
@@ -348,4 +295,11 @@ const BankAccountPage = () => {
   );
 };
 
-export default BankAccountPage;
+export default ResourcesPage;
+
+
+
+
+
+
+

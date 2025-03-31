@@ -1,10 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../shared-components/layouts/DashboardLayout";
-import CustomTable from "../shared-components/table/PSSPTable";
+import CustomTable from "../shared-components/table";
 import { resourcesTableData } from "../../utils/table_data";
 import { FaPlus } from "react-icons/fa";
-import CreatePSSPModal from "../shared-components/modals/CreatePSSPModal";
+import CreateResourceModal from "../shared-components/modals/CreateResourceModal";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { authenticateUser } from "../../services/auth-service";
 import { toast } from "react-toastify";
@@ -14,7 +14,13 @@ import { MAIN_MENU, SUB_MENU } from "../../utils/constants";
 const ResourcesPage = () => {
   const router = useRouter();
 
-  const tableHeadings = ["Name", "Date", "PSSP Code", "Description", "Actions"];
+  const tableHeadings = [
+    "Name",
+    "Date Created",
+    "Resource type",
+    "Resource URL",
+    "Actions",
+  ];
   const [tableData, setTableData] = useState(resourcesTableData);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -30,74 +36,56 @@ const ResourcesPage = () => {
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = tableData.slice(indexOfFirstRow, indexOfLastRow);
 
- 
+  const handleCreateResourceModal = async (newResourceURL) => {
+    const newResourceData = {
+      ResourceName: newResourceURL.resourceName,
+      URL: newResourceURL.resourceUrl,
+      Username: authenticatedUser.email,
+      Type: newResourceURL.resourceType,
+      ParentResourceId: newResourceURL.parentResourceId,
+      UserName: authenticatedUser.tin,
+    };
 
-const handleCreateResourceModal = async (newResourceURL) => {
-  console.log("Function called with newResourceURL:", newResourceURL);
+    try {
+      const createResourceResponse = await AxiosPost(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/Create`,
+        newResourceData
+      );
 
-  if (
-    !newResourceURL?.CreatedBy ||
-    !newResourceURL?.psspCode ||
-    !newResourceURL?.Description
-  ) {
-    console.error("Missing required fields:", newResourceURL);
-    toast.error("Please provide all required fields.");
-    return;
-  }
+      if (createResourceResponse.StatusCode !== 200) {
+        toast.error("Could not create resource.");
+        return;
+      }
+      toast.success("Resource created successfully");
 
-  const newResourceData = {
-    CreatedBy: newResourceURL.CreatedBy,
-    psspCode: newResourceURL.psspCode,
-    Dsecription: newResourceURL.Description,
-  };
-
-  console.log("Formatted newResourceData:", newResourceData);
-
-  try {
-    console.log("Sending request to create resource...");
-    const createResourceResponse = await AxiosPost(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/PSSP/Create`,
-      newResourceData
-    );
-
-    console.log("Received response:", createResourceResponse);
-
-    if (!createResourceResponse || createResourceResponse.StatusCode !== 200) {
-      console.error("Error: Response status not 200", createResourceResponse);
-      toast.error("Could not create resource.");
-      return;
-    }
-
-    console.log("Resource creation successful, proceeding...");
-
-    const createdDataRepresentation = {
-      CreatedBy: newResourceURL.CreatedBy,
-      psspCode: newResourceURL.psspCode,
-      Dsecription: newResourceURL.Description,
+      const createdDataRepresentation = {
+        name: newResourceURL.resourceName,
+        resourceURL: newResourceURL.resourceUrl,
+        Username: authenticatedUser.email,
+        Type: newResourceURL.resourceType,
+        ParentResourceId: 0,
+        resourceType:
+          newResourceURL.resourceType == 1 ? MAIN_MENU : SUB_MENU,
+        dateCreated: new Date().toISOString().split("T")[0],
+        ResourceId: createResourceResponse.Data.ResourseId,
       };
 
-    console.log(
-      "Formatted createdDataRepresentation:",
-      createdDataRepresentation
-    );
-
-    setTableData((prevData) => [createdDataRepresentation, ...prevData]);
-
-    console.log("Updated table data with new resource.");
-    toast.success("Resource created successfully");
-  } catch (error) {
-    console.error(
-      "Create Resource Error:",
-      error?.response?.data || error?.message || error
-    );
-    toast.error(
-      `An error occurred: ${error?.response?.data?.message || "Request failed"}`
-    );
-  }
-};
-
-
-
+      setTableData((prevData) => [
+        { ...createdDataRepresentation },
+        ...prevData,
+      ]);
+    } catch (error) {
+      console.error(
+        "Create Resource Error:",
+        error?.response?.data || error?.message
+      );
+      toast.error(
+        `An error occurred: ${
+          error?.response?.data?.message || "Request failed"
+        }`
+      );
+    }
+  };
 
   const handleDelete = () => {
     setOpenDeleteModal(true);
@@ -110,14 +98,14 @@ const handleCreateResourceModal = async (newResourceURL) => {
   const handleDeleteItem = async (ResourceId) => {
     try {
       const deleteResponse = await AxiosGet(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/PSSP/Delete/${ResourceId}`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/Delete/${ResourceId}`
       );
 
       if (deleteResponse?.data?.StatusCode === 200) {
         toast.success("Resource deleted successfully");
 
         setTableData((prevData) =>
-          prevData.filter((item) => item.id !== ResourceId)
+          prevData.filter((item) => item.ResourceId !== ResourceId)
         );
 
         setOpenDeleteModal(false);
@@ -132,7 +120,7 @@ const handleCreateResourceModal = async (newResourceURL) => {
 
   const fetchAllResources = async () => {
     const apiResponse = await AxiosGet(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/PSSP/GetAllPSSPs`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/GetAllResource`
     );
 
     if (!apiResponse) {
@@ -149,38 +137,41 @@ const handleCreateResourceModal = async (newResourceURL) => {
       return;
     }
 
-    // Ensure correct key mapping
-    const formattedData = tableData.map((item) => ({
-      CreatedBy: item.createdBy, // Ensure this matches your API response
-      psspCode: item.code,
-      Dsecription: item.description, // Fix possible typo: should be "Description"
-      dateCreated: item.createdDate,
-      // Ensure this is present in the API response
-      id: item.PSSPId, // Ensure this is set if used in the table
-      isActive: item.isActive ?? true, // Provide a default value if missing
-    }));
+    tableData.map((item) => (item.name = item.ResourceName));
+    tableData.map((item) => (item.id = item.ResourceId));
+    tableData.map((item) => (item.resourceType = item.ResourceTypeId));
+    tableData.map(
+      (item) =>
+        (item.resourceType = item.ResourceTypeId == 1 ? MAIN_MENU : SUB_MENU)
+    );
+    tableData.map((item) => (item.resourceURL = item.URL));
+    tableData.map(
+      (item) =>
+        (item.dateCreated = new Date(item.CreateDate)
+          .toISOString()
+          .split("T")[0])
+    );
 
-    console.log("Updated Table Data State:", formattedData);
-
-    setTableData(formattedData);
+    setTableData(tableData);
   };
-
 
   const handleEditItem = async (updatedItem, updateParameters) => {
-  const { resourceName, resourceUrl, resourceDes } = updateParameters;
+    updatedItem.ResourceType = updatedItem.resourceType == MAIN_MENU ? 1 : 2;
 
-  const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/PSSP/Update`;
+    const { resourceName, resourceType, resourceUrl, parentResourceId } =
+      updateParameters;
 
-  const payLoad = {
-    psspId: updatedItem.id, // ✅ Matches the expected key
-    updatedBy: resourceName, // ✅ Matches "updatedBy"
-    psspCode: resourceUrl, // ✅ Matches "psspCode"
-    Dsecription: resourceDes, // ✅ Fix typo (was "Dsecription")
-  };
+    const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/Update`;
+    const payLoad = {
+      ResourceName: resourceName,
+      URL: resourceUrl,
+      Username: authenticatedUser.email,
+      Type: resourceType == MAIN_MENU ? 1 : 2,
+      ResourceId: updatedItem.ResourceId,
+      ParentResourceId: updatedItem.ParentResourceId,
+      UserName: authenticatedUser.tin,
+    };
 
-  console.log("Payload sent:", payLoad);
-
-  try {
     const updateResourceResponse = await AxiosPost(updateResourceURL, payLoad);
 
     if (updateResourceResponse?.StatusCode !== 200) {
@@ -190,12 +181,7 @@ const handleCreateResourceModal = async (newResourceURL) => {
 
     toast.success("Resource updated");
     await fetchAllResources();
-  } catch (error) {
-    console.error("Error updating resource:", error);
-    toast.error("Failed to update resource.");
-  }
-};
-
+  };
 
   const handleOpenEditResourceModal = () => {
     setOpenResourceEditModal(true);
@@ -217,7 +203,7 @@ const handleCreateResourceModal = async (newResourceURL) => {
   };
 
   return (
-    <DashboardLayout page="PSSP Management">
+    <DashboardLayout page="Resources">
       <section className="w-full">
         <div className="w-[90%] mx-auto py-5">
           <div className="w-full lg:mt-10">
@@ -228,14 +214,14 @@ const handleCreateResourceModal = async (newResourceURL) => {
                 type="button"
                 onClick={() => setOpenResourceModal(true)}
               >
-                Create PSSP
+                Create Resource
                 <FaPlus />
               </button>
             </section>
 
             {/* Table */}
             <CustomTable
-              isResource={false}
+              isResource={true}
               tableHeadings={tableHeadings}
               tableData={currentRows}
               isEllipseDropdwon={true}
@@ -249,7 +235,7 @@ const handleCreateResourceModal = async (newResourceURL) => {
               handleEditItem={handleEditItem}
               text="Are you sure you want to delete this resource?"
               label="Resource name"
-              heading="Update PSSP"
+              heading="Update Resource"
             />
 
             {/* Pagination Controls */}
@@ -285,7 +271,7 @@ const handleCreateResourceModal = async (newResourceURL) => {
 
         {/* Modal */}
         {openResourceModal && (
-          <CreatePSSPModal
+          <CreateResourceModal
             handleCloseModal={() => setOpenResourceModal(false)}
             handleCreateModal={handleCreateResourceModal}
           />
