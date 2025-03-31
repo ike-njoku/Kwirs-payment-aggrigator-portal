@@ -66,7 +66,7 @@ const RolesPage = () => {
     setAuthenticatedUser(user);
   }, []);
 
-  // handle edit item
+  // handle edit Payment Method
   const handleEditItem = async (
     description,
     requireAuthorization,

@@ -23,7 +23,7 @@ const Tax_office = () => {
   ];
   const [tableData, setTableData] = useState(roleTableData);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [openEditModal, setOpenEditModal] = useState(false);
+  const [openEditTaxOfficeModal, setOpenEditModal] = useState(false);
   const [openRoleModal, setOpenRoleModal] = useState(false);
   const [authenticatedUser, setAuthenticatedUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -73,20 +73,45 @@ const Tax_office = () => {
     setAuthenticatedUser(user);
   }, []);
 
-  const handleEditItem = async (updatedItem, newRole) => {
-    if (newRole) {
-      const selectedRole = tableData.find((item) => item.id === updatedItem.id);
-      selectedRole.name = newRole;
-      selectedRole.RoleId = selectedRole.Id;
-      selectedRole.UserName = authenticatedUser.tin;
+  // handle edit Tax Offices
+  const handleEditItem = async (updatedTaxOffice) => {
+    try {
+      // Validate required fields
+      if (!updatedTaxOffice.TaxOfficeId || !updatedTaxOffice.TaxOfficeName) {
+        toast.error("Please fill in all required fields.");
+        return;
+      }
 
-      const updateRoleResponse = await AxiosPost(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/Update`,
-        selectedRole
+      // Prepare payload
+      const payload = {
+        TaxOfficeId: updatedTaxOffice.TaxOfficeId,
+        TaxOfficeName: updatedTaxOffice.TaxOfficeName,
+        TaxOfficeTypeId: updatedTaxOffice.TaxOfficeTypeId,
+        RegionId: updatedTaxOffice.RegionId,
+        Street: updatedTaxOffice.Street,
+        City: updatedTaxOffice.City,
+        LGAId: updatedTaxOffice.LGAId,
+        Telephone: updatedTaxOffice.Telephone,
+        TaxOfficerName: updatedTaxOffice.TaxOfficerName,
+        TaxOfficerPhone: updatedTaxOffice.TaxOfficerPhone,
+        isActive: updatedTaxOffice.isActive === "true",
+      };
+
+      // API Call
+      const response = await AxiosPost(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/taxOffice/Update`,
+        payload
       );
 
-      if (updateRoleResponse.StatusCode == 200) toast.success("Role Updated");
-      else toast.error("Could not update role");
+      if (response.StatusCode === 200) {
+        toast.success("Tax Office Updated Successfully!");
+        getAllTaxOffices();
+      } else {
+        toast.error(response.Message || "Could not update Tax Office.");
+      }
+    } catch (error) {
+      console.error("Error updating Tax Office:", error);
+      toast.error("An error occurred while updating the Tax Office.");
     }
   };
 
@@ -97,32 +122,6 @@ const Tax_office = () => {
   const handleOpenCreateTaxOffice = () => {
     setOpenRoleModal(true);
   };
-
-  // // Create tax office
-  // const handleCreateTaxOffice = async (newRole) => {
-  //   setIsLoading(true);
-  //   const newRoleData = {
-  //     name: newRole,
-  //     isActive: true,
-  //   };
-
-  //   newRoleData.Name = newRole;
-  //   newRoleData.UserName = authenticatedUser.tin;
-
-  //   const createRoleResponse = await AxiosPost(
-  //     `${process.env.NEXT_PUBLIC_BASE_URL}/api/taxOffice/Create`,
-  //     newRoleData
-  //   );
-
-  //   if (createRoleResponse.StatusCode !== 200) {
-  //     toast.error("Could not create role");
-  //     return;
-  //   }
-  //   setIsLoading(false);
-  //   toast.success("Role created successfully");
-  //   newRoleData.dateCreated = new Date().toISOString().split("T")[0];
-  //   setTableData([...tableData, newRoleData]);
-  // };
 
   // hand create payment method
   const handleCreateTaxOffice = async (formData) => {
@@ -242,8 +241,8 @@ const Tax_office = () => {
               openDeleteModal={openDeleteModal}
               setOpenDeleteModal={setOpenDeleteModal}
               setOpenEditModal={setOpenEditModal}
-              // openEditModal={openEditModal}
-              openEditTaxOfficeModal={openEditModal}
+              // openEditTaxOfficeModal={openEditTaxOfficeModal}
+              openEditTaxOfficeModal={openEditTaxOfficeModal}
               handleDeleteItem={handleDeleteItem}
               handleEditItem={handleEditItem}
               label="Role name"

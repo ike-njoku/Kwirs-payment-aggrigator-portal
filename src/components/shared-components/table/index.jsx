@@ -46,6 +46,10 @@ const CustomTable = ({
     setOpenEditModal(false);
   };
 
+  const handleCloseTaxOfficeModal = () => {
+    setOpenEditModal(false);
+  };
+
   const [paymentMethodId, setPaymentMethodId] = useState(0);
 
   const [selectedItem, setSelectedItem] = useState(0);
@@ -245,7 +249,7 @@ const CustomTable = ({
 
       {openEditTaxOfficeModal && (
         <EditTaxOfficeModal
-          handleCloseModal={handleClosePaymentMethodModal}
+          handleCloseModal={handleCloseTaxOfficeModal}
           index={selectedItem}
           handleEditModal={handleEditItem}
           heading={heading}
