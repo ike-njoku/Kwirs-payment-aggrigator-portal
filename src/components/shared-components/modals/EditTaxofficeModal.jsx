@@ -24,6 +24,46 @@ const EditTaxOfficeModal = ({
     isActive: "true",
   });
 
+  const [taxOfficeTypes, setTaxOfficeTypes] = useState([]);
+  const [lgas, setLgas] = useState([]);
+  const [loadingTypes, setLoadingTypes] = useState(true);
+  const [loadingLgas, setLoadingLgas] = useState(true);
+
+  // Fetch dropdown data
+  useEffect(() => {
+    const fetchTaxOfficeTypes = async () => {
+      try {
+        const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/taxOffice/GettaxOfficeType`;
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data.StatusCode === 200) {
+          setTaxOfficeTypes(data.Data || []);
+        }
+      } catch (error) {
+        console.error("Error fetching tax office types:", error);
+      } finally {
+        setLoadingTypes(false);
+      }
+    };
+
+    const fetchLgas = async () => {
+      try {
+        const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/utility/GetAllLGA`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        setLgas(data || []);
+      } catch (error) {
+        console.error("Error fetching LGAs:", error);
+      } finally {
+        setLoadingLgas(false);
+      }
+    };
+
+    fetchTaxOfficeTypes();
+    fetchLgas();
+  }, []);
+
   // Initialize form data when index changes
   useEffect(() => {
     if (index) {
@@ -92,6 +132,39 @@ const EditTaxOfficeModal = ({
                   >
                     <option value="true">Active</option>
                     <option value="false">Inactive</option>
+                  </select>
+                ) : key === "TaxOfficeTypeId" ? (
+                  <select
+                    className="w-full h-full bg-gray-100 px-3 focus:outline-none"
+                    name={key}
+                    value={value}
+                    onChange={handleChange}
+                    disabled={loadingTypes}
+                  >
+                    <option value="">Select Tax Office Type</option>
+                    {taxOfficeTypes.map((type) => (
+                      <option
+                        key={type.TaxOfficeTypeId}
+                        value={type.TaxOfficeTypeId}
+                      >
+                        {type.TaxOfficeTypeId}
+                      </option>
+                    ))}
+                  </select>
+                ) : key === "LGAId" ? (
+                  <select
+                    className="w-full h-full bg-gray-100 px-3 focus:outline-none"
+                    name={key}
+                    value={value}
+                    onChange={handleChange}
+                    disabled={loadingLgas}
+                  >
+                    <option value="">Select LGA</option>
+                    {lgas.map((lga) => (
+                      <option key={lga.LGAId} value={lga.LGAId.toString()}>
+                        {lga.LGAName}
+                      </option>
+                    ))}
                   </select>
                 ) : (
                   <input

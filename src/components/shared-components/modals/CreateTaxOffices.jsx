@@ -23,7 +23,10 @@ const CreateTaxOffices = ({
   });
 
   const [taxOfficeTypes, setTaxOfficeTypes] = useState([]);
+  const [lgas, setLgas] = useState([]);
   const [loadingTypes, setLoadingTypes] = useState(true);
+  const [loadingLgas, setLoadingLgas] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchTaxOfficeTypes = async () => {
@@ -33,18 +36,38 @@ const CreateTaxOffices = ({
         const data = await response.json();
 
         if (data.StatusCode === 200) {
-          setTaxOfficeTypes(data.Data || []); // Ensure we have an array
+          setTaxOfficeTypes(data.Data || []);
         } else {
           console.error("Failed to fetch tax office types");
+          setError("Failed to load tax office types");
         }
       } catch (error) {
         console.error("Error fetching tax office types:", error);
+        setError("Error loading tax office types");
       } finally {
         setLoadingTypes(false);
       }
     };
 
+    const fetchLgas = async () => {
+      try {
+        const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/utility/GetAllLGA`;
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log("LGA Data:", data); // Debug log
+        // console.log("Data", data);
+
+        setLgas(data || []);
+      } catch (error) {
+        console.error("Error fetching LGAs:", error);
+        setError("Error loading LGAs");
+      } finally {
+        setLoadingLgas(false);
+      }
+    };
+
     fetchTaxOfficeTypes();
+    fetchLgas();
   }, []);
 
   const handleChange = (e) => {
@@ -74,6 +97,13 @@ const CreateTaxOffices = ({
         <h3 className="my-5 text-lg font-semibold pb-4 border-b border-gray-500 text-gray-700">
           Create Tax Office
         </h3>
+
+        {error && (
+          <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+
         <form className="w-full" onSubmit={handleSubmit}>
           {Object.entries(formData).map(([key, value]) => (
             <div className="w-full mb-4" key={key}>
@@ -106,6 +136,24 @@ const CreateTaxOffices = ({
                         value={type.TaxOfficeTypeId}
                       >
                         {type.TaxOfficeTypeId}
+                      </option>
+                    ))}
+                  </select>
+                ) : key === "LGAId" ? (
+                  <select
+                    className="w-full h-full bg-gray-100 px-3 focus:outline-none"
+                    name={key}
+                    value={value}
+                    onChange={handleChange}
+                    disabled={loadingLgas}
+                  >
+                    <option value="">Select LGA</option>
+                    {lgas.map((lga) => (
+                      <option
+                        key={lga.LGAId}
+                        value={lga.LGAId.toString()} // Convert number to string for consistency
+                      >
+                        {lga.LGAName}
                       </option>
                     ))}
                   </select>
