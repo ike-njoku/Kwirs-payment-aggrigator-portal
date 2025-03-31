@@ -143,11 +143,11 @@ const EditAgency = ({ isOpen, onClose, AgencyId, fetchAllAgencies }) => {
         <form className="w-full mt-4" onSubmit={handleUpdateAgency}>
           {/* ✅ Read-only field for UpdatedBy */}
           <div className="w-full mb-4">
-            <label className="text-base font-medium text-gray-700">
+            {/* <label className="text-base font-medium text-gray-700">
               Updated By (TIN)
-            </label>
+            </label> */}
             <input
-              type="text"
+              type="hidden"
               className="w-full border-b-2 border-gray-300 h-[45px] bg-gray-100 px-3 focus:outline-none text-gray-700"
               value={updatedBy}
               readOnly

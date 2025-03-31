@@ -129,13 +129,13 @@ const UserDashboard = () => {
                     Transactions
                   </h3>
 
-                  <div className="flex items-center gap-2">
+                  {/* <div className="flex items-center gap-2">
                     <h3 className="text-sm capitalize flex items-center gap-2">
                       sort by:{" "}
                       <span className="text-pumpkin text-sm">Recently</span>
                     </h3>
                     <FaCaretDown />
-                  </div>
+                  </div> */}
                 </article>
               </div>
               <TransctionComponent

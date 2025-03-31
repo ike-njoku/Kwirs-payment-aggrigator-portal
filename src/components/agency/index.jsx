@@ -11,7 +11,7 @@ import { FaPlus } from "react-icons/fa";
 const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const AgenciesPage = ({ user }) => {
-  const tableHeadings = ["Created By", "Description", "Action"];
+  const tableHeadings = ["Agency Code", "Description", "Action"];
   const [loading, setLoading] = useState(false);
   const [selectedAgency, setSelectedAgency] = useState(null);
   const [agencies, setAgencies] = useState([]);
@@ -103,27 +103,28 @@ const AgenciesPage = ({ user }) => {
 
             {/* Active Agencies Dropdown */}
             <div className="relative">
-              <select
-                className="text-gray focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
-                onChange={(e) => {
-                  const agencyId = Number(e.target.value);
-                  const agency = agencies.find((a) => a.AgencyId === agencyId);
-                  setSelectedAgency(agency);
-                }}
-                value={selectedAgency?.AgencyId || ""}
-              >
-                <option value="">Active Agencies</option>
-                {activeAgencies.length > 0 ? (
-                  activeAgencies.map((agency) => (
-                    <option key={agency.AgencyId} value={agency.AgencyId}>
-                      {agency.description}
-                    </option>
-                  ))
-                ) : (
-                  <option disabled>Loading agencies...</option>
-                )}
-              </select>
-            </div>
+  <select
+    className="text-pumpkin font-medium rounded-lg text-sm px-5 py-2.5 border border-pumpkin"
+    onChange={(e) => {
+      const agencyId = Number(e.target.value);
+      const agency = agencies.find((a) => a.AgencyId === agencyId);
+      setSelectedAgency(agency);
+    }}
+    value={selectedAgency?.AgencyId || ""}
+  >
+    <option value="">Active Agencies</option>
+    {activeAgencies.length > 0 ? (
+      activeAgencies.map((agency) => (
+        <option key={agency.AgencyId} value={agency.AgencyId}>
+          {agency.description}
+        </option>
+      ))
+    ) : (
+      <option disabled>No Agencies Found</option>
+    )}
+  </select>
+</div>
+
           </div>
         </div>
 

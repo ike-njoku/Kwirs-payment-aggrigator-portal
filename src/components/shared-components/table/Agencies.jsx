@@ -41,7 +41,7 @@ const CustomTable = ({ tableHeadings, tableData = [], handleEdit, handleDelete, 
             currentTableData.map((row, index) => (
               <tr key={row.AgencyId || index} className={`border-t hover:bg-gray-50 ${index % 2 === 0 ? "bg-white" : "bg-gray-100"}`}>
                 {/* <td className="px-5 py-3 text-sm text-gray-700">{row.AgencyId}</td> */}
-                <td className="px-5 py-3 text-sm text-gray-700">{row.createdBy}</td>
+                <td className="px-5 py-3 text-sm text-gray-700">{row.agencyCode}</td>
                 <td className="px-5 py-3 text-sm text-gray-700">{row.description}</td>
                 <td className="px-5 py-3 text-sm text-gray-700 flex gap-2">
                   <button onClick={() => handleEdit(row.AgencyId)}>
