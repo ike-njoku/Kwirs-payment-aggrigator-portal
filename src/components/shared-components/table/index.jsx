@@ -126,9 +126,9 @@ const CustomTable = ({
             <td className="px-6 py-4 text-gray-900 capitalize">
               {tableInfo.taxOfficeTypeName}
             </td>
-            {/* <td className="px-6 py-4 text-gray-900 capitalize">
-              {tableInfo.CreatedBy}
-            </td> */}
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.officerName}
+            </td>
             <td className="px-6 py-4 text-gray-900 capitalize">
               {tableInfo.taxOfficerPhone || "null"}
             </td>
