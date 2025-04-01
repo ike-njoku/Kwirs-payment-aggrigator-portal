@@ -192,7 +192,11 @@ const CustomTable = ({
                         handleDelete={handleDelete}
                         handleEdit={handleEdit}
                         setSelectedItem={setSelectedItem}
-                        id={tableInfo.TaxOfficeId || tableInfo.paymentMethodId}
+                        id={
+                          tableInfo.TaxOfficeId ||
+                          tableInfo.id ||
+                          tableInfo.paymentMethodId
+                        }
                         item={tableInfo}
                       />
                     ) : (
