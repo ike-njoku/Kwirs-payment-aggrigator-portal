@@ -58,19 +58,13 @@ const CustomTable = ({
                   className="odd:bg-white even:bg-gray-100 border-b border-gray-200"
                   key={i}
                 >
-                  <td
-                    scope="row"
-                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
-                  >
-                    {tableInfo.CreatedBy}
-                  </td>
-
-                  <td className="px-6 py-4 text-gray-900 capitalize">
-                    {new Date(tableInfo.dateCreated).toLocaleDateString()}
-                  </td>
                   <td className="px-6 py-4 text-gray-900 capitalize">
                     {tableInfo.psspCode}
                   </td>
+                  <td className="px-6 py-4 text-gray-900 capitalize">
+                    {new Date(tableInfo.dateCreated).toLocaleDateString()}
+                  </td>
+
                   <td className="px-6 py-4 text-gray-900 capitalize">
                     {tableInfo.Dsecription}
                   </td>

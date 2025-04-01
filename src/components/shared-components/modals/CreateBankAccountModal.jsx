@@ -2,9 +2,11 @@
 import React, { useState } from "react";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
+import AgencySelect from "../../shared-components/AgencySelect";
+
 
 const CreateTaxTypeModal = ({ handleCloseModal, handleCreateModal }) => {
-    const [CreatedBy, setCreatedBy] = useState("admin");
+    const CreatedBy = "Admin";
     const [accountname, setaccountname] = useState("Daeyo"); 
     const [bankName, setbankName] = useState("Shutter Bank");
     const [accountNumber, setaccountNumber] = useState("0984654322");
@@ -43,26 +45,13 @@ const CreateTaxTypeModal = ({ handleCloseModal, handleCreateModal }) => {
     <ModalLayout handleCloseModal={handleCloseModal}>
       <div className="w-full p-5">
         <h3 className="my-5 text-lg font-semibold pb-4 border-b border-b-gray-500 text-gray-700">
-          Create Tax Type
+          Create Bank Account
         </h3>
 
         <form className="w-full" onSubmit={handleFormSubmit}>
           {/* CreatedBy Input */}
-          <div className="w-full">
-            <label className="text-base font-medium text-gray-700">
-              Created By
-            </label>
-            <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-              <input
-                className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="text"
-                value={CreatedBy}
-                onChange={(e) => setCreatedBy(e.target.value)}
-                placeholder="Enter creator name"
-                required
-              />
-            </div>
-          </div>
+          <AgencySelect agencyId={agencyId} setAgencyId={setagencyId} />
+
           {/* Account Name */}
           <div className="w-full">
             <label className="text-base font-medium text-gray-700">
@@ -113,21 +102,28 @@ const CreateTaxTypeModal = ({ handleCloseModal, handleCreateModal }) => {
           </div>
 
           {/* Agency Id */}
-          <div className="w-full">
-            <label className="text-base font-medium text-gray-700">
-              Agency Id
+          {/* <div className="w-full">
+            <label
+              className="text-base font-medium text-gray-700"
+              htmlFor="agencyId"
+            >
+              Agency
             </label>
+
             <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-              <input
+              <select
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
                 type="text"
                 value={agencyId}
                 onChange={(e) => setagencyId(e.target.value)}
-                placeholder="Enter Agency Id"
+                placeholder="Select Agency "
                 required
-              />
+              >
+                <option value="1">Test Agency</option>
+                <option value="2">Sub menu</option>
+              </select>
             </div>
-          </div>
+          </div> */}
 
           {/* Submit Button */}
           <AuthButtons

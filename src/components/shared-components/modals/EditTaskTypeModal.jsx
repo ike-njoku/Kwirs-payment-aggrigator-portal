@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
+import AgencySelect from "../../shared-components/AgencySelect";
+
 
 const EditTaskTypeModal = ({
   handleCloseModal,
@@ -10,10 +12,10 @@ const EditTaskTypeModal = ({
   label,
   heading,
 }) => {
-  const [taxTypeId, settaxTypeId] = useState(index.taxTypeId);
-  const [createdBy, setcreatedBy] = useState(index.createdBy);
-  const [headCode, setheadCode] = useState(index.headCode);
-  const [subHeadCode, setsubHeadCode] = useState(index.subHeadCode);
+  const taxTypeId = index.taxTypeId;
+  const createdBy = index.createdBy;
+  const headCode = index.headCode;
+  const subHeadCode = index.subHeadCode;
   const [agencyId, setagencyId] = useState("1");
   const [serviceId, setserviceId] = useState(index.serviceId);
   const [Dsecription, setDsecription] = useState(index.Dsecription);
@@ -41,43 +43,7 @@ const EditTaskTypeModal = ({
           {heading}
         </h3>
         <form className="w-full" onSubmit={handleFormSubmit}>
-          <div className="w-full">
-            <label
-              className="text-base font-medium text-gray-700"
-              htmlFor="taxTypeIdtaxTypeId"
-            >
-              Tax Type Id
-            </label>
-            <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-              <input
-                className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="text"
-                value={taxTypeId}
-                onChange={(e) => settaxTypeId(e.target.value)}
-                placeholder="Enter tax Type Id"
-                required
-              />
-            </div>
-          </div>
-          <div className="w-full">
-            <label
-              className="text-base font-medium text-gray-700"
-              htmlFor="createdBy"
-            >
-              Created By
-            </label>
-            <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-              <input
-                className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="text"
-                value={createdBy}
-                onChange={(e) => setcreatedBy(e.target.value)}
-                placeholder="Enter  name"
-                required
-              />
-            </div>
-          </div>{" "}
-          <div className="w-full">
+          {/* <div className="w-full">
             <label
               className="text-base font-medium text-gray-700"
               htmlFor="headCode"
@@ -94,8 +60,8 @@ const EditTaskTypeModal = ({
                 required
               />
             </div>
-          </div>{" "}
-          <div className="w-full">
+          </div>{" "} */}
+          {/* <div className="w-full">
             <label
               className="text-base font-medium text-gray-700"
               htmlFor="subHeadCode"
@@ -112,25 +78,9 @@ const EditTaskTypeModal = ({
                 required
               />
             </div>
-          </div>{" "}
-          <div className="w-full">
-            <label
-              className="text-base font-medium text-gray-700"
-              htmlFor="agencyId"
-            >
-              Agency Id
-            </label>
-            <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-              <input
-                className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="text"
-                value={agencyId}
-                onChange={(e) => setagencyId(e.target.value)}
-                placeholder="Enter Agency Id"
-                required
-              />
-            </div>
-          </div>
+          </div>{" "} */}
+                             <AgencySelect agencyId={agencyId} setAgencyId={setagencyId} />
+         
           {/* Resource URL Input */}
           <div className="w-full">
             <label

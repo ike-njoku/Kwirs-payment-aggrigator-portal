@@ -2,15 +2,16 @@
 import React, { useState } from "react";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
+import AgencySelect from "../../shared-components/AgencySelect";
 
 const CreateTaxTypeModal = ({ handleCloseModal, handleCreateModal }) => {
-   const [taxTypeId, settaxTypeId] = useState("DA");
-    const [createdBy, setcreatedBy] = useState("admin");
-    const [headCode, setheadCode] = useState("10001-001"); 
-    const [subHeadCode, setsubHeadCode] = useState("1003");
-    const [agencyId, setagencyId] = useState(1);
-    const [serviceId, setserviceId] = useState("");
-    const [Dsecription, setDsecription] = useState("WHT");
+  const [taxTypeId, settaxTypeId] = useState("DA");
+  const createdBy = "admin";
+  const [headCode, setheadCode] = useState("10001-001");
+  const [subHeadCode, setsubHeadCode] = useState("1003");
+  const [agencyId, setagencyId] = useState(1);
+  const [serviceId, setserviceId] = useState("");
+  const [Dsecription, setDsecription] = useState("WHT");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFormSubmit = (e) => {
@@ -86,22 +87,9 @@ const CreateTaxTypeModal = ({ handleCloseModal, handleCreateModal }) => {
               />
             </div>
           </div>
-          {/* CreatedBy Input */}
-          <div className="w-full">
-            <label className="text-base font-medium text-gray-700">
-              Created By
-            </label>
-            <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-              <input
-                className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="text"
-                value={createdBy}
-                onChange={(e) => setcreatedBy(e.target.value)}
-                placeholder="Enter creator name"
-                required
-              />
-            </div>
-          </div>
+          <AgencySelect agencyId={agencyId} setAgencyId={setagencyId} />
+
+          {/* CreatedBy Input *
           {/* Head Code Input */}
           <div className="w-full">
             <label className="text-base font-medium text-gray-700">
@@ -134,22 +122,7 @@ const CreateTaxTypeModal = ({ handleCloseModal, handleCreateModal }) => {
               />
             </div>
           </div>
-          {/* Agency Id Input */}
-          <div className="w-full">
-            <label className="text-base font-medium text-gray-700">
-              Agency Id
-            </label>
-            <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-              <input
-                className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="text"
-                value={agencyId}
-                onChange={(e) => setagencyId(e.target.value)}
-                placeholder="Enter Agency Id"
-                required
-              />
-            </div>
-          </div>
+
 
           {/* Service Id Input */}
           <div className="w-full">

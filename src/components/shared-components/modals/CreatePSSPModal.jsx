@@ -4,7 +4,7 @@ import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
 
 const CreatePSSPModal = ({ handleCloseModal, handleCreateModal }) => {
-  const [createdBy, setCreatedBy] = useState("");
+  const createdBy = "admin";
   const [psspCode, setPsspCode] = useState("");
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +37,7 @@ const CreatePSSPModal = ({ handleCloseModal, handleCreateModal }) => {
         </h3>
         <form className="w-full" onSubmit={handleFormSubmit}>
           {/* CreatedBy Input */}
-          <div className="w-full">
+          <div className="w-full hidden">
             <label className="text-base font-medium text-gray-700">
               Created By
             </label>

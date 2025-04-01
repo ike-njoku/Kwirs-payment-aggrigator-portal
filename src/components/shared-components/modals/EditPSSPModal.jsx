@@ -10,11 +10,11 @@ const EditPSSPModal = ({
   label,
   heading,
 }) => {
-  const [resourceName, setResourceName] = useState(index.CreatedBy);
-  const [resourceUrl, setResourceUrl] = useState(index.psspCode);
+  const resourceName = index.CreatedBy;
+  const resourceUrl = index.psspCode;
   const [resourceDes, setResourceDes] = useState(index.Dsecription);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const handleFormSubmit = (e) => {
     setIsLoading(true);
     e.preventDefault();
@@ -29,27 +29,9 @@ const EditPSSPModal = ({
           {heading}
         </h3>
         <form className="w-full" onSubmit={handleFormSubmit}>
-          <div className="w-full">
-            <label
-              className="text-base font-medium text-gray-700"
-              htmlFor="resourceName"
-            >
-              Name
-            </label>
-            <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-              <input
-                className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="text"
-                value={resourceName}
-                onChange={(e) => setResourceName(e.target.value)}
-                placeholder="Enter  name"
-                required
-              />
-            </div>
-          </div>
 
           {/* Resource URL Input */}
-          <div className="w-full">
+          <div className="w-full hidden">
             <label
               className="text-base font-medium text-gray-700"
               htmlFor="resourceUrl"

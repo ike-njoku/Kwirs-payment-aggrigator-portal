@@ -36,12 +36,7 @@ const CustomTable = ({
   const handleCloseEditModal = () => {
     setOpenEditModal(false);
   };
-  //  CreatedBy: CreatedBy,
-  //     accountname: accountname,
-  //     bankName: bankName,
-  //     accountNumber: accountNumber,
-  //     agencyId: agencyId,
-
+ 
   const [selectedItem, setSelectedItem] = useState(0);
   return (
     <>
@@ -64,12 +59,7 @@ const CustomTable = ({
                   className="odd:bg-white even:bg-gray-100 border-b border-gray-200"
                   key={i}
                 >
-                  <td
-                    scope="row"
-                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
-                  >
-                    {tableInfo.CreatedBy}
-                  </td>
+                 
                   <td
                     scope="row"
                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"

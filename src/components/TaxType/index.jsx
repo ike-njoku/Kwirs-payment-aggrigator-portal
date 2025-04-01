@@ -16,10 +16,9 @@ const TaxTypePage = () => {
 
   const tableHeadings = [
     "Tax Type Id",
-    "Created By",
     "Head Code",
     "Sub Head Code",
-    "Agency Id",
+    "Agency",
     "Service Id",
     "Description",
     "Actions",
@@ -38,6 +37,48 @@ const TaxTypePage = () => {
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = tableData.slice(indexOfFirstRow, indexOfLastRow);
+
+  const fetchAllResources = async () => {
+    const apiResponse = await AxiosGet(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/TaxTypes/GetAllTaxTypes`
+    );
+
+    if (!apiResponse) {
+      toast.error("Could not fetch resources");
+      return;
+    }
+
+    const { data } = apiResponse;
+    const tableData = data.Data || data.resources || [];
+
+    if (!tableData.length) {
+      toast.warn("No resources found");
+      setTableData([]);
+      return;
+    }
+
+    // Ensure correct key mapping
+    const formattedData = tableData.map((item) => ({
+      createdBy: item.createdBy,
+      taxTypeId: item.taxtypeId,
+      headCode: item.headCode,
+      subHeadCode: item.subHeadCode,
+      agencyId: item.Agency,
+      serviceId: item.serviceId,
+      Dsecription: item.description,
+      dateCreated: item.createdDate,
+      id: item.taxtypeId,
+      isActive: item.isActive ?? true,
+    }));
+
+    console.log("Updated Table Data State:", tableData);
+
+    setTableData(formattedData);
+  };
+
+  const handleOpenEditResourceModal = () => {
+    setOpenResourceEditModal(true);
+  };
 
   const handleCreateResourceModal = async (newResourceURL) => {
     console.log("Function called with newResourceURL:", newResourceURL);
@@ -104,7 +145,8 @@ const TaxTypePage = () => {
         createdDataRepresentation
       );
 
-      setTableData((prevData) => [createdDataRepresentation, ...prevData]);
+      // setTableData((prevData) => [createdDataRepresentation, ...prevData]);
+      fetchAllResources();
 
       console.log("Updated table data with new resource.");
       toast.success("Resource created successfully");
@@ -121,14 +163,6 @@ const TaxTypePage = () => {
     }
   };
 
-  const handleDelete = () => {
-    setOpenDeleteModal(true);
-  };
-
-  const handleEdit = () => {
-    setOpenEditModal(true);
-  };
-
   const handleDeleteItem = async (ResourceId) => {
     try {
       const deleteResponse = await AxiosGet(
@@ -139,9 +173,7 @@ const TaxTypePage = () => {
       if (deleteResponse?.data?.StatusCode === 200) {
         toast.success("Resource deleted successfully");
 
-        setTableData((prevData) =>
-          prevData.filter((item) => item.id !== ResourceId)
-        );
+        fetchAllResources();
 
         setOpenDeleteModal(false);
       } else {
@@ -151,61 +183,6 @@ const TaxTypePage = () => {
       console.error("Delete Error:", error.response?.data || error);
       toast.error("An error occurred while deleting the resource");
     }
-  };
-
-  const fetchAllResources = async () => {
-    const apiResponse = await AxiosGet(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/TaxTypes/GetAllTaxTypes`
-    );
-
-    if (!apiResponse) {
-      toast.error("Could not fetch resources");
-      return;
-    }
-
-    const { data } = apiResponse;
-    const tableData = data.Data || data.resources || [];
-
-    if (!tableData.length) {
-      toast.warn("No resources found");
-      setTableData([]);
-      return;
-    }
-      // taxTypeId: newResourceURL.taxTypeId,
-      //   createdBy: newResourceURL.createdBy,
-      //   headCode: newResourceURL.headCode,
-      //   subHeadCode: newResourceURL.subHeadCode,
-      //   agencyId: newResourceURL.agencyId,
-      //   serviceId: newResourceURL.serviceId,
-    //   Dsecription: newResourceURL.Dsecription,
-    
-    // Agency: "TEST AGENCY";
-    // createdBy: "Admin";
-    // createdDate: "2025-03-29T20:12:45.143";
-    // description: "WHT";
-    // headCode: "10001-001";
-    // isActive: true;
-    // serviceId: "";
-    // subHeadCode: "1003";
-    // taxtypeId: "DA";
-
-    // Ensure correct key mapping
-    const formattedData = tableData.map((item) => ({
-      createdBy: item.createdBy,
-      taxTypeId: item.taxtypeId,
-      headCode: item.headCode,
-      subHeadCode: item.subHeadCode,
-      agencyId: item.agencyId,
-      serviceId: item.serviceId,
-      Dsecription: item.description,
-      dateCreated: item.createdDate,
-      id: item.taxtypeId,
-      isActive: item.isActive ?? true,
-    }));
-
-    console.log("Updated Table Data State:", tableData);
-
-    setTableData(formattedData);
   };
 
   const handleEditItem = async (updateParameters) => {
@@ -221,17 +198,10 @@ const TaxTypePage = () => {
 
     const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/TaxTypes/Update`;
 
-  //    "taxTypeId": "PAYE",
-  // "createdBy": "1000000826",
-  // "headCode": "10001-001",
-  // "subHeadCode": "1000",
-  // "agencyId": 1,
-  // "serviceId": "",
-  // "Dsecription": "PAYED"
 
     const payLoad = {
       taxTypeId: taxTypeId,
-      createdBy: createdBy,
+      updatedBy: createdBy,
       headCode: headCode,
       subHeadCode: subHeadCode,
       agencyId: 1,
@@ -258,10 +228,6 @@ const TaxTypePage = () => {
       console.error("Error updating resource:", updateResourceResponse, error);
       // toast.error("Failed to update resource.");
     }
-  };
-
-  const handleOpenEditResourceModal = () => {
-    setOpenResourceEditModal(true);
   };
 
   useEffect(() => {

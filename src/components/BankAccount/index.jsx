@@ -15,11 +15,10 @@ const BankAccountPage = () => {
   const router = useRouter();
 
   const tableHeadings = [
-    "Created By",
     "Account Name",
     "Bank Name",
     "Account Number",
-    "Agency Id",
+    "Agency",
     "Actions",
   ];
   const [tableData, setTableData] = useState(resourcesTableData);
@@ -53,29 +52,7 @@ const BankAccountPage = () => {
       return;
     }
 
-    //  {
-    //             "account": "0987654322",
-    //             "accountName": "Dayo",
-    //             "BankaccountId": 2,
-    //             "createdDate": "2025-03-29T21:19:59.383",
-    //             "createdBy": "Admin",
-    //             "bankName": "Shutter Bank",
-    //             "Agency": "TEST AGENCY"
-    //         },
-
-    // Agency: "TEST AGENCY";
-    // BankaccountId: 2;
-    // account: "0987654322";
-    // accountName: "Dayo";
-    // bankName: "Shutter Bank";
-    // createdBy: "Admin";
-    // createdDate: "2025-03-29T21:19:59.383";
-
-  //     "CreatedBy": "Tax Officer 3",
-  // "accountname": "Dayo",
-  // "bankName": "Shutter Bank",
-  // "accountNumber": " 0987654321",
-  // "agencyId": 5
+    
 
     const newResourceData = {
       CreatedBy: newResourceURL.CreatedBy,
@@ -121,7 +98,7 @@ const BankAccountPage = () => {
         createdDataRepresentation
       );
 
-      setTableData((prevData) => [createdDataRepresentation, ...prevData]);
+      fetchAllResources();
 
       console.log("Updated table data with new resource.");
       toast.success("Resource created successfully");
@@ -138,14 +115,6 @@ const BankAccountPage = () => {
     }
   };
 
-  const handleDelete = () => {
-    setOpenDeleteModal(true);
-  };
-
-  const handleEdit = () => {
-    setOpenEditModal(true);
-  };
-
   const handleDeleteItem = async (ResourceId) => {
     console.log("Deleting Resource with ID:", ResourceId); // Debugging log
 
@@ -157,9 +126,7 @@ const BankAccountPage = () => {
       if (deleteResponse?.data?.StatusCode === 200) {
         toast.success("Resource deleted successfully");
 
-        setTableData((prevData) =>
-          prevData.filter((item) => item.BankaccountId !== ResourceId)
-        );
+        fetchAllResources();
 
         setOpenDeleteModal(false);
       } else {
@@ -200,7 +167,7 @@ const BankAccountPage = () => {
       bankName: item.bankName,
       dateCreated: item.createdDate,
       accountNumber: item.account,
-      agencyId: item.BankaccountId,
+      agencyId: item.Agency,
       BankaccountId: item.BankaccountId,
     }));
 
@@ -216,8 +183,9 @@ const BankAccountPage = () => {
     const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Banks/Update`;
 
     const payLoad = {
-      BankaccountId: updatedItem.BankaccountId,
-      CreatedBy,
+      bankId: updatedItem.BankaccountId,
+      updatedBy: CreatedBy,
+      // CreatedBy,
       accountname,
       bankName,
       accountNumber,
@@ -248,7 +216,6 @@ const BankAccountPage = () => {
       // toast.error("Failed to update resource. Please try again later.");
     }
   };
-
 
   const handleOpenEditResourceModal = () => {
     setOpenResourceEditModal(true);

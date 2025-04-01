@@ -51,7 +51,7 @@ const CustomTable = ({
               ))}
             </tr>
           </thead>
-         
+
           <tbody>
             {tableData.length > 0 &&
               tableData.map((tableInfo, i) => (
@@ -65,12 +65,12 @@ const CustomTable = ({
                   >
                     {tableInfo.taxTypeId}
                   </td>
-                  <td
+                  {/* <td
                     scope="row"
                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
                   >
                     {tableInfo.createdBy}
-                  </td>
+                  </td> */}
                   <td
                     scope="row"
                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"

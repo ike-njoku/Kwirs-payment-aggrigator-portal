@@ -23,6 +23,7 @@ const EditResourceModal = ({
     setIsLoading(false);
     handleCloseModal();
   };
+  
   return (
     <ModalLayout handleCloseModal={handleCloseModal}>
       <div className="w-full p-5 ">
