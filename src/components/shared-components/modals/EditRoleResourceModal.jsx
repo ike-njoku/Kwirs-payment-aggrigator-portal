@@ -6,11 +6,19 @@ import { toast } from "react-toastify";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
 
-const EditRoleResourceModal = ({ isOpen, onClose, roleResourceId, selectedRoleResource, selectedRole }) => {
+const EditRoleResourceModal = ({
+  isOpen,
+  onClose,
+  roleResourceId,
+  selectedRoleResource,
+  selectedRole,
+}) => {
   const [roleDetails, setRoleDetails] = useState("");
   const [resourcesId, setResourcesId] = useState("");
   const [roleId, setRoleId] = useState("");
-  const [roleResourceIdState, setRoleResourceId] = useState(roleResourceId ?? "");
+  const [roleResourceIdState, setRoleResourceId] = useState(
+    roleResourceId ?? ""
+  );
   const [UserName, setUserName] = useState("");
   const [loading, setLoading] = useState(false);
   const [roles, setRoles] = useState([]);
@@ -30,13 +38,14 @@ const EditRoleResourceModal = ({ isOpen, onClose, roleResourceId, selectedRoleRe
 
   const fetchRoleResourceDetails = async () => {
     if (!selectedRole || !selectedRole.RoleId) {
-      
       return;
     }
 
     try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/RoleResources/GetAllRoleResources/${selectedRole.RoleId}`);
-      
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/RoleResources/GetAllRoleResources/${selectedRole.RoleId}`
+      );
+
       if (response?.data?.StatusCode === 200) {
         const roleData = response.data.Data;
         setRoleDetails(roleData.RoleName || "");
@@ -47,43 +56,56 @@ const EditRoleResourceModal = ({ isOpen, onClose, roleResourceId, selectedRoleRe
         console.warn("No role resources found:", response.data.StatusMessage);
       }
     } catch (error) {
-      console.error("Error fetching role resources:", error.response?.data || error);
+      console.error(
+        "Error fetching role resources:",
+        error.response?.data || error
+      );
     }
   };
 
   const handleUpdateRoleResource = async () => {
     if (!roleId || !resourcesId || !roleResourceIdState || !UserName) {
-      toast.error("Please ensure all fields (Role, Resource, UserName) are selected before updating.");
+      toast.error(
+        "Please ensure all fields (Role, Resource, UserName) are selected before updating."
+      );
       return;
     }
-  
+
     const payload = {
       UserName: UserName,
       RoleId: roleId,
       ResourcesId: resourcesId,
       RoleResourceId: roleResourceIdState,
     };
-  
-    console.log("🚀 Sending Update Request - Payload:", JSON.stringify(payload, null, 2));
-  
+
+    console.log(
+      "🚀 Sending Update Request - Payload:",
+      JSON.stringify(payload, null, 2)
+    );
+
     try {
       setLoading(true);
-      const response = await AxiosPost(`${API_BASE_URL}/api/RoleResources/Update`, payload);
-  
-      console.log("✅ API Response:", response); // Debugging log
-  
+      const response = await AxiosPost(
+        `${API_BASE_URL}/api/RoleResources/Update`,
+        payload
+      );
+
       if (response?.StatusCode === 200) {
-        toast.success(response.StatusMessage || "Role resource updated successfully!");
+        toast.success(
+          response.StatusMessage || "Role resource updated successfully!"
+        );
         onClose();
       } else {
         toast.error(response?.StatusMessage || "Update failed.");
       }
     } catch (error) {
       console.error("❌ Exception during update:", error);
-  
+
       if (error.response) {
         console.log("📌 Full Backend Response:", error.response.data); // Capture the exact backend error
-        toast.error(error.response.data?.StatusMessage || "Error updating role resource.");
+        toast.error(
+          error.response.data?.StatusMessage || "Error updating role resource."
+        );
       } else if (error.request) {
         toast.error("No response from server. Please check your network.");
       } else {
@@ -93,9 +115,6 @@ const EditRoleResourceModal = ({ isOpen, onClose, roleResourceId, selectedRoleRe
       setLoading(false);
     }
   };
-  
-  
-  
 
   const fetchRoles = async () => {
     try {
@@ -112,9 +131,14 @@ const EditRoleResourceModal = ({ isOpen, onClose, roleResourceId, selectedRoleRe
 
   const fetchResources = async () => {
     try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/Resources/GetAllResource`);
-  
-      if (response?.data?.StatusCode === 200 && Array.isArray(response.data.Data)) {
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/Resources/GetAllResource`
+      );
+
+      if (
+        response?.data?.StatusCode === 200 &&
+        Array.isArray(response.data.Data)
+      ) {
         setResources(response.data.Data);
       } else {
         toast.error("Could not fetch resources");
@@ -123,25 +147,23 @@ const EditRoleResourceModal = ({ isOpen, onClose, roleResourceId, selectedRoleRe
       toast.error("Error fetching resources");
     }
   };
-  
 
-  useEffect(() => {
-  }, [resources]);
-  
+  useEffect(() => {}, [resources]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
         const storedUser = localStorage.getItem("authDetails");
         console.log("🔍 Raw storedUser:", storedUser); // Debugging log
-  
+
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
           console.log("✅ Parsed User Data:", parsedUser); // Debugging log
-  
+
           // Try setting UserName from multiple possible keys
-          const extractedUserName = parsedUser?.UserName || parsedUser?.tin || parsedUser?.email;
-  
+          const extractedUserName =
+            parsedUser?.UserName || parsedUser?.tin || parsedUser?.email;
+
           if (extractedUserName) {
             setUserName(extractedUserName);
             console.log("✅ Updated UserName:", extractedUserName);
@@ -156,17 +178,10 @@ const EditRoleResourceModal = ({ isOpen, onClose, roleResourceId, selectedRoleRe
       }
     }
   }, []);
-  
 
-  
-  
-  
-  
-  
   useEffect(() => {
     console.log("Updated UserName:", UserName);
   }, [UserName]);
-  
 
   return (
     <ModalLayout handleCloseModal={onClose}>
@@ -175,9 +190,19 @@ const EditRoleResourceModal = ({ isOpen, onClose, roleResourceId, selectedRoleRe
           Role Resource
         </h3>
 
-        <form className="w-full mt-4" onSubmit={(e) => { e.preventDefault(); handleUpdateRoleResource(); }}>
-        
-          <input type="hidden" value={UserName} readOnly className="w-full border-b-2 border-gray-300 h-[45px] rounded-md my-2 bg-gray-100 px-3 text-gray-700" />
+        <form
+          className="w-full mt-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleUpdateRoleResource();
+          }}
+        >
+          <input
+            type="hidden"
+            value={UserName}
+            readOnly
+            className="w-full border-b-2 border-gray-300 h-[45px] rounded-md my-2 bg-gray-100 px-3 text-gray-700"
+          />
 
           <div className="w-full mb-4">
             <label className="text-base font-medium text-gray-700">Role</label>
@@ -188,26 +213,29 @@ const EditRoleResourceModal = ({ isOpen, onClose, roleResourceId, selectedRoleRe
             >
               <option value="">Select a Role</option>
               {roles.map((role) => (
-                <option key={role.Id} value={role.Id}>{role.Name}</option>
+                <option key={role.Id} value={role.Id}>
+                  {role.Name}
+                </option>
               ))}
             </select>
           </div>
 
           <div className="w-full mb-4">
-            <label className="text-base font-medium text-gray-700">Resource</label>
+            <label className="text-base font-medium text-gray-700">
+              Resource
+            </label>
             <select
-  className="w-full border-b-2 border-gray-300 h-[45px] rounded-md my-2 bg-gray-100 px-3 text-gray-700"
-  value={resourcesId}
-  onChange={(e) => setResourcesId(e.target.value)}
->
-  <option value="">Select a Resource</option>
-  {resources.map((res) => (
-    <option key={res.ResourceId} value={res.ResourceId}>
-      {res.ResourceName}
-    </option>
-  ))}
-</select>
-
+              className="w-full border-b-2 border-gray-300 h-[45px] rounded-md my-2 bg-gray-100 px-3 text-gray-700"
+              value={resourcesId}
+              onChange={(e) => setResourcesId(e.target.value)}
+            >
+              <option value="">Select a Resource</option>
+              {resources.map((res) => (
+                <option key={res.ResourceId} value={res.ResourceId}>
+                  {res.ResourceName}
+                </option>
+              ))}
+            </select>
           </div>
 
           <input
