@@ -2,268 +2,257 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import RolePermissionTable from "../shared-components/table/PermissionTable";
+import CustomTable from "../shared-components/table/AuthorizationTable";
+import EditAuthorization from "../shared-components/modals/EditAuthorization";
 import DashboardLayout from "../shared-components/layouts/DashboardLayout";
 import { toast } from "react-toastify";
 import { AxiosGet } from "../../services/http-service";
 import { FaPlus } from "react-icons/fa";
-import PermissionModal from "../shared-components/modals/PermissionModal";
+import AuthorizationModal from "../shared-components/modals/AuthorizationModal";
 
 const AuthorizationPage = () => {
-  const tableHeadings = ["Permission Name","Description", "Resources Name", "Action"];
-  const [selectedResourceId, setSelectedResourceId] = useState("");
+  const tableHeadings = ["Tin", "Agency", " Tax yPayer", "Action"];
+  const [selectedAgencyCode, setSelectedAgencyCode] = useState("");
   const [openPermissionModal, setOpenPermissionModal] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [permissions, setPermissions] = useState([]);
-  const [resources, setResources] = useState([]);
-  const [permissionCode, setPermissionCode] = useState("");
-  const [description, setDescription] = useState("");
-
-  // Pagination States
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [selectedAuthorization, setSelectedAuthorization] = useState(null);
+  const [error, setError] = useState("");
+  const [agencies, setAgencies] = useState([]);
+  const [authorizations, setAuthorizations] = useState([]);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
   if (!API_BASE_URL) {
     toast.error("API Base URL is not defined!");
   }
 
-  // Fetch Resources
-  const fetchResources = async () => {
+  // ✅ Fetch Agencies & Get AgencyCode
+  const fetchAgencies = async () => {
     try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/Resources/GetAllResource`);
+      const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/GetAllAgencies`);
       if (response?.data?.StatusCode === 200) {
-        setResources(response.data.Data || []);
+        setAgencies(response.data.Data || []);
       } else {
-        toast.error("Could not fetch resources");
+        toast.error("Could not fetch agencies");
+        setAgencies([]);
       }
     } catch (error) {
-      toast.error("Error fetching resources");
+      console.error("❌ Error fetching agencies:", error);
+      toast.error("Error fetching agencies");
     }
   };
 
-  // Fetch Permissions
-  const fetchPermissions = async () => {
+  // ✅ Fetch Authorizations
+  const fetchAuthorizations = async () => {
     try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/Permissions/GetAllPermissions`);
+      setLoading(true);
+      const token = localStorage.getItem("token"); // Get auth token
+  
+      if (!token) {
+        toast.error("You are not authenticated. Please log in again.");
+        setLoading(false);
+        return;
+      }
+  
+      const response = await AxiosGet(`${API_BASE_URL}/api/DLAuthorization/GetAllAuthorization`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      console.log("📢 API Response:", response); // Debugging
+  
       if (response?.data?.StatusCode === 200) {
-        setPermissions(response.data.Data || []);
+        setAuthorizations(response.data.Data || []);
       } else {
-        toast.error("Could not fetch permissions");
+        setError("Failed to fetch authorizations.");
       }
     } catch (error) {
-      toast.error("Error fetching permissions");
+      console.error("❌ Fetch Error:", error);
+      setError("Could not fetch authorizations.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
+
+
+  const getAgencyById = async (agencyId) => {
+    if (!agencyId) {
+      console.error("❌ Agency ID is required!");
+      return;
+    }
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/Agencies/GetAllAgenciesPBYID/${agencyId}`);
+      if (response?.data?.StatusCode === 200) {
+        console.log("✅ Agency Data:", response.data.Data);
+        return response.data.Data;
+      } else {
+        console.error("❌ Failed to fetch agency:", response?.data?.StatusMessage);
+        return null;
+      }
+    } catch (error) {
+      console.error("❌ Error fetching agency:", error);
+      return null;
+    }
+  };
+  
+  
 
   useEffect(() => {
-    fetchResources().then(fetchPermissions);
+    fetchAgencies();
+    fetchAuthorizations(); // Fetch all authorizations initially
   }, []);
-
-  // Handle Permission Assignment
-  const handleAddRolePermission = async () => {
-    if (!API_BASE_URL) {
-      toast.error("API base URL is missing.");
-      return;
+  
+  useEffect(() => {
+    if (selectedAgencyCode) {
+      handleSelectedAgencyCode({ target: { value: selectedAgencyCode } });
     }
+  }, [selectedAgencyCode]);
+  
 
-    try {
-      const selectedResource = resources.find((res) => res.ResourceId == selectedResourceId);
-      if (!selectedResource) {
-        toast.error("Invalid Resource Name. Please select a valid resource.");
-        return;
-      }
-
-      console.log("Selected Resource:", selectedResource);
-
-      const payload = {
-        permissionCode,
-        description,
-        ResourceId: parseInt(selectedResourceId, 10),
-      };
-
-      const response = await axios.post(
-        `${API_BASE_URL}/api/Permissions/Create`,
-        payload,
-        { headers: { "Content-Type": "application/json" } }
+  const handleSelectedAgencyCode = (e) => {
+    const selectedAgency = e.target.value;
+    setSelectedAgencyCode(selectedAgency);
+  
+    if (selectedAgency) {
+      // Filter authorizations by selected agency
+      const filteredAuthorizations = authorizations.filter(
+        (auth) => auth.agencyId == selectedAgency
       );
-
-      if (response.data.StatusCode === 200) {
-        toast.success("Permission created successfully!");
-        await fetchPermissions();
-
-        setTimeout(() => {
-          setSelectedResourceId("");
-          setPermissionCode("");
-          setDescription("");
-          setOpenPermissionModal(false);
-        }, 2000);
-      } else {
-        toast.error(response.data.StatusMessage || "Failed to create permission.");
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.StatusMessage || "Error creating permission.");
+      setAuthorizations(filteredAuthorizations);
+    } else {
+      // If no agency is selected, reset the authorizations list
+      fetchAuthorizations();
     }
   };
 
-  // Filter and Paginate Permissions
-  const filteredPermissions = permissions
-    .filter((perm) => perm.resourceId == selectedResourceId || selectedResourceId === "")
-    .map((perm) => {
-      const resource = resources.find((res) => res.ResourceId == perm.resourceId);
-      return {
-        ...perm,
-        resourceName: resource ? resource.ResourceName : "Unknown Resource",
-      };
-    });
-
-  // Pagination Logic
-  const totalItems = filteredPermissions.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const paginatedPermissions = filteredPermissions.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-
-  const handleDeletePermission = async (permissionId) => {
-    if (!permissionId) {
-      toast.error("Invalid permission ID.");
-      return;
-    }
-  
-    try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/Permissions/Delete/${permissionId}`);
-      
-      if (response.data?.StatusCode === 200) {
-        toast.success("Permission deleted successfully!");
-        await fetchPermissions();
-      } else {
-        toast.error(response.data?.StatusMessage || "Failed to delete permission.");
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.StatusMessage || "Error deleting permission. Kindly contact the Admin.");
-    }
-  };
-  
-
-
-    const handleEditPermission = async (permission) => {
-      if (!permission || !permission.Permissionid) {
-        console.error("Error: No permission ID found for editing");
-        toast.error("Error: No permission ID selected");
+    // ✅ Handle Edit Click (Fixing Modal Issue)
+    const handleEditAuthorization = (authorizationId) => {
+      console.log("🔍 Received authorizationId:", authorizationId);
+    
+      if (!authorizationId) {
+        console.error("❌ Invalid authorization ID:", authorizationId);
         return;
       }
     
-      try {
-        const response = await axios.get(`/api/Permissions/${permission.Permissionid}`);
+      const authorization = authorizations.find((auth) => auth.authorizationId === authorizationId);
     
-        if (response.status === 200 && response.data) {
-          const updatedPermission = response.data;
-    
-          setSelectedPermission({
-            permissionCode: updatedPermission.permissionCode || "",
-            description: updatedPermission.description || "",
-            resourceId: updatedPermission.ResourceId || "",
-            permissionId: updatedPermission.Permissionid || "",
-          });
-          setIsModalOpen(true);
-        } else {
-          throw new Error("Invalid response from server");
-        }
-      } catch (error) {
-        toast.error("Failed to fetch permission details");
+      if (!authorization) {
+        console.error("❌ Authorization not found for ID:", authorizationId);
+        console.log("🔍 All Authorizations Data:", authorizations);
+        return;
       }
+    
+      console.log("🟢 Selected Authorization for Editing:", authorization);
+      
+      // ✅ Ensure selectedAuthorization updates before opening modal
+      setSelectedAuthorization(authorization);
+      setTimeout(() => setOpenEditModal(true), 100); // Delay to ensure state is updated
     };
     
     
 
-  
+  // ✅ Delete Authorization
+  const handleDeleteAuthorization = async (authorizationId) => {
+    if (!authorizationId) {
+      toast.error("Invalid authorization ID.");
+      return;
+    }
+
+    try {
+      console.log(`🚀 Deleting AuthorizationId: ${authorizationId}`);
+      const response = await AxiosGet(`${API_BASE_URL}/api/DLAuthorization/Delete/${authorizationId}`);
+      if (response?.data?.StatusCode === 200) {
+        toast.success("Authorization deleted successfully!");
+        await fetchAuthorizations();
+      } else {
+        toast.error(response.data?.StatusMessage || "Failed to delete authorization.");
+      }
+    } catch (error) {
+      console.error("❌ Error deleting authorization:", error);
+      toast.error(error.response?.data?.StatusMessage || "Error deleting authorization. Kindly contact the Admin.");
+    }
+  };
 
   return (
-    <DashboardLayout page="Create Permission">
+    <DashboardLayout page="Create Authorization">
       <section className="w-full">
         <div className="w-[90%] mx-auto py-5">
           <div className="w-full lg:mt-10">
             <div className="mt-4 flex gap-4 justify-between items-center">
-              
-              {/* Create Permission Button */}
+              {/* Create Authorization Button */}
               <button
                 onClick={() => setOpenPermissionModal(true)}
                 className="text-pumpkin font-medium rounded-lg text-sm px-5 py-2.5 border border-pumpkin flex items-center gap-2"
                 disabled={loading}
               >
-                {loading ? "Processing..." : "Create Permission"} <FaPlus />
+                {loading ? "Processing..." : "Create Authorization"} <FaPlus />
               </button>
 
-              {/* Resource Filter Dropdown */}
-              <div className="relative">
+              {/* ✅ Agency Code Filter Dropdown */}
+              {/* <div className="relative">
                 <select
                   className="text-pumpkin font-medium rounded-lg text-sm px-5 py-2.5 border border-pumpkin"
-                  onChange={(e) => setSelectedResourceId(e.target.value)}
-                  value={selectedResourceId}
+                  onChange={handleSelectedAgencyCode}
+                  value={selectedAgencyCode}
                 >
-                  <option value="">Filter by Resource</option>
-                  {resources.length > 0 ? (
-                    resources.map((resource) => (
-                      <option key={resource.ResourceId} value={resource.ResourceId}>
-                        {resource.ResourceName}
+                  <option value="">Filter by Agency</option>
+                  {agencies.map((agency) => (
+                      <option key={agency.AgencyId} value={agency.AgencyId}>
+                        {agency.description}
                       </option>
-                    ))
-                  ) : (
-                    <option disabled>No Resources Found</option>
-                  )}
+                    ))}
                 </select>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
-
-        {/* Role Permission Table */}
-        <RolePermissionTable
-         tableHeadings={tableHeadings} 
-         tableData={paginatedPermissions} 
-         onDelete={handleDeletePermission}
-         onEdit={handleEditPermission}
+        <div className="w-[90%] mx-auto mt-6">
+          {loading ? (
+            <p className="text-gray-600">Loading...</p>
+          ) : error ? (
+            <p className="text-red-500">{error}</p>
+          ) : (
+            <CustomTable
+            tableHeadings={tableHeadings}
+            tableData={authorizations}
+            handleEdit={(authorizationId) => {
+              console.log("🟢 Edit Button Clicked - ID:", authorizationId);
+              handleEditAuthorization(authorizationId);
+            }}
+            handleDelete={handleDeleteAuthorization}
+            loading={loading}
+            error={error}
           />
+          
+          )}
+        </div>
 
-        {/* Pagination Controls */}
-        {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-4 mt-6">
-            <button
-              className={`px-4 py-2 rounded border ${currentPage === 1 ? "bg-gray-300" : "bg-pumpkin text-white"}`}
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </button>
-            <span className="text-lg font-medium">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              className={`px-4 py-2 rounded border ${currentPage === totalPages ? "bg-gray-300" : "bg-pumpkin text-white"}`}
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </button>
-          </div>
-        )}
-
-        {/* Role Permission Modal */}
-        {openPermissionModal && (
-          <PermissionModal
+          {/* ✅ Authorization Modal */}
+          {openPermissionModal && (
+          <AuthorizationModal
             isOpen={openPermissionModal}
             onClose={() => setOpenPermissionModal(false)}
-            refreshPermissions={fetchPermissions}
+            refreshPermissions={fetchAuthorizations}
           />
         )}
+        
+
+        {openEditModal && selectedAuthorization && (
+  <EditAuthorization
+    isOpen={openEditModal}
+    onClose={() => setOpenEditModal(false)}
+    fetchAuthorizations={fetchAuthorizations}
+    authorizationId={selectedAuthorization?.authorizationId} // ✅ Fixed prop name
+  />
+)}
+
       </section>
     </DashboardLayout>
   );
 };
 
 export default AuthorizationPage;
+
 

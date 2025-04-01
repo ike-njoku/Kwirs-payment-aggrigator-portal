@@ -24,7 +24,7 @@ const ProfileDetails = ({ handleCloseModal, TIN, profileData }) => {
                 <Image
                   fill
                   alt="user-pic"
-                  src={profileData?.Avatar || "/images/avatar.jpeg"}
+                  src={profileData?.Avatar || "/images/icon-7797704_1280.png"}
                   className="object-cover"
                 />
               </figure>

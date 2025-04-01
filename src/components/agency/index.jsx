@@ -11,58 +11,57 @@ import { FaPlus } from "react-icons/fa";
 const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const AgenciesPage = ({ user }) => {
-  const tableHeadings = ["Created By", "Description", "Action"];
+  const tableHeadings = ["Agency Code", "Description", "Action"];
   const [loading, setLoading] = useState(false);
   const [selectedAgency, setSelectedAgency] = useState(null);
   const [agencies, setAgencies] = useState([]);
+  const [activeAgencies, setActiveAgencies] = useState([]);
   const [openAgencyModal, setOpenAgencyModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [error, setError] = useState("");
-  const [activeAgencies, setActiveAgencies] = useState([]);
 
-  useEffect(() => {
-    const fetchAllAgencies = async () => {
-      try {
-        setLoading(true);
-        const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/GetAllAgencies`);
-
-        console.log("✅ API Response (All Agencies):", response.data);
-
-        if (response?.status === 200 && response.data?.StatusCode === 200) {
-          setAgencies(response.data?.Data ?? []);
-        } else {
-          toast.error("Failed to fetch agencies.");
-        }
-      } catch (error) {
-        toast.error("Error fetching agencies.");
-      } finally {
-        setLoading(false);
+  // ✅ Fetch all agencies
+  const fetchAllAgencies = async () => {
+    try {
+      setLoading(true);
+      const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/GetAllAgencies`);
+      if (response?.status === 200 && response.data?.StatusCode === 200) {
+        setAgencies(response.data?.Data ?? []);
+      } else {
+        toast.error("Failed to fetch agencies.");
       }
-    };
+    } catch (error) {
+      toast.error("Error fetching agencies.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // ✅ Fetch active agencies
+  const fetchActiveAgencies = async () => {
+    try {
+      const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/GetActiveAgencies`);
+      if (response?.status === 200 && response.data?.StatusCode === 200) {
+        setActiveAgencies(response.data?.Data ?? []);
+      } else {
+        toast.error("No active agencies available.");
+      }
+    } catch (error) {
+      toast.error("Error fetching active agencies.");
+    }
+  };
+
+  // ✅ Refresh data whenever a change occurs
+  const refreshAgencies = () => {
     fetchAllAgencies();
-  }, []);
+    fetchActiveAgencies();
+  };
 
   useEffect(() => {
-    const fetchActiveAgencies = async () => {
-      try {
-        const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/GetActiveAgencies`);
-        console.log("✅ API Response (Active Agencies):", response);
-
-        if (response?.status === 200 && response.data?.StatusCode === 200) {
-          setActiveAgencies(response.data?.Data ?? []);
-        } else {
-          toast.error("Failed to fetch active agencies.");
-        }
-      } catch (error) {
-        toast.error("Error fetching active agencies.");
-      }
-    };
-
-    fetchActiveAgencies();
+    refreshAgencies();
   }, []);
 
-  // Handle Delete Click
+  // ✅ Handle Delete
   const handleDelete = async (agencyId) => {
     if (!agencyId) {
       toast.error("Invalid agency selected.");
@@ -70,19 +69,14 @@ const AgenciesPage = ({ user }) => {
     }
 
     try {
-      console.log(`🚀 Sending DELETE request for AgencyId: ${agencyId}`);
-
       const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/Delete/${agencyId}`);
-      console.log("✅ Full API Response:", response);
-
       if (response?.data?.StatusCode === 200) {
         toast.success(response.data.StatusMessage || "Agency deleted successfully!");
-        setAgencies((prev) => prev.filter((item) => item.AgencyId !== agencyId));
+        refreshAgencies(); // ✅ Refresh data after deleting
       } else {
         toast.error(response.data.StatusMessage || "Delete failed.");
       }
     } catch (error) {
-      console.error("❌ Error deleting agency:", error);
       toast.error("An error occurred. Please try again.");
     }
   };
@@ -94,20 +88,20 @@ const AgenciesPage = ({ user }) => {
           <div className="mt-4 flex gap-4 justify-between items-center">
             <button
               onClick={() => setOpenAgencyModal(true)}
-              className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
+              className="text-pumpkin font-medium rounded-lg text-sm px-5 py-2.5 border border-pumpkin flex items-center gap-2"
               disabled={loading}
             >
               {loading ? "Processing..." : "Create an Agency"}
               <FaPlus />
             </button>
 
-            {/* Active Agencies Dropdown */}
+            {/* ✅ Active Agencies Dropdown (Auto-updating) */}
             <div className="relative">
               <select
-                className="text-gray focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
+                className="text-pumpkin font-medium rounded-lg text-sm px-5 py-2.5 border border-pumpkin"
                 onChange={(e) => {
                   const agencyId = Number(e.target.value);
-                  const agency = agencies.find((a) => a.AgencyId === agencyId);
+                  const agency = activeAgencies.find((a) => a.AgencyId === agencyId);
                   setSelectedAgency(agency);
                 }}
                 value={selectedAgency?.AgencyId || ""}
@@ -120,13 +114,14 @@ const AgenciesPage = ({ user }) => {
                     </option>
                   ))
                 ) : (
-                  <option disabled>Loading agencies...</option>
+                  <option disabled>No Agencies Found</option>
                 )}
               </select>
             </div>
           </div>
         </div>
 
+        {/* ✅ Table */}
         <div className="w-[90%] mx-auto mt-6">
           {loading ? (
             <p className="text-gray-600">Loading...</p>
@@ -138,26 +133,32 @@ const AgenciesPage = ({ user }) => {
               tableData={agencies}
               handleEdit={(AgencyId) => {
                 const agency = agencies.find((a) => a.AgencyId === AgencyId);
-                console.log("🟢 Selected Agency for Editing:", agency);
                 setSelectedAgency(agency);
                 setOpenEditModal(true);
               }}
-              handleDelete={handleDelete} // Ensure delete works
+              handleDelete={handleDelete}
               loading={loading}
               error={error}
             />
           )}
         </div>
 
+        {/* ✅ Create Agency Modal */}
         {openAgencyModal && (
-          <AgencyModal isOpen={openAgencyModal} onClose={() => setOpenAgencyModal(false)} />
+          <AgencyModal
+            isOpen={openAgencyModal}
+            onClose={() => setOpenAgencyModal(false)}
+            fetchAllAgencies={refreshAgencies} // ✅ Auto-refresh on close
+          />
         )}
 
+        {/* ✅ Edit Agency Modal */}
         {openEditModal && selectedAgency && (
           <EditAgency
             isOpen={openEditModal}
             onClose={() => setOpenEditModal(false)}
-            selectedAgencyId={selectedAgency?.AgencyId} // ✅ Fixed prop name
+            fetchAllAgencies={refreshAgencies} // ✅ Auto-refresh on update
+            AgencyId={selectedAgency?.AgencyId}
           />
         )}
       </section>
@@ -166,6 +167,7 @@ const AgenciesPage = ({ user }) => {
 };
 
 export default AgenciesPage;
+
 
 
 

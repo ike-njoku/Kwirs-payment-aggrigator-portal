@@ -5,7 +5,7 @@ import { AxiosGet, AxiosPost } from "../../../services/http-service";
 import { toast } from "react-toastify";
 import ModalLayout from "./ModalLayout";
 
-const EditAgency = ({ isOpen, onClose, AgencyId }) => {
+const EditAgency = ({ isOpen, onClose, AgencyId, fetchAllAgencies }) => {
   const [agencyCode, setAgencyCode] = useState("");
   const [description, setDescription] = useState("");
   const [updatedBy, setUpdatedBy] = useState("");
@@ -116,13 +116,14 @@ const EditAgency = ({ isOpen, onClose, AgencyId }) => {
 
     try {
       const response = await AxiosPost(`${API_BASE_URL}/api/Agencies/Update`, payload);
-      console.log("📩 Update Response:", response?.data);
+      console.log("📩 Update Response:", response?.Data);
 
-      if (response?.status === 200 && response.data?.StatusCode === 200) {
-        toast.success(response.data.StatusMessage || "Agency updated successfully!");
+      if (response?.Status === 200 || response.StatusCode === 200) {
+        toast.success(response.StatusMessage || "Agency updated successfully!");
         onClose(); // Close modal on success
+        fetchAllAgencies();
       } else {
-        toast.error(response?.data?.StatusMessage || "Update failed.");
+        toast.error(response.StatusMessage || "Update failed.");
       }
     } catch (error) {
       console.error("❌ Update error:", error);
@@ -142,11 +143,11 @@ const EditAgency = ({ isOpen, onClose, AgencyId }) => {
         <form className="w-full mt-4" onSubmit={handleUpdateAgency}>
           {/* ✅ Read-only field for UpdatedBy */}
           <div className="w-full mb-4">
-            <label className="text-base font-medium text-gray-700">
+            {/* <label className="text-base font-medium text-gray-700">
               Updated By (TIN)
-            </label>
+            </label> */}
             <input
-              type="text"
+              type="hidden"
               className="w-full border-b-2 border-gray-300 h-[45px] bg-gray-100 px-3 focus:outline-none text-gray-700"
               value={updatedBy}
               readOnly
