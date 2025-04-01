@@ -24,8 +24,10 @@ const CreateTaxOffices = ({
 
   const [taxOfficeTypes, setTaxOfficeTypes] = useState([]);
   const [lgas, setLgas] = useState([]);
+  const [regions, setRegions] = useState([]);
   const [loadingTypes, setLoadingTypes] = useState(true);
   const [loadingLgas, setLoadingLgas] = useState(true);
+  const [loadingRegions, setLoadingRegions] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -54,9 +56,7 @@ const CreateTaxOffices = ({
         const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/utility/GetAllLGA`;
         const response = await fetch(url);
         const data = await response.json();
-        console.log("LGA Data:", data); // Debug log
-        // console.log("Data", data);
-
+        console.log("LGA Data:", data);
         setLgas(data || []);
       } catch (error) {
         console.error("Error fetching LGAs:", error);
@@ -66,8 +66,30 @@ const CreateTaxOffices = ({
       }
     };
 
+    const fetchRegions = async () => {
+      try {
+        const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/taxOffice/GettaxOfficeRegion`;
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log("Region Data:", data);
+
+        if (data.StatusCode === 200) {
+          setRegions(data.Data || []);
+        } else {
+          console.error("Failed to fetch regions");
+          setError("Failed to load regions");
+        }
+      } catch (error) {
+        console.error("Error fetching regions:", error);
+        setError("Error loading regions");
+      } finally {
+        setLoadingRegions(false);
+      }
+    };
+
     fetchTaxOfficeTypes();
     fetchLgas();
+    fetchRegions();
   }, []);
 
   const handleChange = (e) => {
@@ -81,7 +103,8 @@ const CreateTaxOffices = ({
     if (
       !formData.TaxOfficeId ||
       !formData.TaxOfficeName ||
-      !formData.TaxOfficeTypeId
+      !formData.TaxOfficeTypeId ||
+      !formData.RegionId
     ) {
       alert("Please fill in all required fields.");
       return;
@@ -149,11 +172,26 @@ const CreateTaxOffices = ({
                   >
                     <option value="">Select LGA</option>
                     {lgas.map((lga) => (
-                      <option
-                        key={lga.LGAId}
-                        value={lga.LGAId.toString()} // Convert number to string for consistency
-                      >
+                      <option key={lga.LGAId} value={lga.LGAId.toString()}>
                         {lga.LGAName}
+                      </option>
+                    ))}
+                  </select>
+                ) : key === "RegionId" ? (
+                  <select
+                    className="w-full h-full bg-gray-100 px-3 focus:outline-none"
+                    name={key}
+                    value={value}
+                    onChange={handleChange}
+                    disabled={loadingRegions}
+                  >
+                    <option value="">Select Region</option>
+                    {regions.map((region) => (
+                      <option
+                        key={region.RegionId || region.Id}
+                        value={(region.RegionId || region.Id).toString()}
+                      >
+                        {region.RegionId || region.Name}
                       </option>
                     ))}
                   </select>

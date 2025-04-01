@@ -26,8 +26,11 @@ const EditTaxOfficeModal = ({
 
   const [taxOfficeTypes, setTaxOfficeTypes] = useState([]);
   const [lgas, setLgas] = useState([]);
+  const [regions, setRegions] = useState([]);
   const [loadingTypes, setLoadingTypes] = useState(true);
   const [loadingLgas, setLoadingLgas] = useState(true);
+  const [loadingRegions, setLoadingRegions] = useState(true);
+  const [error, setError] = useState(null);
 
   // Fetch dropdown data
   useEffect(() => {
@@ -38,9 +41,13 @@ const EditTaxOfficeModal = ({
         const data = await response.json();
         if (data.StatusCode === 200) {
           setTaxOfficeTypes(data.Data || []);
+        } else {
+          console.error("Failed to fetch tax office types");
+          setError("Failed to load tax office types");
         }
       } catch (error) {
         console.error("Error fetching tax office types:", error);
+        setError("Error loading tax office types");
       } finally {
         setLoadingTypes(false);
       }
@@ -51,17 +58,39 @@ const EditTaxOfficeModal = ({
         const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/utility/GetAllLGA`;
         const response = await fetch(url);
         const data = await response.json();
-
         setLgas(data || []);
       } catch (error) {
         console.error("Error fetching LGAs:", error);
+        setError("Error loading LGAs");
       } finally {
         setLoadingLgas(false);
       }
     };
 
+    const fetchRegions = async () => {
+      try {
+        const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/taxOffice/GettaxOfficeRegion`;
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log("Region Data:", data);
+
+        if (data.StatusCode === 200) {
+          setRegions(data.Data || []);
+        } else {
+          console.error("Failed to fetch regions");
+          setError("Failed to load regions");
+        }
+      } catch (error) {
+        console.error("Error fetching regions:", error);
+        setError("Error loading regions");
+      } finally {
+        setLoadingRegions(false);
+      }
+    };
+
     fetchTaxOfficeTypes();
     fetchLgas();
+    fetchRegions();
   }, []);
 
   // Initialize form data when index changes
@@ -94,7 +123,8 @@ const EditTaxOfficeModal = ({
     if (
       !formData.TaxOfficeId ||
       !formData.TaxOfficeName ||
-      !formData.TaxOfficeTypeId
+      !formData.TaxOfficeTypeId ||
+      !formData.RegionId
     ) {
       alert("Please fill in required fields");
       return;
@@ -115,6 +145,12 @@ const EditTaxOfficeModal = ({
         <h3 className="my-5 text-lg font-semibold pb-4 border-b border-gray-500 text-gray-700">
           {heading}
         </h3>
+
+        {error && (
+          <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">
+            {error}
+          </div>
+        )}
 
         <form className="w-full" onSubmit={handleSubmit}>
           {Object.entries(formData).map(([key, value]) => (
@@ -162,7 +198,25 @@ const EditTaxOfficeModal = ({
                     <option value="">Select LGA</option>
                     {lgas.map((lga) => (
                       <option key={lga.LGAId} value={lga.LGAId.toString()}>
-                        {lga.LGAName}
+                        {lga.LGAId}
+                      </option>
+                    ))}
+                  </select>
+                ) : key === "RegionId" ? (
+                  <select
+                    className="w-full h-full bg-gray-100 px-3 focus:outline-none"
+                    name={key}
+                    value={value}
+                    onChange={handleChange}
+                    disabled={loadingRegions}
+                  >
+                    <option value="">Select Region</option>
+                    {regions.map((region) => (
+                      <option
+                        key={region.RegionId || region.Id}
+                        value={(region.RegionId || region.Id).toString()}
+                      >
+                        {region.RegionId || region.Name}
                       </option>
                     ))}
                   </select>
