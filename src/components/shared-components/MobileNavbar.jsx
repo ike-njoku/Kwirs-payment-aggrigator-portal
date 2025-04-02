@@ -3,18 +3,13 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { IoMdClose } from "react-icons/io";
 import { sidebarMenu } from "../../utils/app_data";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
 import { authenticateUser } from "../../services/auth-service";
 import { AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
-import { FaCaretDown } from "react-icons/fa6";
-
+import MenuItems from "./menu-items/MenuItems";
 const MobileNavbar = ({ openNav, handleCloseNav }) => {
-  const pathname = usePathname();
   const [_sidebarMenu, setSideBarMenu] = useState(sidebarMenu);
   const [authenticatedUser, setAuthenticatedUser] = useState({});
-  const [showDropdown, setDropdown] = useState(false);
 
   const getUserMenuItems = async () => {
     const requestURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Menue/GetUserMenueItems`;
@@ -22,8 +17,6 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
     const apiResponse = await AxiosPost(requestURL, {
       UserName: authenticateUser()?.tin,
     });
-
-    console.log("API RESPONSE ----------------------->>> ", apiResponse);
 
     if (!apiResponse || apiResponse.StatusCode !== 200) {
       toast.error("Could not fetch Menu Items. Please reload the page");
@@ -39,10 +32,6 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
     setAuthenticatedUser(authenticateUser());
     getUserMenuItems();
   }, []);
-
-  const handleToggleDropdown = () => {
-    setDropdown((prev) => !prev);
-  };
 
   return (
     <section
@@ -74,50 +63,7 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
         </div>
 
         <div className="w-full py-5 mt-10">
-          <ul className="w-full flex flex-col gap-6">
-            {/* use _sidebarMenu to get menus from the backend */}
-            {_sidebarMenu.map((menu, i) => (
-              <li
-                key={i}
-                className={`w-full px-6  items-center text-lg text-black  capitalize py-2 ${
-                  pathname.includes(menu.url) &&
-                  "bg-pumpkin text-white rounded-[30px]"
-                }`}
-              >
-                <span
-                  className={`flex items-center gap-1 ${
-                    showDropdown && "text-pumpkin"
-                  }`}
-                >
-                  {menu?.MainMenu}{" "}
-                  <button
-                    className={`${showDropdown && "rotate-180"} transition-all`}
-                    onClick={handleToggleDropdown}
-                  >
-                    <FaCaretDown />
-                  </button>
-                </span>
-
-                {showDropdown && (
-                  <ul className="flex flex-col gap-2 w-full">
-                    {menu?.submenu?.map((subMenu, j) => (
-                      <li
-                        key={j}
-                        className={`w-full px-2 flex gap-2 items-center text-lg text-black capitalize`}
-                      >
-                        <Link
-                          href={subMenu?.URL}
-                          className="hover:text-pumpkin"
-                        >
-                          {subMenu?.ResourceName}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
-          </ul>
+          <MenuItems sidebarMenu={_sidebarMenu} />
         </div>
       </div>
     </section>
