@@ -64,8 +64,7 @@ const ResourcesPage = () => {
         Username: authenticatedUser.email,
         Type: newResourceURL.resourceType,
         ParentResourceId: 0,
-        resourceType:
-          newResourceURL.resourceType == 1 ? MAIN_MENU : SUB_MENU,
+        resourceType: newResourceURL.resourceType == 1 ? MAIN_MENU : SUB_MENU,
         dateCreated: new Date().toISOString().split("T")[0],
         ResourceId: createResourceResponse.Data.ResourseId,
       };
@@ -222,6 +221,7 @@ const ResourcesPage = () => {
             {/* Table */}
             <CustomTable
               isResource={true}
+              tableType="resource"
               tableHeadings={tableHeadings}
               tableData={currentRows}
               isEllipseDropdwon={true}
@@ -282,10 +282,3 @@ const ResourcesPage = () => {
 };
 
 export default ResourcesPage;
-
-
-
-
-
-
-

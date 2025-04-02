@@ -28,7 +28,7 @@ const RolesPage = () => {
   const handleDeleteItem = async (RoleId) => {
     try {
       const deleteResponse = await AxiosPost(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/Remove/${RoleId}`
+        1`${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/Remove/${RoleId}`
       );
 
       if (deleteResponse?.StatusCode === 200) {
@@ -125,6 +125,7 @@ const RolesPage = () => {
     );
     setTableData(tableData);
   };
+  console.log("tableData", tableData);
 
   return (
     <DashboardLayout page="Roles">
@@ -147,6 +148,7 @@ const RolesPage = () => {
             {/* table */}
             <CustomTable
               tableHeadings={tableHeadings}
+              tableType="roles"
               tableData={tableData}
               isEllipseDropdwon={true}
               handleDelete={handleDelete}

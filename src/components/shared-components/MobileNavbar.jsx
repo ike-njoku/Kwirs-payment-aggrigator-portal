@@ -3,13 +3,11 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { IoMdClose } from "react-icons/io";
 import { sidebarMenu } from "../../utils/app_data";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
 import { authenticateUser } from "../../services/auth-service";
 import { AxiosPost } from "../../services/http-service";
-
+import { toast } from "react-toastify";
+import MenuItems from "./menu-items/MenuItems";
 const MobileNavbar = ({ openNav, handleCloseNav }) => {
-  const pathname = usePathname();
   const [_sidebarMenu, setSideBarMenu] = useState(sidebarMenu);
   const [authenticatedUser, setAuthenticatedUser] = useState({});
 
@@ -17,7 +15,7 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
     const requestURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Menue/GetUserMenueItems`;
 
     const apiResponse = await AxiosPost(requestURL, {
-      UserName: authenticateUser?.email,
+      UserName: authenticateUser()?.tin,
     });
 
     if (!apiResponse || apiResponse.StatusCode !== 200) {
@@ -31,8 +29,8 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
   };
 
   useEffect(() => {
-    setAuthenticatedUser(authenticateUser);
-    // getUserMenuItems();
+    setAuthenticatedUser(authenticateUser());
+    getUserMenuItems();
   }, []);
 
   return (
@@ -41,7 +39,7 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
         openNav ? "translate-x-0" : "translate-x-[1000px]"
       } fixed bg-[rgba(0,0,0,0.7)] top-0 left-0 right-0 bottom-0 transition-all z-[24]`}
     >
-      <div className="w-full max-w-[300px] h-full p-6 bg-white">
+      <div className="w-full max-w-[300px] h-full p-6 bg-white  overflow-auto">
         <div className="flex justify-end">
           <button className="text-pumpkin text-2xl" onClick={handleCloseNav}>
             <IoMdClose />
@@ -52,7 +50,7 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
             <Image
               fill
               alt="user-pic"
-              src="/images/avatar.jpeg"
+              src="/images/icon-7797704_1280.png"
               className="object-cover"
             />
           </figure>
@@ -65,20 +63,7 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
         </div>
 
         <div className="w-full py-5 mt-10">
-          <ul className="w-full flex flex-col custom-scrollbar max-h-[calc(100vh-150px)] overflow-y-auto gap-6">
-            {/* use _sidebarMenu to get menus from the backend */}
-            {sidebarMenu.map((menu, i) => (
-              <li
-                className={`w-full px-6 flex gap-2 items-center text-lg text-black capitalize py-2 ${
-                  pathname.includes(menu.url) &&
-                  "bg-pumpkin text-white rounded-[30px]"
-                }`}
-                key={i}
-              >
-                {menu.icon} <Link href={menu.url}>{menu.path}</Link>
-              </li>
-            ))}
-          </ul>
+          <MenuItems sidebarMenu={_sidebarMenu} />
         </div>
       </div>
     </section>

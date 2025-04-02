@@ -4,6 +4,8 @@ import { IoSettings } from "react-icons/io5";
 import { IoNotifications } from "react-icons/io5";
 import { MdPayment } from "react-icons/md";
 import { AxiosGet } from "../services/http-service";
+import { HiBuildingOffice2 } from "react-icons/hi2";
+import { MdOutlinePayment } from "react-icons/md";
 
 export const sidebarMenu = [
   {
@@ -30,6 +32,17 @@ export const sidebarMenu = [
     path: "users",
     icon: <FaUsers />,
     url: "/user-list",
+  },
+
+  {
+    path: "Payment Method",
+    icon: <MdOutlinePayment />,
+    url: "/payment-method",
+  },
+  {
+    path: "tax offices",
+    icon: <HiBuildingOffice2 />,
+    url: "/tax-offices",
   },
   {
     path: "resource allocation",
