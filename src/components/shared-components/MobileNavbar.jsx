@@ -9,7 +9,7 @@ import { authenticateUser } from "../../services/auth-service";
 import { AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
 import { FaCaretDown } from "react-icons/fa6";
-
+import { FaTasks, FaUsers } from "react-icons/fa";
 const MobileNavbar = ({ openNav, handleCloseNav }) => {
   const pathname = usePathname();
   const [_sidebarMenu, setSideBarMenu] = useState(sidebarMenu);
@@ -89,6 +89,7 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
                     showDropdown && "text-pumpkin"
                   }`}
                 >
+                  <FaUsers />
                   {menu?.MainMenu}{" "}
                   <button
                     className={`${showDropdown && "rotate-180"} transition-all`}
@@ -107,9 +108,9 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
                       >
                         <Link
                           href={subMenu?.URL}
-                          className="hover:text-pumpkin"
+                          className="hover:text-pumpkin  flex gap-2 items-center"
                         >
-                          {subMenu?.ResourceName}
+                          <FaTasks /> {subMenu?.ResourceName}
                         </Link>
                       </li>
                     ))}
