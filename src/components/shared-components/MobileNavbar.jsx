@@ -9,6 +9,8 @@ import { authenticateUser } from "../../services/auth-service";
 import { AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
 import { FaCaretDown } from "react-icons/fa6";
+import LogoutButton from "./buttons/LogoutButton";
+
 
 const MobileNavbar = ({ openNav, handleCloseNav }) => {
   const pathname = usePathname();
@@ -119,6 +121,7 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
             ))}
           </ul>
         </div>
+        <LogoutButton/>
       </div>
     </section>
   );
