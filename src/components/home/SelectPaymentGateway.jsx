@@ -11,6 +11,7 @@ import PaymentButtons from "../shared-components/buttons/PaymentButtons";
 import PayWithFlutterWave from "../../utils/flutterwavePayment";
 import IcadPayModal from "./IcadPayModal";
 import PayWithCredoPayment from "@/utils/credoPayment";
+import PayWithRemita from "@/utils/remitaPayment";
 
 const SelectPaymentGateway = ({ showPreviousComponent }) => {
   const [selectedOption, setSelectedOption] = useState("nil");
@@ -130,6 +131,11 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
         {selectedOption === "etranzact" && (
           <>
             <PayWithCredoPayment />
+          </>
+        )}
+        {selectedOption === "remita" && (
+          <>
+            <PayWithRemita />
           </>
         )}
         {selectedOption === "flutterWave" && (

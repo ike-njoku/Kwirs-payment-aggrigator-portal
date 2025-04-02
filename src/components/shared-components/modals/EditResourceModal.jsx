@@ -26,6 +26,9 @@ const EditResourceModal = ({
   
   return (
     <ModalLayout handleCloseModal={handleCloseModal}>
+      contact
+      
+      ns1.vercel-dns.com ns2.vercel-dns.com
       <div className="w-full p-5 ">
         <h3 className="my-5 text-lg font-semibold pb-4 border-b border-b-gray-500 text-gray-700">
           {heading}
