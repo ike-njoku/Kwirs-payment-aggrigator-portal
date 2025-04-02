@@ -19,7 +19,7 @@ const MenuItems = ({ sidebarMenu }) => {
       {sidebarMenu.map((menu, i) => (
         <li
           key={i}
-          className={`w-full px-6  items-center text-lg text-black  capitalize py-2 ${
+          className={`w-full px-6  items-center text-lg text-black lg:text-white capitalize py-2 ${
             pathname.includes(menu.url) &&
             "bg-pumpkin text-white rounded-[30px]"
           }`}
@@ -44,7 +44,10 @@ const MenuItems = ({ sidebarMenu }) => {
               {menu?.submenu?.map((subMenu, j) => (
                 <li
                   key={j}
-                  className={`w-full px-2 flex gap-2 items-center text-lg text-black capitalize`}
+                  className={`w-full px-2 flex gap-2 items-center text-lg text-black lg:text-white capitalize ${
+                    pathname.includes(subMenu.URL) &&
+                    "bg-pumpkin text-white rounded-[30px]"
+                  }`}
                 >
                   <Link
                     href={subMenu?.URL}
