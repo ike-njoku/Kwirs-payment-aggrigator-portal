@@ -1,24 +1,26 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../shared-components/layouts/DashboardLayout";
-import CustomTable from "../shared-components/table";
+import CustomTable from "../shared-components/table/TaxTextTable";
 import { resourcesTableData } from "../../utils/table_data";
 import { FaPlus } from "react-icons/fa";
-import CreateResourceModal from "../shared-components/modals/CreateResourceModal";
+import CreateTaxTypeModal from "../shared-components/modals/CreateTaxTypeModal";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { authenticateUser } from "../../services/auth-service";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { MAIN_MENU, SUB_MENU } from "../../utils/constants";
 
-const ResourcesPage = () => {
+const TaxTypePage = () => {
   const router = useRouter();
 
   const tableHeadings = [
-    "Name",
-    "Date Created",
-    "Resource type",
-    "Resource URL",
+    "Tax Type Id",
+    "Head Code",
+    "Sub Head Code",
+    "Agency",
+    "Service Id",
+    "Description",
     "Actions",
   ];
   const [tableData, setTableData] = useState(resourcesTableData);
@@ -36,90 +38,9 @@ const ResourcesPage = () => {
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = tableData.slice(indexOfFirstRow, indexOfLastRow);
 
-  const handleCreateResourceModal = async (newResourceURL) => {
-    const newResourceData = {
-      ResourceName: newResourceURL.resourceName,
-      URL: newResourceURL.resourceUrl,
-      Username: authenticatedUser.email,
-      Type: newResourceURL.resourceType,
-      ParentResourceId: newResourceURL.parentResourceId,
-      UserName: authenticatedUser.tin,
-    };
-
-    try {
-      const createResourceResponse = await AxiosPost(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/Create`,
-        newResourceData
-      );
-
-      if (createResourceResponse.StatusCode !== 200) {
-        toast.error("Could not create resource.");
-        return;
-      }
-      toast.success("Resource created successfully");
-
-      const createdDataRepresentation = {
-        name: newResourceURL.resourceName,
-        resourceURL: newResourceURL.resourceUrl,
-        Username: authenticatedUser.email,
-        Type: newResourceURL.resourceType,
-        ParentResourceId: 0,
-        resourceType: newResourceURL.resourceType == 1 ? MAIN_MENU : SUB_MENU,
-        dateCreated: new Date().toISOString().split("T")[0],
-        ResourceId: createResourceResponse.Data.ResourseId,
-      };
-
-      setTableData((prevData) => [
-        { ...createdDataRepresentation },
-        ...prevData,
-      ]);
-    } catch (error) {
-      console.error(
-        "Create Resource Error:",
-        error?.response?.data || error?.message
-      );
-      toast.error(
-        `An error occurred: ${
-          error?.response?.data?.message || "Request failed"
-        }`
-      );
-    }
-  };
-
-  const handleDelete = () => {
-    setOpenDeleteModal(true);
-  };
-
-  const handleEdit = () => {
-    setOpenEditModal(true);
-  };
-
-  const handleDeleteItem = async (ResourceId) => {
-    try {
-      const deleteResponse = await AxiosGet(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/Delete/${ResourceId}`
-      );
-
-      if (deleteResponse?.data?.StatusCode === 200) {
-        toast.success("Resource deleted successfully");
-
-        setTableData((prevData) =>
-          prevData.filter((item) => item.ResourceId !== ResourceId)
-        );
-
-        setOpenDeleteModal(false);
-      } else {
-        toast.error("Could not delete resource");
-      }
-    } catch (error) {
-      console.error("Delete Error:", error.response?.data || error);
-      toast.error("An error occurred while deleting the resource");
-    }
-  };
-
   const fetchAllResources = async () => {
     const apiResponse = await AxiosGet(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/GetAllResource`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/TaxTypes/GetAllTaxTypes`
     );
 
     if (!apiResponse) {
@@ -136,54 +57,177 @@ const ResourcesPage = () => {
       return;
     }
 
-    tableData.map((item) => (item.name = item.ResourceName));
-    tableData.map((item) => (item.id = item.ResourceId));
-    tableData.map((item) => (item.resourceType = item.ResourceTypeId));
-    tableData.map(
-      (item) =>
-        (item.resourceType = item.ResourceTypeId == 1 ? MAIN_MENU : SUB_MENU)
-    );
-    tableData.map((item) => (item.resourceURL = item.URL));
-    tableData.map(
-      (item) =>
-        (item.dateCreated = new Date(item.CreateDate)
-          .toISOString()
-          .split("T")[0])
-    );
+    // Ensure correct key mapping
+    const formattedData = tableData.map((item) => ({
+      createdBy: item.createdBy,
+      taxTypeId: item.taxtypeId,
+      headCode: item.headCode,
+      subHeadCode: item.subHeadCode,
+      agencyId: item.Agency,
+      serviceId: item.serviceId,
+      Dsecription: item.description,
+      dateCreated: item.createdDate,
+      id: item.taxtypeId,
+      isActive: item.isActive ?? true,
+    }));
 
-    setTableData(tableData);
-  };
+    console.log("Updated Table Data State:", tableData);
 
-  const handleEditItem = async (updatedItem, updateParameters) => {
-    updatedItem.ResourceType = updatedItem.resourceType == MAIN_MENU ? 1 : 2;
-
-    const { resourceName, resourceType, resourceUrl, parentResourceId } =
-      updateParameters;
-
-    const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Resources/Update`;
-    const payLoad = {
-      ResourceName: resourceName,
-      URL: resourceUrl,
-      Username: authenticatedUser.email,
-      Type: resourceType == MAIN_MENU ? 1 : 2,
-      ResourceId: updatedItem.ResourceId,
-      ParentResourceId: updatedItem.ParentResourceId,
-      UserName: authenticatedUser.tin,
-    };
-
-    const updateResourceResponse = await AxiosPost(updateResourceURL, payLoad);
-
-    if (updateResourceResponse?.StatusCode !== 200) {
-      toast.error("Could not update Resource at this time");
-      return;
-    }
-
-    toast.success("Resource updated");
-    await fetchAllResources();
+    setTableData(formattedData);
   };
 
   const handleOpenEditResourceModal = () => {
     setOpenResourceEditModal(true);
+  };
+
+  const handleCreateResourceModal = async (newResourceURL) => {
+    console.log("Function called with newResourceURL:", newResourceURL);
+
+    // Ensure all required fields are present
+    if (
+      !newResourceURL?.taxTypeId ||
+      !newResourceURL?.createdBy ||
+      !newResourceURL?.headCode ||
+      !newResourceURL?.subHeadCode ||
+      !newResourceURL?.agencyId ||
+      // !newResourceURL?.serviceId ||
+      !newResourceURL?.Dsecription
+    ) {
+      console.error("Missing required fields:", newResourceURL);
+      toast.error("Please provide all required fields.");
+      return;
+    }
+
+    const newResourceData = {
+      taxTypeId: newResourceURL.taxTypeId,
+      createdBy: newResourceURL.createdBy,
+      headCode: newResourceURL.headCode,
+      subHeadCode: newResourceURL.subHeadCode,
+      agencyId: newResourceURL.agencyId,
+      serviceId: newResourceURL.serviceId,
+      Dsecription: newResourceURL.Dsecription,
+    };
+
+    console.log("Formatted newResourceData:", newResourceData);
+
+    try {
+      console.log("Sending request to create resource...");
+      const createResourceResponse = await AxiosPost(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/TaxTypes/Create`,
+        newResourceData
+      );
+
+      console.log("Received response:", createResourceResponse);
+
+      if (
+        !createResourceResponse ||
+        createResourceResponse.StatusCode !== 200
+      ) {
+        console.error("Error: Response status not 200", createResourceResponse);
+        toast.error("Could not create resource.");
+        return;
+      }
+
+      console.log("Resource creation successful, proceeding...");
+
+      const createdDataRepresentation = {
+        taxTypeId: newResourceURL.taxTypeId,
+        createdBy: newResourceURL.createdBy,
+        headCode: newResourceURL.headCode,
+        subHeadCode: newResourceURL.subHeadCode,
+        agencyId: newResourceURL.agencyId,
+        serviceId: newResourceURL.serviceId,
+        Dsecription: newResourceURL.Dsecription,
+      };
+
+      console.log(
+        "Formatted createdDataRepresentation:",
+        createdDataRepresentation
+      );
+
+      // setTableData((prevData) => [createdDataRepresentation, ...prevData]);
+      fetchAllResources();
+
+      console.log("Updated table data with new resource.");
+      toast.success("Resource created successfully");
+    } catch (error) {
+      console.error(
+        "Create Resource Error:",
+        error?.response?.data || error?.message || error
+      );
+      toast.error(
+        `An error occurred: ${
+          error?.response?.data?.message || "Request failed"
+        }`
+      );
+    }
+  };
+
+  const handleDeleteItem = async (ResourceId) => {
+    try {
+      const deleteResponse = await AxiosGet(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/TaxTypes/Delete/${ResourceId}`
+      );
+      console.error("ResourceId :", ResourceId);
+
+      if (deleteResponse?.data?.StatusCode === 200) {
+        toast.success("Resource deleted successfully");
+
+        fetchAllResources();
+
+        setOpenDeleteModal(false);
+      } else {
+        toast.error("Could not delete resource");
+      }
+    } catch (error) {
+      console.error("Delete Error:", error.response?.data || error);
+      toast.error("An error occurred while deleting the resource");
+    }
+  };
+
+  const handleEditItem = async (updateParameters) => {
+    const {
+      taxTypeId,
+      createdBy,
+      headCode,
+      subHeadCode,
+      agencyId,
+      serviceId,
+      Dsecription,
+    } = updateParameters;
+
+    const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/TaxTypes/Update`;
+
+
+    const payLoad = {
+      taxTypeId: taxTypeId,
+      updatedBy: createdBy,
+      headCode: headCode,
+      subHeadCode: subHeadCode,
+      agencyId: 1,
+      serviceId: serviceId,
+      Dsecription: "PAYED",
+    };
+
+    console.log("Payload sent:", payLoad);
+
+    try {
+      const updateResourceResponse = await AxiosPost(
+        updateResourceURL,
+        payLoad
+      );
+
+      if (updateResourceResponse?.StatusCode !== 200) {
+        toast.error("Could not update Resource at this time");
+        return;
+      }
+
+      toast.success("Resource updated");
+      await fetchAllResources();
+    } catch (error) {
+      console.error("Error updating resource:", updateResourceResponse, error);
+      // toast.error("Failed to update resource.");
+    }
   };
 
   useEffect(() => {
@@ -202,7 +246,7 @@ const ResourcesPage = () => {
   };
 
   return (
-    <DashboardLayout page="Resources">
+    <DashboardLayout page="Tax Type">
       <section className="w-full">
         <div className="w-[90%] mx-auto py-5">
           <div className="w-full lg:mt-10">
@@ -213,15 +257,14 @@ const ResourcesPage = () => {
                 type="button"
                 onClick={() => setOpenResourceModal(true)}
               >
-                Create Resource
+                Create Tax Type
                 <FaPlus />
               </button>
             </section>
 
             {/* Table */}
             <CustomTable
-              isResource={true}
-              tableType="resource"
+              isResource={false}
               tableHeadings={tableHeadings}
               tableData={currentRows}
               isEllipseDropdwon={true}
@@ -235,7 +278,7 @@ const ResourcesPage = () => {
               handleEditItem={handleEditItem}
               text="Are you sure you want to delete this resource?"
               label="Resource name"
-              heading="Update Resource"
+              heading="Update Tax Type"
             />
 
             {/* Pagination Controls */}
@@ -271,7 +314,7 @@ const ResourcesPage = () => {
 
         {/* Modal */}
         {openResourceModal && (
-          <CreateResourceModal
+          <CreateTaxTypeModal
             handleCloseModal={() => setOpenResourceModal(false)}
             handleCreateModal={handleCreateResourceModal}
           />
@@ -281,4 +324,4 @@ const ResourcesPage = () => {
   );
 };
 
-export default ResourcesPage;
+export default TaxTypePage;

@@ -2,94 +2,117 @@
 import React, { useState } from "react";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
+import AgencySelect from "../../shared-components/AgencySelect";
 
-const EditResourceModal = ({
+
+const EditTaskTypeModal = ({
   handleCloseModal,
   index,
   handleEditModal,
   label,
   heading,
 }) => {
-  const [resourceName, setResourceName] = useState(index.name);
-  const [resourceUrl, setResourceUrl] = useState(index.resourceURL);
+  const taxTypeId = index.taxTypeId;
+  const createdBy = index.createdBy;
+  const headCode = index.headCode;
+  const subHeadCode = index.subHeadCode;
+  const [agencyId, setagencyId] = useState("1");
+  const [serviceId, setserviceId] = useState(index.serviceId);
+  const [Dsecription, setDsecription] = useState(index.Dsecription);
   const [isLoading, setIsLoading] = useState(false);
-  const [resourceType, setResourceType] = useState(
-    index.resourceType || "Select resource type"
-  );
+
   const handleFormSubmit = (e) => {
     setIsLoading(true);
     e.preventDefault();
-    handleEditModal(index, { resourceName, resourceUrl, resourceType });
+    handleEditModal(index, {
+      taxTypeId,
+      createdBy,
+      headCode,
+      subHeadCode,
+      agencyId,
+      serviceId,
+      Dsecription,
+    });
     setIsLoading(false);
     handleCloseModal();
   };
-  
   return (
     <ModalLayout handleCloseModal={handleCloseModal}>
-      contact
-      
-      ns1.vercel-dns.com ns2.vercel-dns.com
       <div className="w-full p-5 ">
         <h3 className="my-5 text-lg font-semibold pb-4 border-b border-b-gray-500 text-gray-700">
           {heading}
         </h3>
         <form className="w-full" onSubmit={handleFormSubmit}>
-          <div className="w-full">
+          {/* <div className="w-full">
             <label
               className="text-base font-medium text-gray-700"
-              htmlFor="resourceName"
+              htmlFor="headCode"
             >
-              Resource Name
+              Head Code
             </label>
             <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
               <input
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
                 type="text"
-                value={resourceName}
-                onChange={(e) => setResourceName(e.target.value)}
-                placeholder="Enter resource name"
+                value={headCode}
+                onChange={(e) => setheadCode(e.target.value)}
+                placeholder="Enter Head Code"
                 required
               />
             </div>
-          </div>
-
-          {/* Resource URL Input */}
-          <div className="w-full">
+          </div>{" "} */}
+          {/* <div className="w-full">
             <label
               className="text-base font-medium text-gray-700"
-              htmlFor="resourceUrl"
+              htmlFor="subHeadCode"
             >
-              Resource URL
+              Sub Head Code
             </label>
             <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
               <input
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                value={resourceUrl}
-                onChange={(e) => setResourceUrl(e.target.value)}
-                placeholder="Eg. https://url.com"
+                type="text"
+                value={subHeadCode}
+                onChange={(e) => setsubHeadCode(e.target.value)}
+                placeholder="Enter Sub Head Code"
                 required
+              />
+            </div>
+          </div>{" "} */}
+                             <AgencySelect agencyId={agencyId} setAgencyId={setagencyId} />
+         
+          {/* Resource URL Input */}
+          <div className="w-full">
+            <label
+              className="text-base font-medium text-gray-700"
+              htmlFor="serviceId"
+            >
+              Service Id
+            </label>
+            <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
+              <input
+                className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
+                value={serviceId}
+                onChange={(e) => setserviceId(e.target.value)}
+                placeholder="service ID"
               />
             </div>
           </div>
           <div className="w-full">
             <label
               className="text-base font-medium text-gray-700"
-              htmlFor="resourceUrl"
+              htmlFor="Dsecription"
             >
-              Resource Type
+              Description
             </label>
             <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-              <select
+              <input
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="url"
-                value={resourceType}
-                onChange={(e) => setResourceType(e.target.value)}
-                placeholder="Eg. https://url.com"
+                value={Dsecription}
+                onChange={(e) => setDsecription(e.target.value)}
+                placeholder="Description"
                 required
-              >
-                <option value="1">Main menu</option>
-                <option value="2">Sub menu</option>
-              </select>
+              />
             </div>
           </div>
           <AuthButtons
@@ -103,4 +126,4 @@ const EditResourceModal = ({
   );
 };
 
-export default EditResourceModal;
+export default EditTaskTypeModal;

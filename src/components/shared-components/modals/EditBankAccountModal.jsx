@@ -2,33 +2,37 @@
 import React, { useState } from "react";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
+import AgencySelect from "../../shared-components/AgencySelect";
 
-const EditResourceModal = ({
+const EditBankAccountModal = ({
   handleCloseModal,
   index,
   handleEditModal,
   label,
   heading,
 }) => {
-  const [resourceName, setResourceName] = useState(index.name);
-  const [resourceUrl, setResourceUrl] = useState(index.resourceURL);
+  const [CreatedBy, setCreatedBy] = useState(index.CreatedBy);
+  const [accountname, setaccountname] = useState(index.accountname);
+  const [bankName, setbankName] = useState(index.bankName);
+  const [accountNumber, setaccountNumber] = useState(index.accountNumber);
+  const [agencyId, setagencyId] = useState(index.agencyId);
   const [isLoading, setIsLoading] = useState(false);
-  const [resourceType, setResourceType] = useState(
-    index.resourceType || "Select resource type"
-  );
+
   const handleFormSubmit = (e) => {
     setIsLoading(true);
     e.preventDefault();
-    handleEditModal(index, { resourceName, resourceUrl, resourceType });
+    handleEditModal(index, {
+      CreatedBy,
+      accountname,
+      bankName,
+      accountNumber,
+      agencyId,
+    });
     setIsLoading(false);
     handleCloseModal();
   };
-  
   return (
     <ModalLayout handleCloseModal={handleCloseModal}>
-      contact
-      
-      ns1.vercel-dns.com ns2.vercel-dns.com
       <div className="w-full p-5 ">
         <h3 className="my-5 text-lg font-semibold pb-4 border-b border-b-gray-500 text-gray-700">
           {heading}
@@ -37,61 +41,59 @@ const EditResourceModal = ({
           <div className="w-full">
             <label
               className="text-base font-medium text-gray-700"
-              htmlFor="resourceName"
+              htmlFor="accountname"
             >
-              Resource Name
+              Account Name
             </label>
             <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
               <input
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
                 type="text"
-                value={resourceName}
-                onChange={(e) => setResourceName(e.target.value)}
-                placeholder="Enter resource name"
+                value={accountname}
+                onChange={(e) => setaccountname(e.target.value)}
+                placeholder="Enter Account name"
                 required
               />
             </div>
-          </div>
-
-          {/* Resource URL Input */}
+          </div>{" "}
           <div className="w-full">
             <label
               className="text-base font-medium text-gray-700"
-              htmlFor="resourceUrl"
+              htmlFor="bankName"
             >
-              Resource URL
+              Bank Name
             </label>
             <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
               <input
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                value={resourceUrl}
-                onChange={(e) => setResourceUrl(e.target.value)}
-                placeholder="Eg. https://url.com"
+                type="text"
+                value={bankName}
+                onChange={(e) => setbankName(e.target.value)}
+                placeholder="Enter Bank name"
+                required
+              />
+            </div>
+          </div>{" "}
+          <div className="w-full">
+            <label
+              className="text-base font-medium text-gray-700"
+              htmlFor="accountNumber"
+            >
+              Account Number
+            </label>
+            <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
+              <input
+                className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
+                type="text"
+                value={accountNumber}
+                onChange={(e) => setaccountNumber(e.target.value)}
+                placeholder="Enter Account Number"
                 required
               />
             </div>
           </div>
-          <div className="w-full">
-            <label
-              className="text-base font-medium text-gray-700"
-              htmlFor="resourceUrl"
-            >
-              Resource Type
-            </label>
-            <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-              <select
-                className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="url"
-                value={resourceType}
-                onChange={(e) => setResourceType(e.target.value)}
-                placeholder="Eg. https://url.com"
-                required
-              >
-                <option value="1">Main menu</option>
-                <option value="2">Sub menu</option>
-              </select>
-            </div>
-          </div>
+          {/* Resource URL Input */}
+          <AgencySelect agencyId={agencyId} setAgencyId={setagencyId} />
           <AuthButtons
             label="Update"
             textColor="text-white"
@@ -103,4 +105,4 @@ const EditResourceModal = ({
   );
 };
 
-export default EditResourceModal;
+export default EditBankAccountModal;

@@ -9,6 +9,7 @@ import MobileNavbar from "../MobileNavbar";
 import { authenticateUser } from "../../../services/auth-service";
 import { AxiosGet, AxiosPost } from "../../../services/http-service";
 import { toast } from "react-toastify";
+import MenuItems from "../menu-items/MenuItems";
 
 const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
   const pathname = usePathname();
@@ -91,54 +92,7 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
           </h3>
 
           <div className="w-full py-5 mt-10">
-            <ul className="w-full flex flex-col gap-6">
-              {/* use _sidebarMenu to get menus from the backend */}
-
-              {_sidebarMenu.map((menu, i) => (
-                <li
-                  className={`w-full px-8 text-xl text-white capitalize py-2 `}
-                  key={i}
-                >
-                  {/* $
-                  {
-                    // pathname.includes(menu.url) && "bg-pumpkin"
-                  } */}
-                  <span
-                    className={`flex items-center gap-1 ${
-                      showDropdown && "text-pumpkin"
-                    }`}
-                  >
-                    {menu?.MainMenu}{" "}
-                    <button
-                      className={`${
-                        showDropdown && "rotate-180"
-                      } transition-all`}
-                      onClick={handleToggleDropdown}
-                    >
-                      <FaCaretDown />
-                    </button>
-                  </span>
-                  {/* {menu.icon} <Link href={menu.url}>{menu.path}</Link> */}
-                  {showDropdown && (
-                    <ul className="flex flex-col gap-2 w-full">
-                      {menu?.submenu?.map((subMenu, j) => (
-                        <li
-                          key={j}
-                          className={`w-full px-2 flex gap-2 items-center text-lg text-white capitalize`}
-                        >
-                          <Link
-                            href={subMenu?.URL}
-                            className="hover:text-pumpkin"
-                          >
-                            {subMenu?.ResourceName}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </li>
-              ))}
-            </ul>
+            <MenuItems sidebarMenu={_sidebarMenu} />
           </div>
         </div>
       </div>
