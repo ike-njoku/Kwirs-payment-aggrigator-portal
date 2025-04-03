@@ -13,6 +13,7 @@ import PayWithFlutterWave from "../../utils/flutterwavePayment";
 import IcadPayModal from "./IcadPayModal";
 import { handleInterswitchPayment } from "../../utils/interswitchPayment";
 import PayWithCredoPayment from "@/utils/credoPayment";
+import PayWithRemita from "@/utils/remitaPayment";
 
 const SelectPaymentGateway = ({ showPreviousComponent }) => {
   const [selectedOption, setSelectedOption] = useState("nil");
@@ -104,11 +105,21 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
             onClick={() => handleInterswitchPayment(invoiceData)}
           />
         )}
-        {selectedOption === "flutterWave" && <PayWithFlutterWave />}
+        {/* {selectedOption === "flutterWave" && <PayWithFlutterWave />} */}
 
         {selectedOption === "etranzact" && (
           <>
             <PayWithCredoPayment />
+          </>
+        )}
+        {selectedOption === "remita" && (
+          <>
+            <PayWithRemita />
+          </>
+        )}
+        {selectedOption === "flutterWave" && (
+          <>
+            <PayWithFlutterWave />
           </>
         )}
       </div>

@@ -14,12 +14,12 @@ const MenuItems = ({ sidebarMenu }) => {
   };
 
   return (
-    <ul className="w-full flex flex-col gap-6">
+    <ul className="w-full flex flex-col text- custom-scrollbar max-h-[calc(100vh-150px)] overflow-y-auto gap-4">
       {/* use _sidebarMenu to get menus from the backend */}
       {sidebarMenu.map((menu, i) => (
         <li
           key={i}
-          className={`w-full px-6  items-center text-lg text-black lg:text-white capitalize py-2 ${
+          className={`w-full px-6  items-center text-md text-black lg:text-white capitalize py-2 ${
             pathname.includes(menu.url) &&
             "bg-pumpkin text-white rounded-[30px]"
           }`}
@@ -40,11 +40,11 @@ const MenuItems = ({ sidebarMenu }) => {
           </span>
 
           {showDropdown == i && (
-            <ul className="flex flex-col gap-2 w-full">
+            <ul className="flex flex-col gap-4 mt-4 w-full">
               {menu?.submenu?.map((subMenu, j) => (
                 <li
                   key={j}
-                  className={`w-full px-2 flex gap-2 items-center text-lg text-black lg:text-white capitalize ${
+                  className={`w-full px-2 flex gap-2 items-center text-md text-black lg:text-white capitalize ${
                     pathname.includes(subMenu.URL) &&
                     "bg-pumpkin text-white rounded-[30px]"
                   }`}
