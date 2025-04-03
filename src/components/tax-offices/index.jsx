@@ -246,8 +246,8 @@ const Tax_office = () => {
               openEditTaxOfficeModal={openEditTaxOfficeModal}
               handleDeleteItem={handleDeleteItem}
               handleEditItem={handleEditItem}
-              label="Role name"
-              heading="Upate Roles"
+              label=""
+              heading="Update Tax Office"
             />
           </div>
         </div>
