@@ -1,4 +1,5 @@
 "use client";
+import React, { useEffect, useState } from "react";
 import ModalLayout from "./ModalLayout";
 import Image from "next/image";
 import { AxiosGet } from "../../../services/http-service";
@@ -8,6 +9,9 @@ import ProifileInfo from "../../dashboard/ProifileInfo";
 const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const ProfileDetails = ({ handleCloseModal, TIN, profileData }) => {
+
+  const [loading, setLoading] = useState(false);
+
   return (
     <ModalLayout handleCloseModal={handleCloseModal}>
       <div className="w-full p-6">
@@ -47,8 +51,8 @@ const ProfileDetails = ({ handleCloseModal, TIN, profileData }) => {
                 propertyKeysName="tin"
                 value={profileData?.TIN || "N/A"}
               />
-              {/* <ProifileInfo propertyKeysName="status" value={profileData?.Status || "N/A"} /> */}
-              {/* <ProifileInfo propertyKeysName="tax office" value={profileData?.TaxOffice || "N/A"} /> */}
+              <ProifileInfo propertyKeysName="status" value={profileData?.Status || "N/A"} />
+              <ProifileInfo propertyKeysName="tax office" value={profileData?.TaxOffice || "N/A"} />
             </ul>
           </section>
         ) : (
