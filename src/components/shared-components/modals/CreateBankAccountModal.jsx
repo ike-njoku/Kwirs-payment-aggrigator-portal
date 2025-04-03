@@ -7,9 +7,9 @@ import AgencySelect from "../../shared-components/AgencySelect";
 
 const CreateTaxTypeModal = ({ handleCloseModal, handleCreateModal }) => {
     const CreatedBy = "Admin";
-    const [accountname, setaccountname] = useState("Daeyo"); 
-    const [bankName, setbankName] = useState("Shutter Bank");
-    const [accountNumber, setaccountNumber] = useState("0984654322");
+    const [accountname, setaccountname] = useState(""); 
+    const [bankName, setbankName] = useState("");
+    const [accountNumber, setaccountNumber] = useState("");
     const [agencyId, setagencyId] = useState("1");
   const [isLoading, setIsLoading] = useState(false);
 
