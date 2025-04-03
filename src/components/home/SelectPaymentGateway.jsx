@@ -105,7 +105,7 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
             onClick={() => handleInterswitchPayment(invoiceData)}
           />
         )}
-        {selectedOption === "flutterWave" && <PayWithFlutterWave />}
+        {/* {selectedOption === "flutterWave" && <PayWithFlutterWave />} */}
 
         {selectedOption === "etranzact" && (
           <>

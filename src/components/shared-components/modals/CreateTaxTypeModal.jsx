@@ -5,13 +5,13 @@ import AuthButtons from "../buttons/AuthButtons";
 import AgencySelect from "../../shared-components/AgencySelect";
 
 const CreateTaxTypeModal = ({ handleCloseModal, handleCreateModal }) => {
-  const [taxTypeId, settaxTypeId] = useState("DA");
+  const [taxTypeId, settaxTypeId] = useState(" ");
   const createdBy = "admin";
   const [headCode, setheadCode] = useState("10001-001");
-  const [subHeadCode, setsubHeadCode] = useState("1003");
+  const [subHeadCode, setsubHeadCode] = useState(" ");
   const [agencyId, setagencyId] = useState(1);
   const [serviceId, setserviceId] = useState("");
-  const [Dsecription, setDsecription] = useState("WHT");
+  const [Dsecription, setDsecription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFormSubmit = (e) => {
