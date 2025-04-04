@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
+import SwitchIcon from "@/components/users/SwitchIcon";
 
 const EditTaxOfficeModal = ({
   handleCloseModal,
@@ -21,7 +22,7 @@ const EditTaxOfficeModal = ({
     Telephone: "",
     TaxOfficerName: "",
     TaxOfficerPhone: "",
-    isActive: "true",
+    isActive: true, // Changed from string to boolean
   });
 
   const [taxOfficeTypes, setTaxOfficeTypes] = useState([]);
@@ -31,6 +32,22 @@ const EditTaxOfficeModal = ({
   const [loadingLgas, setLoadingLgas] = useState(true);
   const [loadingRegions, setLoadingRegions] = useState(true);
   const [error, setError] = useState(null);
+
+  // Function to clean up label names by removing 'Id' and proper formatting
+  const formatLabel = (key) => {
+    return key
+      .replace(/Id$/, "") // Remove 'Id' at the end
+      .replace(/([A-Z])/g, " $1") // Add space before capital letters
+      .trim();
+  };
+
+  // Toggle function for the SwitchIcon
+  const toggleStatus = () => {
+    setFormData((prev) => ({
+      ...prev,
+      isActive: !prev.isActive,
+    }));
+  };
 
   // Fetch dropdown data
   useEffect(() => {
@@ -107,7 +124,7 @@ const EditTaxOfficeModal = ({
         Telephone: index.Telephone || "",
         TaxOfficerName: index.TaxOfficerName || "",
         TaxOfficerPhone: index.TaxOfficerPhone || "",
-        isActive: index.isActive ? "true" : "false",
+        isActive: index.isActive || false, // Changed to boolean
       });
     }
   }, [index]);
@@ -132,7 +149,6 @@ const EditTaxOfficeModal = ({
 
     handleEditModal({
       ...formData,
-      isActive: formData.isActive === "true",
       TaxOfficeId: index.TaxOfficeId, // Preserve original ID
     });
 
@@ -156,19 +172,19 @@ const EditTaxOfficeModal = ({
           {Object.entries(formData).map(([key, value]) => (
             <div className="w-full mb-4" key={key}>
               <label className="text-base font-medium text-gray-700">
-                {key.replace(/([A-Z])/g, " $1").trim()}
+                {formatLabel(key)}
               </label>
               <div className="border-b-2 border-pumpkin h-[45px] w-full rounded-md mt-2">
                 {key === "isActive" ? (
-                  <select
-                    className="w-full h-full bg-gray-100 px-3 focus:outline-none"
-                    name={key}
-                    value={value}
-                    onChange={handleChange}
-                  >
-                    <option value="true">Active</option>
-                    <option value="false">Inactive</option>
-                  </select>
+                  <div className="flex items-center h-full px-3">
+                    <SwitchIcon
+                      isActive={formData.isActive}
+                      onToggle={toggleStatus}
+                    />
+                    <span className="ml-2 text-gray-700">
+                      {formData.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </div>
                 ) : key === "TaxOfficeTypeId" ? (
                   <select
                     className="w-full h-full bg-gray-100 px-3 focus:outline-none"
@@ -183,7 +199,7 @@ const EditTaxOfficeModal = ({
                         key={type.TaxOfficeTypeId}
                         value={type.TaxOfficeTypeId}
                       >
-                        {type.TaxOfficeTypeId}
+                        {type.TaxOfficeTypeName}
                       </option>
                     ))}
                   </select>
@@ -198,7 +214,7 @@ const EditTaxOfficeModal = ({
                     <option value="">Select LGA</option>
                     {lgas.map((lga) => (
                       <option key={lga.LGAId} value={lga.LGAId.toString()}>
-                        {lga.LGAId}
+                        {lga.LGAName}
                       </option>
                     ))}
                   </select>
@@ -216,7 +232,7 @@ const EditTaxOfficeModal = ({
                         key={region.RegionId || region.Id}
                         value={(region.RegionId || region.Id).toString()}
                       >
-                        {region.RegionId || region.Name}
+                        {region.RegionName || region.Name}
                       </option>
                     ))}
                   </select>
@@ -227,9 +243,7 @@ const EditTaxOfficeModal = ({
                     name={key}
                     value={value}
                     onChange={handleChange}
-                    placeholder={`Enter ${key
-                      .replace(/([A-Z])/g, " $1")
-                      .trim()}`}
+                    placeholder={`Enter ${formatLabel(key)}`}
                   />
                 )}
               </div>

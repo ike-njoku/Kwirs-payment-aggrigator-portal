@@ -38,7 +38,7 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
         return;
       }
 
-      setSideBarMenu(apiResponse.Data);
+      setSideBarMenu([...sidebarMenu, ...apiResponse.Data]);
     } catch (error) {
       console.error("Error fetching menu items:", error);
     }

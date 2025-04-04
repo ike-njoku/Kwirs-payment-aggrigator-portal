@@ -26,7 +26,7 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
     }
 
     const { Data } = apiResponse;
-    setSideBarMenu(Data);
+    setSideBarMenu([...sidebarMenu, ...Data]);
     return;
   };
 
