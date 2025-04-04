@@ -7,6 +7,8 @@ import { authenticateUser } from "../../services/auth-service";
 import { AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
 import MenuItems from "./menu-items/MenuItems";
+import LogoutButton from "./buttons/LogoutButton"
+
 const MobileNavbar = ({ openNav, handleCloseNav }) => {
   const [_sidebarMenu, setSideBarMenu] = useState(sidebarMenu);
   const [authenticatedUser, setAuthenticatedUser] = useState({});
@@ -65,6 +67,7 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
         <div className="w-full py-5 mt-10">
           <MenuItems sidebarMenu={_sidebarMenu} />
         </div>
+        <LogoutButton/>
       </div>
     </section>
   );
