@@ -98,10 +98,10 @@ const CustomTable = ({
               scope="row"
               className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
             >
-              {tableInfo.Description}
+              {tableInfo.PaymentMethod}
             </td>
             <td className="px-6 py-4 text-gray-900 capitalize">
-              {tableInfo.PaymentMethod}
+              {tableInfo.Description}
             </td>
             <td className="px-6 py-4 text-gray-900 capitalize">
               {tableInfo.CreatedBy}
@@ -115,8 +115,8 @@ const CustomTable = ({
         return (
           <>
             <td
-              scope="row"
-              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
+              scope
+              className="px-3 py-4 font-medium text-gray-900 capitalize break-words "
             >
               {tableInfo.taxOfficeName}
             </td>

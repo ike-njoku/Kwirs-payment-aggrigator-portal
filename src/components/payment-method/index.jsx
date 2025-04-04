@@ -11,8 +11,8 @@ import CreatePaymentMethod from "../shared-components/modals/createPaymentMethod
 
 const RolesPage = () => {
   const tableHeadings = [
-    "Description",
     "Payment Method",
+    "Description",
     "Created By",
     // "Authorization",
     "Actions",
