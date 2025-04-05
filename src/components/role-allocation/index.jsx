@@ -90,7 +90,6 @@ const ResourcesPage = () => {
         <div className=" w-[90%] mx-auto py-5">
           <div className=" w-full lg:mt-10">
             {/* search bar and filter options here */}
-
             {/* table */}
             <UsersTable isRoleAllocation={true} />
           </div>
