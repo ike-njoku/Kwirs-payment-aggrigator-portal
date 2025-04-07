@@ -5,7 +5,6 @@ import HomeRadio from "../shared-components/inputs/HomeRadio";
 import PrimaryInput from "../shared-components/inputs/PrimaryInput";
 import useFetchInvoiceData from "@/utils/fetchInvoiceData";
 
-
 const AssessmentNumberComponent = ({
   showNextComponent,
   paymentAssessmentNumberment,
@@ -16,18 +15,23 @@ const AssessmentNumberComponent = ({
 }) => {
   const [selectedOption, setSelectedOption] = useState("");
   const [assessmentNumber, setAssessmentNumber] = useState("");
-  const { fetchInvoiceData, loading } = useFetchInvoiceData();
 
-   const handleSubmit = async (e) => {
-     e.preventDefault();
-     if (selectedOption === "payWithPRN") {
-       await fetchInvoiceData(paymentPRN); // Fetch invoice first
-       handleShowInvoice(e); // Then show invoice (handled by parent)
-     } else {
-       showNextComponent(e);
-     }
-   };
+  const { fetchInvoiceData, loading, notFound } = useFetchInvoiceData();
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (selectedOption === "payWithPRN") {
+      const success = await fetchInvoiceData(paymentPRN);
+      if (success) {
+        console.log("Invoice found, showing invoice.");
+        handleShowInvoice(e); // Trigger only if invoice is found
+      } else {
+        console.log("No invoice found or error occurred.");
+      }
+    } else {
+      showNextComponent(e);
+    }
+  };
 
   const handleOptionChange = (e) => {
     setSelectedOption(e.target.value);
@@ -84,10 +88,14 @@ const AssessmentNumberComponent = ({
           />
         )}
         {loading && <p className="text-white">Fetching invoice...</p>}{" "}
+        {!loading && notFound && (
+          <p className="text-red-500">
+            PRN is not associated with any invoice...
+          </p>
+        )}
         {/* ✅ Show loading state */}
         {/* {paymentPRN} */}
-        6446-2223-9604
-
+        {/* 6446-2223-9604 */}
         <AuthButtons
           label="Continue"
           isDisabled={false}
