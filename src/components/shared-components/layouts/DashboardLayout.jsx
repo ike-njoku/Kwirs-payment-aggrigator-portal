@@ -10,6 +10,7 @@ import { authenticateUser } from "../../../services/auth-service";
 import { AxiosGet, AxiosPost } from "../../../services/http-service";
 import { toast } from "react-toastify";
 import MenuItems from "../menu-items/MenuItems";
+import LogoutButton from "../buttons/LogoutButton";
 
 const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
   const pathname = usePathname();
@@ -38,7 +39,7 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
         return;
       }
 
-      setSideBarMenu(apiResponse.Data);
+      setSideBarMenu([...sidebarMenu, ...apiResponse.Data]);
     } catch (error) {
       console.error("Error fetching menu items:", error);
     }
@@ -94,6 +95,7 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
           <div className="w-full py-5 mt-10">
             <MenuItems sidebarMenu={_sidebarMenu} />
           </div>
+          <LogoutButton />
         </div>
       </div>
 

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
+import SwitchIcon from "@/components/users/SwitchIcon";
 
 const CreateTaxOffices = ({
   handleCloseModal,
@@ -19,7 +20,7 @@ const CreateTaxOffices = ({
     Telephone: "",
     TaxOfficerName: "",
     TaxOfficerPhone: "",
-    isActive: true,
+    isActive: true, // Changed to boolean
   });
 
   const [taxOfficeTypes, setTaxOfficeTypes] = useState([]);
@@ -29,6 +30,14 @@ const CreateTaxOffices = ({
   const [loadingLgas, setLoadingLgas] = useState(true);
   const [loadingRegions, setLoadingRegions] = useState(true);
   const [error, setError] = useState(null);
+
+  // Toggle function for the SwitchIcon
+  const toggleStatus = () => {
+    setFormData((prev) => ({
+      ...prev,
+      isActive: !prev.isActive,
+    }));
+  };
 
   useEffect(() => {
     const fetchTaxOfficeTypes = async () => {
@@ -114,6 +123,13 @@ const CreateTaxOffices = ({
     handleCloseModal();
   };
 
+  const formatLabel = (key) => {
+    return key
+      .replace(/Id$/, "")
+      .replace(/([A-Z])/g, " $1")
+      .trim();
+  };
+
   return (
     <ModalLayout handleCloseModal={handleCloseModal}>
       <div className="w-full p-5">
@@ -131,19 +147,19 @@ const CreateTaxOffices = ({
           {Object.entries(formData).map(([key, value]) => (
             <div className="w-full mb-4" key={key}>
               <label className="text-base font-medium text-gray-700">
-                {key.replace(/([A-Z])/g, " $1").trim()}
+                {formatLabel(key)}
               </label>
               <div className="border-b-2 border-pumpkin h-[45px] w-full rounded-md mt-2">
                 {key === "isActive" ? (
-                  <select
-                    className="w-full h-full bg-gray-100 px-3 focus:outline-none"
-                    name={key}
-                    value={value}
-                    onChange={handleChange}
-                  >
-                    <option value="true">Active</option>
-                    <option value="false">Inactive</option>
-                  </select>
+                  <div className="flex items-center h-full px-3">
+                    <SwitchIcon
+                      isActive={formData.isActive}
+                      onToggle={toggleStatus}
+                    />
+                    <span className="ml-2 text-gray-700">
+                      {formData.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </div>
                 ) : key === "TaxOfficeTypeId" ? (
                   <select
                     className="w-full h-full bg-gray-100 px-3 focus:outline-none"
@@ -158,7 +174,7 @@ const CreateTaxOffices = ({
                         key={type.TaxOfficeTypeId}
                         value={type.TaxOfficeTypeId}
                       >
-                        {type.TaxOfficeTypeId}
+                        {type.TaxOfficeTypeName}
                       </option>
                     ))}
                   </select>
@@ -191,7 +207,7 @@ const CreateTaxOffices = ({
                         key={region.RegionId || region.Id}
                         value={(region.RegionId || region.Id).toString()}
                       >
-                        {region.RegionId || region.Name}
+                        {region.RegionName || region.Name}
                       </option>
                     ))}
                   </select>
@@ -202,9 +218,7 @@ const CreateTaxOffices = ({
                     name={key}
                     value={value}
                     onChange={handleChange}
-                    placeholder={`Enter ${key
-                      .replace(/([A-Z])/g, " $1")
-                      .trim()}`}
+                    placeholder={`Enter ${formatLabel(key)}`}
                   />
                 )}
               </div>

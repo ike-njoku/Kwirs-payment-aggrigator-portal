@@ -9,7 +9,6 @@ import Link from "next/link";
 import { AxiosPost, AxiosGet } from "../../services/http-service";
 import { toast } from "react-toastify";
 
-
 // const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 //   const [currentDate, setCurrentDate] = useState(displayDate());
@@ -70,7 +69,7 @@ const UserDashboard = () => {
         setRecentTransactions(response.data.Data || []);
       } else {
         toast.error(
-          response.data?.StatusMessage || "Could not fetch profile data."
+          response?.data?.StatusMessage || "Could not fetch profile data."
         );
         setProfileData({});
       }

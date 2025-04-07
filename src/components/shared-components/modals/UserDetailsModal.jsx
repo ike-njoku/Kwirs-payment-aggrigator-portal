@@ -131,6 +131,7 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
     getRoles();
     handleGetUserRole();
   }, []);
+
   return (
     <ModalLayout handleCloseModal={handleCloseModal}>
       <div className="w-full p-5">
@@ -194,7 +195,11 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
               </ul>
 
               <div className="border-b-2 border-b-pumpkin w-full rounded-md my-4 custom-select">
-                <Select options={options} onChange={handleChangeRoles} />
+                <Select
+                  options={options}
+                  onChange={handleChangeRoles}
+                  defaultValue={options[0]}
+                />
               </div>
 
               {/* undo the comment below to update user info */}

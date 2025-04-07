@@ -4,7 +4,6 @@ import DashboardLayout from "../shared-components/layouts/DashboardLayout";
 import CustomTable from "../shared-components/table";
 import { roleTableData } from "../../utils/table_data";
 import { FaPlus } from "react-icons/fa";
-import CreateRoleModel from "../shared-components/modals/CreateRoleModel";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
 import CreateTaxOffices from "../shared-components/modals/CreateTaxOffices";
@@ -18,7 +17,6 @@ const Tax_office = () => {
     "Phone",
     "City",
     "LGA",
-    // "IsActive",
     "Actions",
   ];
   const [tableData, setTableData] = useState(roleTableData);
@@ -28,6 +26,27 @@ const Tax_office = () => {
   const [authenticatedUser, setAuthenticatedUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
+  // Pagination States
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 4;
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentRows, setCurrentRows] = useState([]);
+
+  // Update pagination when tableData changes
+  useEffect(() => {
+    const newTotalPages = Math.ceil(tableData.length / rowsPerPage);
+    setTotalPages(newTotalPages);
+
+    // Reset to page 1 if current page exceeds new total pages
+    if (currentPage > newTotalPages && newTotalPages > 0) {
+      setCurrentPage(1);
+    }
+
+    const indexOfLastRow = currentPage * rowsPerPage;
+    const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+    setCurrentRows(tableData.slice(indexOfFirstRow, indexOfLastRow));
+  }, [tableData, currentPage]);
+
   const handleDelete = () => {
     setOpenDeleteModal(true);
   };
@@ -36,9 +55,16 @@ const Tax_office = () => {
     setOpenEditModal(true);
   };
 
-  // handle tax office delete
+  // Pagination Handlers
+  const nextPage = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
   const handleDeleteItem = async (TaxOfficeId) => {
-    console.log("Deleting Tax Office ID:", TaxOfficeId); // Debugging
     if (!TaxOfficeId) {
       toast.error("Invalid Tax Office ID");
       return;
@@ -54,7 +80,6 @@ const Tax_office = () => {
         deleteResponse?.StatusCode === 200
       ) {
         toast.success("Tax office deleted successfully");
-
         setTableData((prevData) =>
           prevData.filter((item) => item.taxOfficeId !== TaxOfficeId)
         );
@@ -73,16 +98,13 @@ const Tax_office = () => {
     setAuthenticatedUser(user);
   }, []);
 
-  // handle edit Tax Offices
   const handleEditItem = async (updatedTaxOffice) => {
     try {
-      // Validate required fields
       if (!updatedTaxOffice.TaxOfficeId || !updatedTaxOffice.TaxOfficeName) {
         toast.error("Please fill in all required fields.");
         return;
       }
 
-      // Prepare payload
       const payload = {
         TaxOfficeId: updatedTaxOffice.TaxOfficeId,
         TaxOfficeName: updatedTaxOffice.TaxOfficeName,
@@ -97,7 +119,6 @@ const Tax_office = () => {
         isActive: updatedTaxOffice.isActive === "true",
       };
 
-      // API Call
       const response = await AxiosPost(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/taxOffice/Update`,
         payload
@@ -123,7 +144,6 @@ const Tax_office = () => {
     setOpenRoleModal(true);
   };
 
-  // hand create payment method
   const handleCreateTaxOffice = async (formData) => {
     setIsLoading(true);
 
@@ -141,34 +161,19 @@ const Tax_office = () => {
       isActive: formData.isActive,
     };
 
-    console.log("newtaxoffice:", newTaxOffice);
-
     try {
       const createResponse = await AxiosPost(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/taxOffice/Create`,
         newTaxOffice
       );
 
-      console.log("Create response:", createResponse);
-
       if (createResponse?.StatusCode !== 200) {
         toast.error("Could not create tax office");
         return;
       }
 
-      setIsLoading(false);
       toast.success("Tax office created successfully");
-
-      // Update table data with the new tax office
-      setTableData([
-        ...tableData,
-        {
-          ...newTaxOffice,
-          dateCreated: new Date().toISOString().split("T")[0],
-        },
-      ]);
-
-      getAllTaxOffices(); // Refresh the list
+      getAllTaxOffices();
     } catch (error) {
       console.error("Create Error:", error.response?.data || error);
       toast.error("An error occurred while creating the tax office");
@@ -181,49 +186,49 @@ const Tax_office = () => {
     getAllTaxOffices();
   }, []);
 
-  // get all tax offices here
-
   const getAllTaxOffices = async () => {
-    const apiResponse = await AxiosGet(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/taxOffice/GetAllTaxOffices`
-    );
-    if (!apiResponse || !apiResponse.data) {
-      toast.error("Could not fetch tax offices");
-      return;
+    try {
+      const apiResponse = await AxiosGet(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/taxOffice/GetAllTaxOffices`
+      );
+
+      if (!apiResponse || !apiResponse.data) {
+        toast.error("Could not fetch tax offices");
+        return;
+      }
+
+      const formattedData = apiResponse.data.Data.map((item) => ({
+        ...item,
+        taxOfficeId: item.TaxOfficeId,
+        taxOfficeName: item.TaxOfficeName,
+        regionName: item.RegionName,
+        taxOfficeTypeName: item.TaxOfficeTypeName,
+        createdBy: item.CreatedBy,
+        officerName: item.TaxOfficerName,
+        taxOfficerPhone: item.TaxOfficerPhone,
+        city: item.City,
+        lGAName: item.LGAName,
+        isActive: item.IsActive,
+        dateCreated: item.UpdateDate
+          ? new Date(item.UpdateDate).toISOString().split("T")[0]
+          : null,
+      }));
+
+      setTableData(formattedData);
+    } catch (error) {
+      toast.error("Error fetching tax offices");
+      console.error("Error:", error);
     }
-
-    let tableData = apiResponse.data.Data.map((item) => ({
-      ...item,
-      taxOfficeId: item.TaxOfficeId,
-      taxOfficeName: item.TaxOfficeName,
-      regionName: item.RegionName,
-      taxOfficeTypeName: item.TaxOfficeTypeName,
-      createdBy: item.CreatedBy,
-      officerName: item.TaxOfficerName,
-      taxOfficerPhone: item.TaxOfficerPhone,
-      city: item.City,
-      lGAName: item.LGAName,
-      isActive: item.IsActive,
-      dateCreated: item.UpdateDate
-        ? new Date(item.UpdateDate).toISOString().split("T")[0]
-        : null,
-    }));
-
-    setTableData(tableData);
-    console.log("tableDatasss", tableData);
   };
 
   return (
     <DashboardLayout page="Tax Office">
       <section className="w-full">
-        <div className=" w-[90%] mx-auto py-5">
-          <div className=" w-full lg:mt-10">
-            {/* search bar and filter options here */}
+        <div className="w-[90%] mx-auto py-5">
+          <div className="w-full lg:mt-10">
             <section className="w-full mb-3 flex justify-end items-center gap-5 lg:justify-start">
               <button
-                id="dropdownBgHoverButton"
-                data-dropdown-toggle="dropdownBgHover"
-                className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center  relative  gap-2 border border-pumpkin"
+                className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
                 type="button"
                 onClick={handleOpenCreateTaxOffice}
               >
@@ -231,24 +236,53 @@ const Tax_office = () => {
                 <FaPlus />
               </button>
             </section>
-            {/* table */}
+
             <CustomTable
               tableHeadings={tableHeadings}
               tableType="tax-office"
-              tableData={tableData}
+              tableData={currentRows}
               isEllipseDropdwon={true}
               handleDelete={handleDelete}
               handleEdit={handleEdit}
               openDeleteModal={openDeleteModal}
               setOpenDeleteModal={setOpenDeleteModal}
               setOpenEditModal={setOpenEditModal}
-              // openEditTaxOfficeModal={openEditTaxOfficeModal}
               openEditTaxOfficeModal={openEditTaxOfficeModal}
               handleDeleteItem={handleDeleteItem}
               handleEditItem={handleEditItem}
-              label="Role name"
-              heading="Upate Roles"
+              label=""
+              heading="Update Tax Office"
             />
+
+            {tableData.length > rowsPerPage && (
+              <div className="flex justify-between items-center mt-4 px-4 py-2 bg-gray-100">
+                <button
+                  onClick={prevPage}
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 text-sm font-medium rounded ${
+                    currentPage === 1
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-pumpkin text-white hover:bg-orange-600"
+                  }`}
+                >
+                  Previous
+                </button>
+                <span className="text-sm font-medium">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={nextPage}
+                  disabled={currentPage >= totalPages}
+                  className={`px-4 py-2 text-sm font-medium rounded ${
+                    currentPage >= totalPages
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-pumpkin text-white hover:bg-orange-600"
+                  }`}
+                >
+                  Next
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

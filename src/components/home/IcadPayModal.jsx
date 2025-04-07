@@ -94,7 +94,7 @@ const IcadPayModal = ({ isOpen, onClose, invoiceData }) => {
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment/Notification`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment/NotificationICAD`,
         {
           method: "POST",
           headers: {
