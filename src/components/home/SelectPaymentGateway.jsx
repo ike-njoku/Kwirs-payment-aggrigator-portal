@@ -14,6 +14,7 @@ import IcadPayModal from "./IcadPayModal";
 import { handleInterswitchPayment } from "../../utils/interswitchPayment";
 import PayWithCredoPayment from "@/utils/credoPayment";
 import PayWithRemita from "@/utils/remitaPayment";
+import RRR from "./RRR";
 
 const SelectPaymentGateway = ({ showPreviousComponent }) => {
   const [selectedOption, setSelectedOption] = useState("nil");
@@ -89,6 +90,9 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
           key={i}
         />
       ))}
+
+
+      {/* <RRR /> */}
 
       <div className="w-full flex justify-between gap-4 items-center mt-6">
         <PaymentButtons label="Back" onClick={showPreviousComponent} />

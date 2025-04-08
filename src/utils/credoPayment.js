@@ -53,11 +53,14 @@ const PayWithCredoPayment = () => {
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/payment/Notification`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(paymentData),
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/api/payment/NotificationCREDO`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(paymentData),
+        }
+      );
 
       if (!response.ok)
         throw new Error(`HTTP error! Status: ${response.status}`);

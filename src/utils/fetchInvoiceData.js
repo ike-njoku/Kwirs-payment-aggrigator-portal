@@ -6,9 +6,11 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const useFetchInvoiceData = () => {
   const { setPaymentRequestDetails } = useContext(PaymentRequest);
   const [loading, setLoading] = useState(false);
+  const [notFound, setNotFound] = useState(false);
 
   const fetchInvoiceData = async (PRN) => {
     setLoading(true);
+    setNotFound(false); // Reset notFound state before making the request
     try {
       console.log("Fetching invoice data...");
       const response = await fetch(
@@ -18,6 +20,8 @@ const useFetchInvoiceData = () => {
       if (!response.ok) throw new Error("Failed to fetch invoice");
 
       const data = await response.json();
+
+      console.log("Fetched data:", data); // Debugging the fetched data
 
       if (data?.Data?.length > 0) {
         const invoiceData = data.Data[0]; // ✅ Extract the first invoice object
@@ -35,18 +39,25 @@ const useFetchInvoiceData = () => {
           payerName: data.Data[0]?.payerName ?? "",
           amount: data.Data[0]?.amount ?? 0,
         });
+
+        return true; // Successfully fetched invoice data
       } else {
         console.warn("No invoice data found.");
         setPaymentRequestDetails(null);
+        setNotFound(true);
+        return false; // No invoice found
       }
     } catch (error) {
       console.error("Error fetching invoice:", error);
+      setNotFound(true);
+      return false; // Error occurred
     } finally {
       setLoading(false);
     }
   };
 
-  return { fetchInvoiceData, loading };
+  return { fetchInvoiceData, loading, notFound };
 };
+
 
 export default useFetchInvoiceData;
