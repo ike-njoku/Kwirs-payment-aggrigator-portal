@@ -123,7 +123,6 @@ const HomePage = () => {
             </div>
 
             <div className="w-full my-10 overflow-y-auto customScroll">
-
               {/* max-h-[600px] overflow-y-auto customScroll */}
 
               {nextComponent === 0 && (
@@ -174,7 +173,11 @@ const HomePage = () => {
               {nextComponent === 4 && (
                 <Invoice
                   showNextComponent={handleShowPaymentGateway}
-                  showPreviousComponent={() => showNextComponent(3)}
+                  showPreviousComponent={() => {
+                    showNextComponent(0);
+                    setPaymentRequestDetails({});
+                    setPaymentPRN("");
+                  }}
                   paymentRequestDetails={paymentRequestDetails}
                 />
               )}
