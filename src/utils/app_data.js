@@ -17,11 +17,7 @@ export const sidebarMenu = [
   },
   {
     MainMenu: "Settings",
-    submenu: [
-      { ResourceName: "Change Password", URL: "/change-password" },
-      { ResourceName: "Reset password", URL: "/reset-password" },
-    ],
-    // submenu: [{ ResourceName: "Notifications", URL: "/notifications" }],
+    submenu: [{ ResourceName: "Change Password", URL: "/change-password" }],
   },
 ];
 
