@@ -165,7 +165,11 @@ const HomePage = () => {
               {nextComponent === 4 && (
                 <Invoice
                   showNextComponent={handleShowPaymentGateway}
-                  showPreviousComponent={() => showNextComponent(3)}
+                  showPreviousComponent={() => {
+                    showNextComponent(0);
+                    setPaymentRequestDetails({});
+                    setPaymentPRN("");
+                  }}
                   paymentRequestDetails={paymentRequestDetails}
                 />
               )}
