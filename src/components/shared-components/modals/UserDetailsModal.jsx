@@ -37,7 +37,7 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
       const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/GetUserRoles`;
 
       const payload = {
-        UserName: user.UserName,
+        UserName: user.userName,
       };
 
       const apiResponse = await AxiosPost(apiUrl, payload);
@@ -80,16 +80,18 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
   };
 
   const handleDeleteRole = async (id) => {
-    console.log("CALLED TOO");
+    console.log("CALLED TOO", id);
     try {
       setIsLoading(true);
       const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Roles/RemoveUserFromRole`;
 
       const payload = {
-        UserName: user.UserName,
+        UserName: user.userName,
         RoleId: id,
       };
       const apiResponse = await AxiosPost(apiUrl, payload);
+
+      console.log("API RESPONSE ----->>", apiResponse, "=======><", payload);
 
       if (apiResponse && apiResponse.StatusCode == 200) {
         toast.success(apiResponse.StatusMessage);
@@ -180,6 +182,7 @@ const UserDetailsModal = ({ handleCloseModal, user, isRoleAllocation }) => {
                             {i !== allUserRoles.length - 1 && ","}
                             <button
                               className="absolute -top-2 -right-2 text-red-500 text-sm opacity-0"
+                              type="button"
                               onClick={() => handleDeleteRole(roles.Id)}
                             >
                               <FaTimes />
