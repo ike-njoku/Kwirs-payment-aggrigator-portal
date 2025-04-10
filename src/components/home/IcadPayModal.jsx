@@ -32,29 +32,22 @@ const IcadPayModal = ({ isOpen, onClose, invoiceData }) => {
       ref: ` ${Math.floor(Math.random() * 1000000000 + 1)}`,
       narration: invoiceData.narration,
       callback_url: "",
-      callback: (response) => {
-        console.log("Payment Response:", response);
-      },
+      callback: (response) => {},
       onSuccess: (response) => {
-        console.log("Success:", response);
         alert(`Success! Transaction ref: ${response.paymentReference}`);
 
         // Send the notification after successful payment
         sendPaymentNotification(response);
       },
       onError: (response) => {
-        console.log("Error:", response);
         alert("Payment Failed");
       },
-      onClose: () => {
-        console.log("Payment window closed");
-      },
+      onClose: () => {},
     });
   };
 
   const sendPaymentNotification = async (paymentResponse) => {
     if (!paymentResponse || !paymentResponse.requestSuccessful) {
-      console.error("Invalid payment response:", paymentResponse);
       return;
     }
 
@@ -90,8 +83,6 @@ const IcadPayModal = ({ isOpen, onClose, invoiceData }) => {
     };
 
     // Log the payload before sending
-    console.log("Notification Payload:", notificationPayload);
-
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment/NotificationICAD`,
@@ -106,9 +97,7 @@ const IcadPayModal = ({ isOpen, onClose, invoiceData }) => {
 
       const result = await res.json();
       if (res.ok) {
-        console.log("Payment notification sent successfully:", result);
       } else {
-        console.error("Failed to send payment notification:", result);
       }
     } catch (error) {
       console.error("Error sending payment notification:", error);
