@@ -92,7 +92,6 @@ const AssessmentNumberComponent = ({
         )}
         {/* ✅ Show loading state */}
         {/* {paymentPRN} */}
-        6446-2223-9604
         <AuthButtons
           label="Continue"
           isDisabled={false}
