@@ -14,10 +14,9 @@ const ResetPasswordPage = () => {
 
   const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
-  // Handle reCAPTCHA token change
   const handleCaptchaChange = (token) => {
     setCaptchaToken(token);
-    localStorage.setItem('captchaToken', token); // Store token in localStorage
+    localStorage.setItem('captchaToken', token);
   };
 
   const handleResetPassword = async (event) => {
@@ -28,15 +27,13 @@ const ResetPasswordPage = () => {
       return;
     }
 
-    // Validate username: must be 10-digit TIN
-    const tinRegex = /^\d{10}$/;
-    if (!tinRegex.test(username)) {
-      toast.error("TIN must be a valid 10-digit number.");
+    if (!username.trim()) {
+      toast.error("UserName is required.");
       return;
     }
 
     const payload = {
-      UserName: username,
+      UserName: username.trim(),
       CaptchaToken: captchaToken,
     };
 
@@ -69,17 +66,15 @@ const ResetPasswordPage = () => {
         <form onSubmit={handleResetPassword}>
           <div>
             <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-            Tin Number
+              User Name
             </label>
-            <input
-              type="text"
+            <textarea
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              maxLength={10}
-              inputMode="numeric"
               className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md"
-              placeholder="Enter your TIN"
+              placeholder="Enter your UserName"
+              rows={3}
               required
             />
           </div>
