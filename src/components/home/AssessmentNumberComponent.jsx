@@ -23,10 +23,7 @@ const AssessmentNumberComponent = ({
     if (selectedOption === "payWithPRN") {
       const success = await fetchInvoiceData(paymentPRN);
       if (success) {
-        console.log("Invoice found, showing invoice.");
         handleShowInvoice(e); // Trigger only if invoice is found
-      } else {
-        console.log("No invoice found or error occurred.");
       }
     } else {
       showNextComponent(e);
@@ -95,7 +92,6 @@ const AssessmentNumberComponent = ({
         )}
         {/* ✅ Show loading state */}
         {/* {paymentPRN} */}
-        6446-2223-9604
         <AuthButtons
           label="Continue"
           isDisabled={false}

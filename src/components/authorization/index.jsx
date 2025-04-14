@@ -29,7 +29,9 @@ const AuthorizationPage = () => {
   // ✅ Fetch Agencies & Get AgencyCode
   const fetchAgencies = async () => {
     try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/GetAllAgencies`);
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/Agencies/GetAllAgencies`
+      );
       if (response?.data?.StatusCode === 200) {
         setAgencies(response.data.Data || []);
       } else {
@@ -37,7 +39,6 @@ const AuthorizationPage = () => {
         setAgencies([]);
       }
     } catch (error) {
-      console.error("❌ Error fetching agencies:", error);
       toast.error("Error fetching agencies");
     }
   };
@@ -47,74 +48,68 @@ const AuthorizationPage = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token"); // Get auth token
-  
+
       if (!token) {
         toast.error("You are not authenticated. Please log in again.");
         setLoading(false);
         return;
       }
-  
-      const response = await AxiosGet(`${API_BASE_URL}/api/DLAuthorization/GetAllAuthorization`, {
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-  
-      console.log("📢 API Response:", response); // Debugging
-  
+
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/DLAuthorization/GetAllAuthorization`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
       if (response?.data?.StatusCode === 200) {
         setAuthorizations(response.data.Data || []);
       } else {
         setError("Failed to fetch authorizations.");
       }
     } catch (error) {
-      console.error("❌ Fetch Error:", error);
       setError("Could not fetch authorizations.");
     } finally {
       setLoading(false);
     }
   };
 
-
   const getAgencyById = async (agencyId) => {
     if (!agencyId) {
-      console.error("❌ Agency ID is required!");
       return;
     }
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/Agencies/GetAllAgenciesPBYID/${agencyId}`);
+      const response = await axios.get(
+        `${API_BASE_URL}/api/Agencies/GetAllAgenciesPBYID/${agencyId}`
+      );
       if (response?.data?.StatusCode === 200) {
-        console.log("✅ Agency Data:", response.data.Data);
         return response.data.Data;
       } else {
-        console.error("❌ Failed to fetch agency:", response?.data?.StatusMessage);
         return null;
       }
     } catch (error) {
-      console.error("❌ Error fetching agency:", error);
       return null;
     }
   };
-  
-  
 
   useEffect(() => {
     fetchAgencies();
     fetchAuthorizations(); // Fetch all authorizations initially
   }, []);
-  
+
   useEffect(() => {
     if (selectedAgencyCode) {
       handleSelectedAgencyCode({ target: { value: selectedAgencyCode } });
     }
   }, [selectedAgencyCode]);
-  
 
   const handleSelectedAgencyCode = (e) => {
     const selectedAgency = e.target.value;
     setSelectedAgencyCode(selectedAgency);
-  
+
     if (selectedAgency) {
       // Filter authorizations by selected agency
       const filteredAuthorizations = authorizations.filter(
@@ -127,31 +122,24 @@ const AuthorizationPage = () => {
     }
   };
 
-    // ✅ Handle Edit Click (Fixing Modal Issue)
-    const handleEditAuthorization = (authorizationId) => {
-      console.log("🔍 Received authorizationId:", authorizationId);
-    
-      if (!authorizationId) {
-        console.error("❌ Invalid authorization ID:", authorizationId);
-        return;
-      }
-    
-      const authorization = authorizations.find((auth) => auth.authorizationId === authorizationId);
-    
-      if (!authorization) {
-        console.error("❌ Authorization not found for ID:", authorizationId);
-        console.log("🔍 All Authorizations Data:", authorizations);
-        return;
-      }
-    
-      console.log("🟢 Selected Authorization for Editing:", authorization);
-      
-      // ✅ Ensure selectedAuthorization updates before opening modal
-      setSelectedAuthorization(authorization);
-      setTimeout(() => setOpenEditModal(true), 100); // Delay to ensure state is updated
-    };
-    
-    
+  // ✅ Handle Edit Click (Fixing Modal Issue)
+  const handleEditAuthorization = (authorizationId) => {
+    if (!authorizationId) {
+      return;
+    }
+
+    const authorization = authorizations.find(
+      (auth) => auth.authorizationId === authorizationId
+    );
+
+    if (!authorization) {
+      return;
+    }
+
+    // ✅ Ensure selectedAuthorization updates before opening modal
+    setSelectedAuthorization(authorization);
+    setTimeout(() => setOpenEditModal(true), 100); // Delay to ensure state is updated
+  };
 
   // ✅ Delete Authorization
   const handleDeleteAuthorization = async (authorizationId) => {
@@ -161,17 +149,22 @@ const AuthorizationPage = () => {
     }
 
     try {
-      console.log(`🚀 Deleting AuthorizationId: ${authorizationId}`);
-      const response = await AxiosGet(`${API_BASE_URL}/api/DLAuthorization/Delete/${authorizationId}`);
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/DLAuthorization/Delete/${authorizationId}`
+      );
       if (response?.data?.StatusCode === 200) {
         toast.success("Authorization deleted successfully!");
         await fetchAuthorizations();
       } else {
-        toast.error(response.data?.StatusMessage || "Failed to delete authorization.");
+        toast.error(
+          response.data?.StatusMessage || "Failed to delete authorization."
+        );
       }
     } catch (error) {
-      console.error("❌ Error deleting authorization:", error);
-      toast.error(error.response?.data?.StatusMessage || "Error deleting authorization. Kindly contact the Admin.");
+      toast.error(
+        error.response?.data?.StatusMessage ||
+          "Error deleting authorization. Kindly contact the Admin."
+      );
     }
   };
 
@@ -215,44 +208,38 @@ const AuthorizationPage = () => {
             <p className="text-red-500">{error}</p>
           ) : (
             <CustomTable
-            tableHeadings={tableHeadings}
-            tableData={authorizations}
-            handleEdit={(authorizationId) => {
-              console.log("🟢 Edit Button Clicked - ID:", authorizationId);
-              handleEditAuthorization(authorizationId);
-            }}
-            handleDelete={handleDeleteAuthorization}
-            loading={loading}
-            error={error}
-          />
-          
+              tableHeadings={tableHeadings}
+              tableData={authorizations}
+              handleEdit={(authorizationId) => {
+                handleEditAuthorization(authorizationId);
+              }}
+              handleDelete={handleDeleteAuthorization}
+              loading={loading}
+              error={error}
+            />
           )}
         </div>
 
-          {/* ✅ Authorization Modal */}
-          {openPermissionModal && (
+        {/* ✅ Authorization Modal */}
+        {openPermissionModal && (
           <AuthorizationModal
             isOpen={openPermissionModal}
             onClose={() => setOpenPermissionModal(false)}
             refreshPermissions={fetchAuthorizations}
           />
         )}
-        
 
         {openEditModal && selectedAuthorization && (
-  <EditAuthorization
-    isOpen={openEditModal}
-    onClose={() => setOpenEditModal(false)}
-    fetchAuthorizations={fetchAuthorizations}
-    authorizationId={selectedAuthorization?.authorizationId} // ✅ Fixed prop name
-  />
-)}
-
+          <EditAuthorization
+            isOpen={openEditModal}
+            onClose={() => setOpenEditModal(false)}
+            fetchAuthorizations={fetchAuthorizations}
+            authorizationId={selectedAuthorization?.authorizationId} // ✅ Fixed prop name
+          />
+        )}
       </section>
     </DashboardLayout>
   );
 };
 
 export default AuthorizationPage;
-
-
