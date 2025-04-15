@@ -29,6 +29,7 @@ const CustomTable = ({
   label,
   isResource = false,
   tableType = "default", // Add this new prop to differentiate table types
+  onPreviewClick, // Add this new prop
 }) => {
   const handleCloseDeleteModal = () => {
     setOpenDeleteModal(false);
@@ -111,6 +112,46 @@ const CustomTable = ({
             </td> */}
           </>
         );
+      case "audit-log": // Another table type
+        return (
+          <>
+            <td
+              scope="row"
+              className="px-3 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
+            >
+              {tableInfo.userName}
+            </td>
+            <td className="px-2 py-4 text-gray-900 capitalize">
+              {tableInfo.date}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.machineAddress}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.machineName}
+            </td>
+            {/* <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.machineVersion}
+            </td> */}
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.actionType}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.recordId}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.auditLogId}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              <button
+                className="hover:text--600 bg-orange-600 rounded-xl text-white px-3 py-1"
+                onClick={() => onPreviewClick(tableInfo.auditLogId)} // Use the prop here
+              >
+                Preview
+              </button>
+            </td>
+          </>
+        );
       case "tax-office": // Another table type
         return (
           <>
@@ -186,27 +227,29 @@ const CustomTable = ({
                   key={i}
                 >
                   {renderTableCell(tableInfo, tableType)}
-                  <td className="px-6 py-4 text-gray-900">
-                    {isEllipseDropdwon ? (
-                      <EllipseDropdown
-                        handleDelete={handleDelete}
-                        handleEdit={handleEdit}
-                        setSelectedItem={setSelectedItem}
-                        id={
-                          tableInfo.TaxOfficeId ||
-                          tableInfo.id ||
-                          tableInfo.paymentMethodId
-                        }
-                        item={tableInfo}
-                      />
-                    ) : (
-                      <SwitchIcon
-                        isActive={tableInfo.isActive}
-                        onToggle={toggleStatus}
-                        index={i}
-                      />
-                    )}
-                  </td>
+                  {tableType !== "audit-log" && (
+                    <td className="px-6 py-4 text-gray-900">
+                      {isEllipseDropdwon ? (
+                        <EllipseDropdown
+                          handleDelete={handleDelete}
+                          handleEdit={handleEdit}
+                          setSelectedItem={setSelectedItem}
+                          id={
+                            tableInfo.TaxOfficeId ||
+                            tableInfo.id ||
+                            tableInfo.paymentMethodId
+                          }
+                          item={tableInfo}
+                        />
+                      ) : (
+                        <SwitchIcon
+                          isActive={tableInfo.isActive}
+                          onToggle={toggleStatus}
+                          index={i}
+                        />
+                      )}
+                    </td>
+                  )}
                 </tr>
               ))}
 

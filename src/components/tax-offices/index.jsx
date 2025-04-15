@@ -119,6 +119,7 @@ const Tax_office = () => {
         isActive: updatedTaxOffice.isActive === "true",
       };
 
+      console.log("Payload for update:", payload);
       const response = await AxiosPost(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/taxOffice/Update`,
         payload
