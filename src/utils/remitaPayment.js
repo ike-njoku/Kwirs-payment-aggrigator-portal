@@ -51,7 +51,7 @@ const PayWithRemita = () => {
       transactionRef: paymentResponse.paymentReference,
       amount: invoiceData.amount || 0,
       currency: "NGN",
-      status: paymentResponse.paymentReference ? "success" : "pending",
+      status: paymentResponse.paymentReference ? 1 : 3,
       channel: "1",
       transactionDate: new Date().toISOString(),
       invoiceId: invoiceData.PRN,

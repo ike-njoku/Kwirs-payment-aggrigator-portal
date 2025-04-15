@@ -1,8 +1,8 @@
-import PsspManagement from "@/components/PSSP-Management";
+import BulkPayment from "@/components/BulkPayment";
 import React from "react";
 
 const page = () => {
-  return <PsspManagement />;
+  return <BulkPayment />;
 };
 
 export default page;
