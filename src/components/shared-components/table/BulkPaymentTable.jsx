@@ -71,11 +71,11 @@ const CustomTable = ({
                     {tableInfo.taxpayerTIN}
                   </td>
                   <td className="px-6 py-4 text-gray-900 capitalize">
-                    {/* {tableInfo.taxpayerTIN} */}
-                    100
+                    {tableInfo.taxTypeId}
+                    {/* 100 */}
                   </td>
                   <td className="px-6 py-4 text-gray-900 capitalize">
-                    {new Date(tableInfo.dateCreated).toLocaleDateString()}
+                    {new Date(tableInfo.paymentDate).toLocaleDateString()}
                   </td>
 
                   <td className="px-6 py-4 text-gray-900 capitalize">
