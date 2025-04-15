@@ -111,7 +111,11 @@ const LoginPage = () => {
               />
 
               <div className="flex justify-end">
-                <Link href="#" className="text-pumpkin underline text-sm">
+                <Link
+                  style={{ color: "white" }}
+                  href="/reset-password"
+                  className="text-pumpkin underline text-sm"
+                >
                   Forgot Password?
                 </Link>
               </div>
