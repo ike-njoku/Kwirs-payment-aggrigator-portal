@@ -118,26 +118,8 @@ const WorkflowActionModal = ({ isOpen, onClose, refreshWorkflows }) => {
             handleCreateWorkflowAction();
           }}
         >
-          {/* Role */}
-          <div className="w-full mb-4">
-            <label className="text-base font-medium text-gray-700">Select Role</label>
-            <select
-              value={roleId}
-              onChange={(e) => setRoleId(e.target.value)}
-              required
-              className="w-full border-b-2 border-gray-300 h-[45px] rounded-md my-2 bg-gray-100 px-3 text-gray-700"
-            >
-              <option value="">Select Role Type</option>
-              {roles.map((role) => (
-                <option key={role.Id} value={role.Id}>
-                  {role.Name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Workflow Type */}
-          <div className="w-full mb-4">
+           {/* Workflow Type */}
+           <div className="w-full mb-4">
             <label className="text-base font-medium text-gray-700">Workflow Type</label>
             <select
               value={selectedTypeId}
@@ -154,8 +136,26 @@ const WorkflowActionModal = ({ isOpen, onClose, refreshWorkflows }) => {
             </select>
           </div>
 
-          {/* Stage */}
-          <div className="w-full mb-4">
+            {/* Step */}
+            <div className="w-full mb-4">
+            <label className="text-base font-medium text-gray-700">Workflow Step</label>
+            <select
+              value={selectedStepId}
+              onChange={(e) => setSelectedStepId(e.target.value)}
+              required
+              className="w-full border-b-2 border-gray-300 h-[45px] rounded-md my-2 bg-gray-100 px-3 text-gray-700"
+            >
+              <option value="">Select Workflow Step</option>
+              {wfSteps.map((step) => (
+                <option key={step.StepId} value={step.StepId}>
+                  {step.Description}
+                </option>
+              ))}
+            </select>
+          </div>
+
+            {/* Stage */}
+            <div className="w-full mb-4">
             <label className="text-base font-medium text-gray-700">Workflow Stage</label>
             <select
               value={selectedStageId}
@@ -172,19 +172,19 @@ const WorkflowActionModal = ({ isOpen, onClose, refreshWorkflows }) => {
             </select>
           </div>
 
-          {/* Step */}
+          {/* Role */}
           <div className="w-full mb-4">
-            <label className="text-base font-medium text-gray-700">Workflow Step</label>
+            <label className="text-base font-medium text-gray-700">Select Role</label>
             <select
-              value={selectedStepId}
-              onChange={(e) => setSelectedStepId(e.target.value)}
+              value={roleId}
+              onChange={(e) => setRoleId(e.target.value)}
               required
               className="w-full border-b-2 border-gray-300 h-[45px] rounded-md my-2 bg-gray-100 px-3 text-gray-700"
             >
-              <option value="">Select Workflow Step</option>
-              {wfSteps.map((step) => (
-                <option key={step.StepId} value={step.StepId}>
-                  {step.Description}
+              <option value="">Select Role Type</option>
+              {roles.map((role) => (
+                <option key={role.Id} value={role.Id}>
+                  {role.Name}
                 </option>
               ))}
             </select>
@@ -223,8 +223,6 @@ const WorkflowActionModal = ({ isOpen, onClose, refreshWorkflows }) => {
 };
 
 export default WorkflowActionModal;
-
-
 
 
 

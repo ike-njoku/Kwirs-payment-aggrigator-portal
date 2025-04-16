@@ -1,17 +1,18 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { FaPlus } from "react-icons/fa";
 import DashboardLayout from "../shared-components/layouts/DashboardLayout";
+import EditWorkFlowActivityModal from "../shared-components/modals/WorkFlowActivityModal";
 import WorkFlowActionTable from "../shared-components/table/WorkFlowAction";
 import WorkflowActionModal from "../shared-components/modals/WorkFlowActionModal";
-import { AxiosGet, AxiosDelete } from "../../services/http-service";
+import { AxiosGet } from "../../services/http-service";
 
 const WorkFlowActionPage = () => {
   const [workflowActions, setWorkflowActions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [openEditModal, setOpenEditModal] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [selectedAction, setSelectedAction] = useState(null);
   const [roles, setRoles] = useState([]);
@@ -38,7 +39,7 @@ const WorkFlowActionPage = () => {
     }
   };
 
-  // Fetch roles for auto-selection
+  // Fetch roles
   const fetchRoles = async () => {
     try {
       const res = await AxiosGet(`${API_BASE_URL}/api/Role/GetAllRoles`);
@@ -51,36 +52,28 @@ const WorkFlowActionPage = () => {
   };
 
   const handleDeleteAction = async (id) => {
-    // Confirmation dialog before deleting
-    const confirm = window.confirm("Are you sure you want to delete this workflow action?");
-    if (!confirm) return;
-  
+    // const confirm = window.confirm("Are you sure you want to delete this workflow action?");
+    // if (!confirm) return;
+
     try {
-      const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL; // Ensure the base URL is correct
-  
-      // Sending delete request to the API
       const res = await AxiosGet(`${API_BASE_URL}/api/WFlow/DeleteWFAction/${id}`);
-  
       if (res?.data?.StatusCode === 200) {
         toast.success("Workflow action deleted successfully!");
-        fetchWorkflowActions(); // Refresh the workflow actions after deletion
+        fetchWorkflowActions();
       } else {
         toast.error(res?.data?.StatusMessage || "Failed to delete the action.");
       }
     } catch (error) {
-      console.error("Error while deleting:", error);
-      toast.error("An error occurred while deleting the workflow action. Please try again.");
+      toast.error("An error occurred while deleting the workflow action.");
     }
   };
-  
 
   const handleEditAction = (action) => {
     setSelectedAction(action);
-    setOpenModal(true);
+    setOpenEditModal(true);
   };
 
-  const tableHeadings = [ "Role","Type", "Stage", "Step"];
-
+  const tableHeadings = ["Role", "Type", "Stage", "Step"];
   const totalItems = workflowActions.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const paginatedActions = workflowActions.slice(
@@ -118,25 +111,19 @@ const WorkFlowActionPage = () => {
           onDelete={handleDeleteAction}
         />
 
-        {/* Pagination Controls */}
+        {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex justify-center items-center gap-4 mt-6">
             <button
-              className={`px-4 py-2 rounded border ${
-                currentPage === 1 ? "bg-gray-300" : "bg-pumpkin text-white"
-              }`}
+              className={`px-4 py-2 rounded border ${currentPage === 1 ? "bg-gray-300" : "bg-pumpkin text-white"}`}
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
             >
               Previous
             </button>
-            <span className="text-lg font-medium">
-              Page {currentPage} of {totalPages}
-            </span>
+            <span className="text-lg font-medium">Page {currentPage} of {totalPages}</span>
             <button
-              className={`px-4 py-2 rounded border ${
-                currentPage === totalPages ? "bg-gray-300" : "bg-pumpkin text-white"
-              }`}
+              className={`px-4 py-2 rounded border ${currentPage === totalPages ? "bg-gray-300" : "bg-pumpkin text-white"}`}
               onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
             >
@@ -145,7 +132,20 @@ const WorkFlowActionPage = () => {
           </div>
         )}
 
-        {/* Modal for create/edit */}
+        {/* Edit Modal */}
+        {openEditModal && (
+          <EditWorkFlowActivityModal
+            isOpen={openEditModal}
+            onClose={() => {
+              setOpenEditModal(false);
+              setSelectedAction(null);
+            }}
+            selectedActivity={selectedAction}
+            onUpdate={fetchWorkflowActions}
+          />
+        )}
+
+        {/* Create Modal */}
         {openModal && (
           <WorkflowActionModal
             isOpen={openModal}
@@ -153,9 +153,7 @@ const WorkFlowActionPage = () => {
               setOpenModal(false);
               setSelectedAction(null);
             }}
-            refreshWorkflows={fetchWorkflowActions}
-            selectedAction={selectedAction}
-            roles={roles} // pass roles for auto-selection
+            onCreated={fetchWorkflowActions}
           />
         )}
       </section>
@@ -164,6 +162,3 @@ const WorkFlowActionPage = () => {
 };
 
 export default WorkFlowActionPage;
-
-
-
