@@ -1,4 +1,4 @@
-import SendEmail from "@/components/send-email";
+import SendEmail from "@/components/notification-settings";
 import React from "react";
 
 const page = () => {
