@@ -4,7 +4,7 @@ import DashboardLayout from "../shared-components/layouts/DashboardLayout";
 import BulkPaymentTable from "../shared-components/table/BulkPaymentTable";
 import { resourcesTableData } from "../../utils/table_data";
 import { FaPlus } from "react-icons/fa";
-import CreateBulkPaymentModal from "../shared-components/modals/CreateBulkPaymentModal";
+import GetBulkPaymentModal from "../shared-components/modals/GetBulkPaymentModal";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { authenticateUser } from "../../services/auth-service";
 import { toast } from "react-toastify";
@@ -87,45 +87,51 @@ const ResourcesPage = () => {
     }
   }, []);
 
-  const handleCreateResourceModal = async (newResourceData) => {
-    console.log("Function called with:", newResourceData);
-
-    const { TaxOfficeId, TaxType, ExcelFile } = newResourceData;
-
-    if (!TaxOfficeId || !TaxType || !ExcelFile) {
-      toast.error("Please provide all required fields.");
-      return false;
-    }
+  const handleCreateResourceModal = async (data) => {
+    console.log("Function called with:", data);
 
     try {
-      const formData = new FormData();
-      formData.append("TaxOfficeId", TaxOfficeId);
-      formData.append("TaxType", TaxType);
-      formData.append("ExcelFile", ExcelFile);
+      let response;
 
-      console.log("Sending request with FormData...");
-      const response = await AxiosPost(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/DLPayments/ExcelUpload`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+      if (data.mode === "batch") {
+        const { batchNumber } = data;
+
+        if (!batchNumber) {
+          toast.error("Please provide a batch number.");
+          return;
         }
-      );
 
-      console.log("Received response:", response);
+        const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/DLPayments/GetPaymentByBatch/${batchNumber}`;
+        response = await AxiosGet(url);
+      } else if (data.mode === "date") {
+        const { startDate, endDate, TaxofficeId } = data;
 
-      if (!response || response.StatusCode !== 200) {
-        toast.error("Could not create resource.");
-        return false;
+        if (!startDate || !endDate || !TaxofficeId) {
+          toast.error("Please provide all required fields for Date filter.");
+          return;
+        }
+
+        const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/DLPayments/GetPaymentByDate`;
+        response = await AxiosPost(url, {
+          startDate,
+          endDate,
+          taxOfficeId: TaxofficeId,
+        });
       }
 
-      toast.success("Resource created successfully.");
+      console.log("API response:", response);
+      // console.log("API response:", response?.Data);
 
-      const rawData = response?.Data || [];
+      if (
+        !response ||
+        (response.status !== 200 && response.StatusCode !== 200)
+      ) {
+        toast.error("Could not retrieve payments.");
+        return;
+      }
 
-      // Save the BatchNumber of the first item for undo
+      const rawData = response?.data?.Data || response?.Data || [];
+
       if (rawData.length > 0 && rawData[0].BatchNumber) {
         setLastBatchNumber(rawData[0].BatchNumber);
         localStorage.setItem(
@@ -151,18 +157,14 @@ const ResourcesPage = () => {
       setTableData(formattedData);
       localStorage.setItem("persistedTableData", JSON.stringify(formattedData));
 
-      console.log("Updated Table Data State:", formattedData);
-
       fetchAllResources?.();
-      return true;
     } catch (error) {
-      console.error("Error creating resource:", error);
+      console.error("Error getting payment data:", error);
       toast.error(
         `An error occurred: ${
           error?.response?.data?.message || "Request failed"
         }`
       );
-      return false;
     }
   };
 
@@ -200,7 +202,7 @@ const ResourcesPage = () => {
     setLastBatchNumber(null);
     localStorage.removeItem("persistedTableData");
     localStorage.removeItem("lastBatchNumber");
-    toast.success("Data Saved successfully");
+    toast.success("Done");
   };
 
   const handleDeleteItem = async (ResourceId) => {
@@ -281,7 +283,7 @@ const ResourcesPage = () => {
   };
 
   return (
-    <DashboardLayout page="Bulk Payment">
+    <DashboardLayout page="Find Payment">
       <section className="w-full">
         <div className="w-[90%] mx-auto py-5">
           <div className="w-full lg:mt-10">
@@ -299,10 +301,24 @@ const ResourcesPage = () => {
                   type="button"
                   onClick={() => setOpenResourceModal(true)}
                 >
-                  Create Bulk Payment
-                  <FaPlus />
+                  {" "}
+                  Get Payments
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                    />
+                  </svg>
                 </button>
-                <button
+                {/* <button
                   className="text-pumpkin border border-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2
              disabled:text-gray-400 disabled:border-gray-300 disabled:cursor-not-allowed disabled:bg-gray-100"
                   type="button"
@@ -310,12 +326,12 @@ const ResourcesPage = () => {
                   disabled={!lastBatchNumber}
                 >
                   RollBack
-                </button>
+                </button> */}
                 <button
                   onClick={handleClearTable}
                   className="text-white bg-pumpkin hover:bg-red-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2"
                 >
-                  Done
+                  Refresh
                 </button>
               </div>
             </section>
@@ -372,7 +388,7 @@ const ResourcesPage = () => {
 
         {/* Modal */}
         {openResourceModal && (
-          <CreateBulkPaymentModal
+          <GetBulkPaymentModal
             handleCloseModal={() => setOpenResourceModal(false)}
             handleCreateModal={handleCreateResourceModal}
           />
