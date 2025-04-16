@@ -91,7 +91,6 @@ const SelectPaymentGateway = ({ showPreviousComponent }) => {
         />
       ))}
 
-
       {/* <RRR /> */}
 
       <div className="w-full flex justify-between gap-4 items-center mt-6">

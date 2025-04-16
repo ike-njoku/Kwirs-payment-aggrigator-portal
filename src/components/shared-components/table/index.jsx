@@ -6,6 +6,7 @@ import EditModal from "../modals/EditModal";
 import EditResourceModal from "../modals/EditResourceModal";
 import EditPaymentMethodModal from "../modals/EditPaymentMethodModal";
 import EditTaxOfficeModal from "../modals/EditTaxofficeModal";
+import EditSendEmail from "../modals/EditSendEmail";
 
 const CustomTable = ({
   tableData,
@@ -24,11 +25,13 @@ const CustomTable = ({
   setOpenEditModal,
   handleDeleteItem,
   handleEditItem,
+  openEditEmailModal,
   text,
   heading,
   label,
   isResource = false,
   tableType = "default", // Add this new prop to differentiate table types
+  onPreviewClick, // Add this new prop
 }) => {
   const handleCloseDeleteModal = () => {
     setOpenDeleteModal(false);
@@ -47,6 +50,10 @@ const CustomTable = ({
   };
 
   const handleCloseTaxOfficeModal = () => {
+    setOpenEditModal(false);
+  };
+
+  const handleCloseEmailsModal = () => {
     setOpenEditModal(false);
   };
 
@@ -109,6 +116,67 @@ const CustomTable = ({
             {/* <td className="px-6 py-4 text-gray-900 capitalize">
               {tableInfo.Authorization}
             </td> */}
+          </>
+        );
+
+      case "send-email": // Another table type
+        return (
+          <>
+            <td
+              scope="row"
+              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
+            >
+              {tableInfo.SMS}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.Email}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.Description}
+            </td>
+            {/* <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.Authorization}
+            </td> */}
+          </>
+        );
+      case "audit-log": // Another table type
+        return (
+          <>
+            <td
+              scope="row"
+              className="px-3 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
+            >
+              {tableInfo.userName}
+            </td>
+            <td className="px-2 py-4 text-gray-900 capitalize">
+              {tableInfo.date}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.machineAddress}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.machineName}
+            </td>
+            {/* <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.machineVersion}
+            </td> */}
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.actionType}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.recordId}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.auditLogId}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              <button
+                className="hover:text--600 bg-orange-600 rounded-xl text-white px-3 py-1"
+                onClick={() => onPreviewClick(tableInfo.auditLogId)} // Use the prop here
+              >
+                Preview
+              </button>
+            </td>
           </>
         );
       case "tax-office": // Another table type
@@ -186,27 +254,30 @@ const CustomTable = ({
                   key={i}
                 >
                   {renderTableCell(tableInfo, tableType)}
-                  <td className="px-6 py-4 text-gray-900">
-                    {isEllipseDropdwon ? (
-                      <EllipseDropdown
-                        handleDelete={handleDelete}
-                        handleEdit={handleEdit}
-                        setSelectedItem={setSelectedItem}
-                        id={
-                          tableInfo.TaxOfficeId ||
-                          tableInfo.id ||
-                          tableInfo.paymentMethodId
-                        }
-                        item={tableInfo}
-                      />
-                    ) : (
-                      <SwitchIcon
-                        isActive={tableInfo.isActive}
-                        onToggle={toggleStatus}
-                        index={i}
-                      />
-                    )}
-                  </td>
+                  {tableType !== "audit-log" && (
+                    <td className="px-6 py-4 text-gray-900">
+                      {isEllipseDropdwon ? (
+                        <EllipseDropdown
+                          handleDelete={handleDelete}
+                          handleEdit={handleEdit}
+                          setSelectedItem={setSelectedItem}
+                          id={
+                            tableInfo.TaxOfficeId ||
+                            tableInfo.id ||
+                            tableInfo.paymentMethodId
+                          }
+                          item={tableInfo}
+                          showDelete={tableType !== "send-email"} // Hide delete for "send-email"
+                        />
+                      ) : (
+                        <SwitchIcon
+                          isActive={tableInfo.isActive}
+                          onToggle={toggleStatus}
+                          index={i}
+                        />
+                      )}
+                    </td>
+                  )}
                 </tr>
               ))}
 
@@ -246,6 +317,15 @@ const CustomTable = ({
           handleCloseModal={handleClosePaymentMethodModal}
           index={selectedItem}
           handleEditModal={handleEditItem}
+          heading={heading}
+          label={label}
+        />
+      )}
+      {openEditEmailModal && (
+        <EditSendEmail
+          handleCloseModal={handleCloseEmailsModal}
+          index={selectedItem}
+          handleEditModal={handleEditItem} // This should now be properly connected
           heading={heading}
           label={label}
         />
