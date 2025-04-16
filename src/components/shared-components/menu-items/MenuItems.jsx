@@ -9,6 +9,25 @@ const MenuItems = ({ sidebarMenu }) => {
   const [showDropdown, setDropdown] = useState(null);
   const pathname = usePathname();
 
+  const addStatisMenus = () => {
+    return [
+      {
+        MainMenu: "Dashboard",
+        submenu: [
+          { ResourceName: "Dashboard", URL: "/dashboard" },
+          { ResourceName: "Profile", URL: "/profile" },
+        ],
+      },
+      {
+        MainMenu: "Settings",
+        submenu: [
+          { ResourceName: "Settings", URL: "/settings" },
+          { ResourceName: "Notifications", URL: "/notifications" },
+        ],
+      },
+    ];
+  };
+
   const handleToggleDropdown = (index) => {
     setDropdown((prev) => (prev == index ? null : index));
   };

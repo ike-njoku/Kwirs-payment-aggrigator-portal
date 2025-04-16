@@ -49,11 +49,14 @@ const PayWithFlutterWave = () => {
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/payment/Notification`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(paymentData),
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/api/payment/NotificationFlutterWave`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(paymentData),
+        }
+      );
       console.log(paymentData);
 
       if (!response.ok)

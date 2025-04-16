@@ -37,8 +37,6 @@ const BankAccountPage = () => {
   const currentRows = tableData.slice(indexOfFirstRow, indexOfLastRow);
 
   const handleCreateResourceModal = async (newResourceURL) => {
-    console.log("Function called with newResourceURL:", newResourceURL);
-
     // Ensure all required fields are present
     if (
       !newResourceURL?.CreatedBy ||
@@ -47,12 +45,9 @@ const BankAccountPage = () => {
       !newResourceURL?.accountNumber ||
       !newResourceURL?.agencyId
     ) {
-      console.error("Missing required fields:", newResourceURL);
       toast.error("Please provide all required fields.");
       return;
     }
-
-    
 
     const newResourceData = {
       CreatedBy: newResourceURL.CreatedBy,
@@ -63,27 +58,19 @@ const BankAccountPage = () => {
       // Agency: "TEST AGENCY",
     };
 
-    console.log("newResourceData:", newResourceData);
-
     try {
-      console.log("Sending request to create resource...");
       const createResourceResponse = await AxiosPost(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/Banks/Create`,
         newResourceData
       );
 
-      console.log("Received response:", createResourceResponse);
-
       if (
         !createResourceResponse ||
         createResourceResponse.StatusCode !== 200
       ) {
-        console.error("Error: Response status not 200", createResourceResponse);
         toast.error("Could not create resource.");
         return;
       }
-
-      console.log("Resource creation successful, proceeding...");
 
       const createdDataRepresentation = {
         CreatedBy: newResourceURL.CreatedBy,
@@ -93,20 +80,10 @@ const BankAccountPage = () => {
         agencyId: newResourceURL.agencyId,
       };
 
-      console.log(
-        "Formatted createdDataRepresentation:",
-        createdDataRepresentation
-      );
-
       fetchAllResources();
 
-      console.log("Updated table data with new resource.");
       toast.success("Resource created successfully");
     } catch (error) {
-      console.error(
-        "Create Resource Error:",
-        error?.response?.data || error?.message || error
-      );
       toast.error(
         `An error occurred: ${
           error?.response?.data?.message || "Request failed"
@@ -116,8 +93,6 @@ const BankAccountPage = () => {
   };
 
   const handleDeleteItem = async (ResourceId) => {
-    console.log("Deleting Resource with ID:", ResourceId); // Debugging log
-
     try {
       const deleteResponse = await AxiosGet(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/Banks/Delete/${ResourceId}`
@@ -133,7 +108,6 @@ const BankAccountPage = () => {
         toast.error("Could not delete resource");
       }
     } catch (error) {
-      console.error("Delete Error:", error.response?.data || error);
       toast.error("An error occurred while deleting the resource");
     }
   };
@@ -142,7 +116,6 @@ const BankAccountPage = () => {
     const apiResponse = await AxiosGet(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/Banks/GetAllBankAccounts`
     );
-    console.log("data1:", apiResponse);
 
     if (!apiResponse) {
       toast.error("Could not fetch resources");
@@ -151,8 +124,6 @@ const BankAccountPage = () => {
 
     const { data } = apiResponse;
     const tableData = data.Data || data.resources || [];
-
-    console.log("data2:", apiResponse);
 
     if (!tableData.length) {
       toast.warn("No resources found");
@@ -170,8 +141,6 @@ const BankAccountPage = () => {
       agencyId: item.Agency,
       BankaccountId: item.BankaccountId,
     }));
-
-    console.log("Updated Table Data State:", formattedData);
 
     setTableData(formattedData);
   };
@@ -192,8 +161,6 @@ const BankAccountPage = () => {
       agencyId,
     };
 
-    console.log("Payload sent:", payLoad);
-
     try {
       const updateResourceResponse = await AxiosPost(
         updateResourceURL,
@@ -212,8 +179,7 @@ const BankAccountPage = () => {
       toast.success("Resource updated successfully!");
       await fetchAllResources();
     } catch (error) {
-      console.error("Error updating resource:", error.message || error);
-      // toast.error("Failed to update resource. Please try again later.");
+      toast.error("Failed to update resource. Please try again.");
     }
   };
 

@@ -9,101 +9,15 @@ import { MdOutlinePayment } from "react-icons/md";
 
 export const sidebarMenu = [
   {
-    path: "dashboard",
-    icon: <MdSpaceDashboard />,
-    url: "/dashboard",
-  },
-  // {
-  //   path: "profile",
-  //   icon: <FaUser />,
-  //   url: "/profile",
-  // },
-  {
-    path: "settings",
-    icon: <IoSettings />,
-    url: "/settings",
+    MainMenu: "Dashboard",
+    submenu: [
+      { ResourceName: "Dashboard", URL: "/dashboard" },
+      { ResourceName: "Profile", URL: "/profile" },
+    ],
   },
   {
-    path: "notifications",
-    icon: <IoNotifications />,
-    url: "/notifications",
-  },
-  {
-    path: "users",
-    icon: <FaUsers />,
-    url: "/user-list",
-  },
-
-  {
-    path: "Payment Method",
-    icon: <MdOutlinePayment />,
-    url: "/payment-method",
-  },
-  {
-    path: "tax offices",
-    icon: <HiBuildingOffice2 />,
-    url: "/tax-offices",
-  },
-  {
-    path: "resource allocation",
-    icon: <FaTasks />,
-    url: "/resource-allocation",
-  },
-  {
-    path: "resources",
-    icon: <FaTasks />,
-    url: "/resources",
-  },
-  {
-    path: "PSSP Management",
-    icon: <FaTasks />,
-    url: "/pssp-management",
-  },
-  {
-    path: "Tax Type",
-    icon: <FaTasks />,
-    url: "/tax-type",
-  },
-  {
-    path: "Bank Accounts",
-    icon: <FaTasks />,
-    url: "/bank-accounts",
-  },
-
-  {
-    path: "Tin request",
-    icon: <FaTasks />,
-    url: "/tin-request",
-  },
-  {
-    path: "Taxpayer category",
-    icon: <FaTasks />,
-    url: "/taxpayer-category",
-  },
-  {
-    path: "permission",
-    icon: <FaTasks />,
-    url: "/permission",
-  },
-  {
-    path: "role permission",
-    icon: <FaTasks />,
-    url: "/role-permission",
-  },
-  {
-    path: "role allocation",
-    icon: <FaTasks />,
-    url: "/role-allocation",
-  },
-  {
-    path: "roles",
-    icon: <FaUserTie />,
-    url: "/roles",
-  },
-  {
-    path: "transactions",
-    icon: <MdPayment />,
-    url: "/transactions",
+    MainMenu: "Settings",
+    submenu: [{ ResourceName: "Change Password", URL: "/change-password" }],
   },
 ];
 
