@@ -6,6 +6,7 @@ import EditModal from "../modals/EditModal";
 import EditResourceModal from "../modals/EditResourceModal";
 import EditPaymentMethodModal from "../modals/EditPaymentMethodModal";
 import EditTaxOfficeModal from "../modals/EditTaxofficeModal";
+import EditSendEmail from "../modals/EditSendEmail";
 
 const CustomTable = ({
   tableData,
@@ -24,6 +25,7 @@ const CustomTable = ({
   setOpenEditModal,
   handleDeleteItem,
   handleEditItem,
+  openEditEmailModal,
   text,
   heading,
   label,
@@ -48,6 +50,10 @@ const CustomTable = ({
   };
 
   const handleCloseTaxOfficeModal = () => {
+    setOpenEditModal(false);
+  };
+
+  const handleCloseEmailsModal = () => {
     setOpenEditModal(false);
   };
 
@@ -106,6 +112,27 @@ const CustomTable = ({
             </td>
             <td className="px-6 py-4 text-gray-900 capitalize">
               {tableInfo.CreatedBy}
+            </td>
+            {/* <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.Authorization}
+            </td> */}
+          </>
+        );
+
+      case "send-email": // Another table type
+        return (
+          <>
+            <td
+              scope="row"
+              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
+            >
+              {tableInfo.SMS}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.Email}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.Description}
             </td>
             {/* <td className="px-6 py-4 text-gray-900 capitalize">
               {tableInfo.Authorization}
@@ -240,6 +267,7 @@ const CustomTable = ({
                             tableInfo.paymentMethodId
                           }
                           item={tableInfo}
+                          showDelete={tableType !== "send-email"} // Hide delete for "send-email"
                         />
                       ) : (
                         <SwitchIcon
@@ -289,6 +317,15 @@ const CustomTable = ({
           handleCloseModal={handleClosePaymentMethodModal}
           index={selectedItem}
           handleEditModal={handleEditItem}
+          heading={heading}
+          label={label}
+        />
+      )}
+      {openEditEmailModal && (
+        <EditSendEmail
+          handleCloseModal={handleCloseEmailsModal}
+          index={selectedItem}
+          handleEditModal={handleEditItem} // This should now be properly connected
           heading={heading}
           label={label}
         />

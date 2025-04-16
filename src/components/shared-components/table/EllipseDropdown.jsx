@@ -7,24 +7,33 @@ const EllipseDropdown = ({
   id,
   setSelectedItem,
   item,
+  showDelete = true, // Default to true (shows delete button)
 }) => {
+  const editItem = () => {
+    handleEdit(item); // Pass the item to edit
+    setSelectedItem(item);
+  };
+
   const deleteItem = () => {
-    handleDelete();
+    handleDelete(item); // Pass the item to delete
     setSelectedItem(id);
   };
 
-  const editItem = () => {
-    handleEdit();
-    setSelectedItem(item);
-  };
   return (
     <section className="flex items-center gap-4">
-      <button className="" onClick={editItem}>
+      <button onClick={editItem} className="text-gray-700 hover:text-gray-900">
         <FaRegEdit />
       </button>
-      <button className="text-red-400" onClick={deleteItem}>
-        <FaTrashAlt />
-      </button>
+
+      {/* Only show delete button if showDelete is true */}
+      {showDelete && (
+        <button
+          onClick={deleteItem}
+          className="text-red-400 hover:text-red-600"
+        >
+          <FaTrashAlt />
+        </button>
+      )}
     </section>
   );
 };
