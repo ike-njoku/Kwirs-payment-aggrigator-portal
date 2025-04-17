@@ -33,7 +33,7 @@ const LoginPage = () => {
 
     const token = await generateAccessToken({
       password: authenticationDetails.password,
-      username: "Admin",
+      username: authenticationDetails.tin,
       grant_type: "password",
     });
 
