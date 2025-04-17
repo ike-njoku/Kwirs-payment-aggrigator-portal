@@ -17,7 +17,7 @@ const SendEmail = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
 
-  // Pagination
+  // Pagination starts here
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 4;
   const [totalPages, setTotalPages] = useState(1);
