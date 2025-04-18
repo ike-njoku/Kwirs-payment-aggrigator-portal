@@ -45,7 +45,7 @@ const SelectTaxOffice = ({ taxOfficeId, setTaxOfficeId }) => {
           required
         >
           <option value="">Select Tax Office</option>
-          <option value="KUB">Test tax Office</option>
+          {/* <option value="KUB">Test tax Office</option> */}
           {taxOffices.map((office) => (
             <option key={office.TaxOfficeId} value={office.TaxOfficeId}>
               {office.TaxOfficeName}

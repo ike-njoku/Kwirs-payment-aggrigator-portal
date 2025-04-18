@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../shared-components/layouts/DashboardLayout";
-import BulkPaymentTable from "../shared-components/table/BulkPaymentTable";
+import BulkPaymentRecordsTable from "../shared-components/table/BulkPaymentRecordsTable";
 import { resourcesTableData } from "../../utils/table_data";
 import { FaPlus } from "react-icons/fa";
 import GetBulkPaymentModal from "../shared-components/modals/GetBulkPaymentModal";
@@ -17,6 +17,7 @@ const ResourcesPage = () => {
   const tableHeadings = [
     "S/N",
     "Tax Payer",
+    "Batch Number",
     "Channel",
     "TIN",
     "Tax Type",
@@ -31,7 +32,7 @@ const ResourcesPage = () => {
   const [authenticatedUser, setAuthenticatedUser] = useState({});
   const [lastBatchNumber, setLastBatchNumber] = useState(() => {
     // Get from localStorage or default to null
-    const saved = localStorage.getItem("lastBatchNumber");
+    const saved = localStorage.getItem("lastBatchNumber2");
     return saved ? JSON.parse(saved) : null;
   });
   // Pagination States
@@ -81,92 +82,94 @@ const ResourcesPage = () => {
     const isUserAuthenticated = authenticateUser();
     setAuthenticatedUser(isUserAuthenticated);
     // fetchAllResources();
-    const savedData = localStorage.getItem("persistedTableData");
+    const savedData = localStorage.getItem("persistedTableData2");
     if (savedData) {
       setTableData(JSON.parse(savedData));
     }
   }, []);
 
   const handleCreateResourceModal = async (data) => {
-    console.log("Function called with:", data);
+  console.log("Function called with:", data);
 
-    try {
-      let response;
+  try {
+    let response;
 
-      if (data.mode === "batch") {
-        const { batchNumber } = data;
+    if (data.mode === "batch") {
+      const { batchNumber } = data;
 
-        if (!batchNumber) {
-          toast.error("Please provide a batch number.");
-          return;
-        }
-
-        const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/DLPayments/GetPaymentByBatch/${batchNumber}`;
-        response = await AxiosGet(url);
-      } else if (data.mode === "date") {
-        const { startDate, endDate, TaxofficeId } = data;
-
-        if (!startDate || !endDate || !TaxofficeId) {
-          toast.error("Please provide all required fields for Date filter.");
-          return;
-        }
-
-        const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/DLPayments/GetPaymentByDate`;
-        response = await AxiosPost(url, {
-          startDate,
-          endDate,
-          taxOfficeId: TaxofficeId,
-        });
-      }
-
-      console.log("API response:", response);
-      // console.log("API response:", response?.Data);
-
-      if (
-        !response ||
-        (response.status !== 200 && response.StatusCode !== 200)
-      ) {
-        toast.error("Could not retrieve payments.");
+      if (!batchNumber) {
+        toast.error("Please provide a batch number.");
         return;
       }
 
-      const rawData = response?.data?.Data || response?.Data || [];
+      const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/DLPayments/GetPaymentByBatch/${batchNumber}`;
+      response = await AxiosGet(url);
+    } else if (data.mode === "date") {
+      const { startDate, endDate, TaxofficeId } = data;
 
-      if (rawData.length > 0 && rawData[0].BatchNumber) {
-        setLastBatchNumber(rawData[0].BatchNumber);
-        localStorage.setItem(
-          "lastBatchNumber",
-          JSON.stringify(rawData[0].BatchNumber)
-        );
+      if (!startDate || !endDate || !TaxofficeId) {
+        toast.error("Please provide all required fields for Date filter.");
+        return;
       }
 
-      const formattedData = rawData.map((item) => ({
-        BatchNumber: item.BatchNumber,
-        Channel: item.Channel,
-        PaymentRef: item.PaymentRef,
-        RequestId: item.RequestId,
-        createdBy: item.createdBy,
-        createdDate: item.createdDate,
-        description: item.description,
-        paymentDate: item.paymentDate,
-        taxTypeId: item.taxTypeId,
-        taxpayerName: item.taxpayerName,
-        taxpayerTIN: item.taxpayerTIN,
-      }));
+      const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/DLPayments/GetPaymentByDate`;
+      response = await AxiosPost(url, {
+        startDate,
+        endDate,
+        taxOfficeId: TaxofficeId,
+      });
+    }
 
-      setTableData(formattedData);
-      localStorage.setItem("persistedTableData", JSON.stringify(formattedData));
+    console.log("API response:", response);
 
-      fetchAllResources?.();
-    } catch (error) {
-      console.error("Error getting payment data:", error);
+    const rawData = response?.data?.Data || response?.Data || [];
+
+    if (rawData.length > 0 && rawData[0].BatchNumber) {
+      setLastBatchNumber(rawData[0].BatchNumber);
+      localStorage.setItem(
+        "lastBatchNumber2",
+        JSON.stringify(rawData[0].BatchNumber)
+      );
+    }
+
+    const formattedData = rawData.map((item) => ({
+      BatchNumber: item.BatchNumber,
+      Channel: item.Channel,
+      PaymentRef: item.PaymentRef,
+      RequestId: item.RequestId,
+      createdBy: item.createdBy,
+      createdDate: item.createdDate,
+      description: item.description,
+      paymentDate: item.paymentDate,
+      taxTypeId: item.taxTypeId,
+      taxpayerName: item.taxpayerName,
+      taxpayerTIN: item.taxpayerTIN,
+    }));
+
+    if (formattedData.length === 0) {
+      toast.info("No records found.");
+    }
+    
+    setTableData(formattedData);
+    localStorage.setItem("persistedTableData2", JSON.stringify(formattedData));
+
+    fetchAllResources?.();
+  } catch (error) {
+    console.error("Error getting payment data:", error);
+
+    // 👇 Add fallback toast for known bad request
+    if (error?.response?.status === 400) {
+      toast.error("Could not retrieve payments. Bad request.");
+    } else {
       toast.error(
         `An error occurred: ${
           error?.response?.data?.message || "Request failed"
         }`
       );
     }
-  };
+  }
+};
+
 
   // Undo handler
   const handleUndo = async () => {
@@ -186,8 +189,8 @@ const ResourcesPage = () => {
         toast.success("Rollback successful.");
         setTableData([]); // clear table
         setLastBatchNumber(null); // clear batch number
-        localStorage.removeItem("persistedTableData");
-        localStorage.removeItem("lastBatchNumber");
+        localStorage.removeItem("persistedTableData2");
+        localStorage.removeItem("lastBatchNumber2");
       } else {
         toast.error("Rollback failed.");
       }
@@ -200,8 +203,8 @@ const ResourcesPage = () => {
   const handleClearTable = () => {
     setTableData([]);
     setLastBatchNumber(null);
-    localStorage.removeItem("persistedTableData");
-    localStorage.removeItem("lastBatchNumber");
+    localStorage.removeItem("persistedTableData2");
+    localStorage.removeItem("lastBatchNumber2");
     toast.success("Done");
   };
 
@@ -283,41 +286,41 @@ const ResourcesPage = () => {
   };
 
   return (
-    <DashboardLayout page="Find Payment">
+    <DashboardLayout page="Find Bulk Payments">
       <section className="w-full">
         <div className="w-[90%] mx-auto py-5">
           <div className="w-full lg:mt-10">
             {/* Search bar and filter options */}
-            <section className="w-full mb-3 flex justify-between items-center gap-5 lg:justify-start">
-              <div>
+            <section className="w-full mb-3 flex justify-between items-center gap-5 lg:justify-start-">
+              {/* <div>
                 <p className="text-[18px] font-semibold text-gray-700">
                   Batch Number:
                   <span className=" text-pumpkin"> {lastBatchNumber}</span>
                 </p>{" "}
-              </div>
-              <div className="flex gap-2 items-center ">
-                <button
-                  className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
-                  type="button"
-                  onClick={() => setOpenResourceModal(true)}
+              </div> */}
+              <button
+                className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
+                type="button"
+                onClick={() => setOpenResourceModal(true)}
+              >
+                {" "}
+                Get Payments
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-6"
                 >
-                  {" "}
-                  Get Payments
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-6"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-                    />
-                  </svg>
-                </button>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                  />
+                </svg>
+              </button>
+              <div className="flex gap-2 items-center ">
                 {/* <button
                   className="text-pumpkin border border-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2
              disabled:text-gray-400 disabled:border-gray-300 disabled:cursor-not-allowed disabled:bg-gray-100"
@@ -337,7 +340,7 @@ const ResourcesPage = () => {
             </section>
 
             {/* Table */}
-            <BulkPaymentTable
+            <BulkPaymentRecordsTable
               isResource={false}
               tableHeadings={tableHeadings}
               tableData={currentRows}

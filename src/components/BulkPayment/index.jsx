@@ -286,7 +286,7 @@ const ResourcesPage = () => {
         <div className="w-[90%] mx-auto py-5">
           <div className="w-full lg:mt-10">
             {/* Search bar and filter options */}
-            <section className="w-full mb-3 flex justify-between items-center gap-5 lg:justify-start">
+            <section className="w-full mb-3 flex justify-between items-center gap-5 lg:justify-start-">
               <div>
                 <p className="text-[18px] font-semibold text-gray-700">
                   Batch Number:
