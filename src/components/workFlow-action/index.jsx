@@ -145,17 +145,18 @@ const WorkFlowActionPage = () => {
           />
         )}
 
-        {/* Create Modal */}
-        {openModal && (
-          <WorkflowActionModal
-            isOpen={openModal}
-            onClose={() => {
-              setOpenModal(false);
-              setSelectedAction(null);
-            }}
-            onCreated={fetchWorkflowActions}
-          />
-        )}
+      {/* Create Modal */}
+{openModal && (
+  <WorkflowActionModal
+    isOpen={openModal}
+    onClose={() => {
+      setOpenModal(false);
+      setSelectedAction(null);
+    }}
+    refreshWorkflows={fetchWorkflowActions} // ✅ renamed to match expected prop
+  />
+)}
+
       </section>
     </DashboardLayout>
   );
