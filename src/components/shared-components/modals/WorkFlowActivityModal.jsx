@@ -4,11 +4,16 @@ import ModalLayout from "./ModalLayout";
 import { AxiosPost } from "../../../services/http-service";
 import AuthButtons from "../buttons/AuthButtons";
 
-const WorkFlowActivityModal = ({ isOpen, onClose, selectedActivity, onUpdate }) => {
+const WorkFlowActivityModal = ({
+  isOpen,
+  onClose,
+  selectedActivity,
+  onUpdate,
+}) => {
   const [formData, setFormData] = useState({
     WF_ActivitId: "",
     Approved: false,
-    Remark: ""
+    Remark: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -21,7 +26,7 @@ const WorkFlowActivityModal = ({ isOpen, onClose, selectedActivity, onUpdate }) 
       setFormData({
         WF_ActivitId: selectedActivity?.WF_ActivitId || "", // This will now auto-fill
         Approved: selectedActivity?.Approved || false,
-        Remark: selectedActivity?.Remark || "" // Ensure Remark is also pre-filled
+        Remark: selectedActivity?.Remark || "", // Ensure Remark is also pre-filled
       });
     }
   }, [isOpen, selectedActivity]); // Re-run when `isOpen` or `selectedActivity` changes
@@ -30,7 +35,7 @@ const WorkFlowActivityModal = ({ isOpen, onClose, selectedActivity, onUpdate }) 
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -46,11 +51,14 @@ const WorkFlowActivityModal = ({ isOpen, onClose, selectedActivity, onUpdate }) 
     setLoading(true);
 
     try {
-      const response = await AxiosPost(`${API_BASE_URL}/api/WFlow/CreateWFActivity`, {
-        WF_ActivitId: parseInt(formData.WF_ActivitId),
-        Approved: formData.Approved,
-        Remark: formData.Remark.trim()
-      });
+      const response = await AxiosPost(
+        `${API_BASE_URL}/api/WFlow/CreateWFActivity`,
+        {
+          WF_ActivitId: parseInt(formData.WF_ActivitId),
+          Approved: formData.Approved,
+          Remark: formData.Remark.trim(),
+        }
+      );
 
       if (response?.data?.StatusCode === 200) {
         toast.success("Workflow activity updated successfully!");
@@ -77,7 +85,9 @@ const WorkFlowActivityModal = ({ isOpen, onClose, selectedActivity, onUpdate }) 
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           {/* WF_ActivitId */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Activity ID</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Activity ID
+            </label>
             <input
               type="text"
               name="WF_ActivitId"
@@ -90,7 +100,9 @@ const WorkFlowActivityModal = ({ isOpen, onClose, selectedActivity, onUpdate }) 
 
           {/* Remark */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Remark</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Remark
+            </label>
             <textarea
               name="Remark"
               value={formData.Remark}
@@ -103,9 +115,13 @@ const WorkFlowActivityModal = ({ isOpen, onClose, selectedActivity, onUpdate }) 
 
           {/* Approved Toggle */}
           <div className="flex items-center gap-3">
-            <label className="text-base font-medium text-gray-700">Approved</label>
+            <label className="text-base font-medium text-gray-700">
+              Approved
+            </label>
             <div
-              onClick={() => setFormData(prev => ({ ...prev, Approved: !prev.Approved }))}
+              onClick={() =>
+                setFormData((prev) => ({ ...prev, Approved: !prev.Approved }))
+              }
               className={`cursor-pointer w-12 h-6 flex items-center rounded-full p-1 transition-all ${
                 formData.Approved ? "bg-pumpkin" : "bg-gray-300"
               }`}
@@ -134,34 +150,3 @@ const WorkFlowActivityModal = ({ isOpen, onClose, selectedActivity, onUpdate }) 
 };
 
 export default WorkFlowActivityModal;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

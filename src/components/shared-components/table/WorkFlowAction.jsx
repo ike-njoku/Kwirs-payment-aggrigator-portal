@@ -8,7 +8,7 @@ const WorkFlowActionTable = ({
   onDelete,
 }) => {
   return (
-    <div className="overflow-x-auto bg-white rounded-lg shadow-md">
+    <div className="overflow-x-auto bg-white rounded-lg shadow-md ml-10 mr-10">
       <table className="min-w-full table-auto border-collapse text-sm">
         <thead className="bg-pumpkin">
           <tr>
@@ -34,7 +34,7 @@ const WorkFlowActionTable = ({
                   index % 2 === 0 ? "bg-white" : "bg-gray-50"
                 } hover:bg-gray-100`}
               >
-                 <td className="px-6 py-3 text-gray-700">
+                <td className="px-6 py-3 text-gray-700">
                   {row.Role ?? "No role"}
                 </td>
                 <td className="px-6 py-3 text-gray-700">
@@ -42,7 +42,7 @@ const WorkFlowActionTable = ({
                 </td>
                 <td className="px-6 py-3 text-gray-700">
                   {row.Stage ?? "No stage"}
-                </td>  
+                </td>
                 <td className="px-6 py-3 text-gray-700">
                   {row.Description ?? "No description"}
                 </td>
@@ -79,14 +79,3 @@ const WorkFlowActionTable = ({
 };
 
 export default WorkFlowActionTable;
-
-
-
-
-
-
-
-
-
-
-

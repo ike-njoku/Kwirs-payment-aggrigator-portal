@@ -56,7 +56,9 @@ const WorkFlowActionPage = () => {
     // if (!confirm) return;
 
     try {
-      const res = await AxiosGet(`${API_BASE_URL}/api/WFlow/DeleteWFAction/${id}`);
+      const res = await AxiosGet(
+        `${API_BASE_URL}/api/WFlow/DeleteWFAction/${id}`
+      );
       if (res?.data?.StatusCode === 200) {
         toast.success("Workflow action deleted successfully!");
         fetchWorkflowActions();
@@ -115,16 +117,26 @@ const WorkFlowActionPage = () => {
         {totalPages > 1 && (
           <div className="flex justify-center items-center gap-4 mt-6">
             <button
-              className={`px-4 py-2 rounded border ${currentPage === 1 ? "bg-gray-300" : "bg-pumpkin text-white"}`}
+              className={`px-4 py-2 rounded border ${
+                currentPage === 1 ? "bg-gray-300" : "bg-pumpkin text-white"
+              }`}
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
             >
               Previous
             </button>
-            <span className="text-lg font-medium">Page {currentPage} of {totalPages}</span>
+            <span className="text-lg font-medium">
+              Page {currentPage} of {totalPages}
+            </span>
             <button
-              className={`px-4 py-2 rounded border ${currentPage === totalPages ? "bg-gray-300" : "bg-pumpkin text-white"}`}
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              className={`px-4 py-2 rounded border ${
+                currentPage === totalPages
+                  ? "bg-gray-300"
+                  : "bg-pumpkin text-white"
+              }`}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
               disabled={currentPage === totalPages}
             >
               Next
@@ -145,18 +157,17 @@ const WorkFlowActionPage = () => {
           />
         )}
 
-      {/* Create Modal */}
-{openModal && (
-  <WorkflowActionModal
-    isOpen={openModal}
-    onClose={() => {
-      setOpenModal(false);
-      setSelectedAction(null);
-    }}
-    refreshWorkflows={fetchWorkflowActions} // ✅ renamed to match expected prop
-  />
-)}
-
+        {/* Create Modal */}
+        {openModal && (
+          <WorkflowActionModal
+            isOpen={openModal}
+            onClose={() => {
+              setOpenModal(false);
+              setSelectedAction(null);
+            }}
+            refreshWorkflows={fetchWorkflowActions} // ✅ renamed to match expected prop
+          />
+        )}
       </section>
     </DashboardLayout>
   );
