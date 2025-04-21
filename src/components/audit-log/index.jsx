@@ -114,7 +114,7 @@ const AuditLog = () => {
         data
       );
       if (apiResponse.StatusCode === 200) {
-        toast.success("Audit Log gotten Successfully!");
+        // toast.success("Audit Log gotten Successfully!");
       } else {
         toast.error(apiResponse.Message || "Could not get Audit Log.");
       }

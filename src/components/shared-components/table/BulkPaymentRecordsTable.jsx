@@ -65,6 +65,9 @@ const CustomTable = ({
                     {tableInfo.taxpayerName}
                   </td>
                   <td className="px-6 py-4 text-gray-900 capitalize">
+                    {tableInfo.BatchNumber}
+                  </td>
+                  <td className="px-6 py-4 text-gray-900 capitalize">
                     {tableInfo.Channel}
                   </td>
                   <td className="px-6 py-4 text-gray-900 capitalize">

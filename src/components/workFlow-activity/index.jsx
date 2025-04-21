@@ -5,8 +5,8 @@ import { toast } from "react-toastify";
 import { FaPlus } from "react-icons/fa";
 import DashboardLayout from "../shared-components/layouts/DashboardLayout";
 import WorkFlowActivityTable from "../shared-components/table/WorkFlowActivity";
-import EditWorkFlowActivityModal from "../shared-components/modals/EditWorkFlowActivityModal";
-import { AxiosGet, AxiosDelete } from "../../services/http-service";
+import WorkFlowActivityModal from "../shared-components/modals/WorkFlowActivityModal";
+import { AxiosGet } from "../../services/http-service";
 
 const WorkFlowActivityPage = () => {
   const [workflowActivities, setWorkflowActivities] = useState([]);
@@ -54,34 +54,6 @@ const WorkFlowActivityPage = () => {
     }
   };
 
-  // const fetchRoles = async () => {
-  //   try {
-  //     const res = await AxiosGet(`${API_BASE_URL}/api/Role/GetAllRoles`);
-  //     if (res?.data?.StatusCode === 200) {
-  //       setRoles(res.data.Data);
-  //     }
-  //   } catch (error) {
-  //     toast.error("Failed to fetch roles.");
-  //   }
-  // };
-
-  // const handleDeleteAction = async (id) => {
-  //   const confirm = window.confirm("Are you sure you want to delete this workflow activity?");
-  //   if (!confirm) return;
-
-  //   try {
-  //     const res = await AxiosDelete(`${API_BASE_URL}/api/WFlow/DeleteWFAction/${id}`);
-  //     if (res?.data?.StatusCode === 200) {
-  //       toast.success("Workflow activity deleted!");
-  //       fetchWorkflowActivities(userTIN);
-  //     } else {
-  //       toast.error(res?.data?.StatusMessage || "Failed to delete activity.");
-  //     }
-  //   } catch (error) {
-  //     toast.error("Delete failed. Please try again.");
-  //   }
-  // };
-
   const handleEditAction = (action) => {
     setSelectedAction(action);
     setOpenModal(true);
@@ -96,31 +68,19 @@ const WorkFlowActivityPage = () => {
 
   useEffect(() => {
     fetchUserDetailsAndWFData();
-    // fetchRoles();
   }, []);
 
   return (
-    <DashboardLayout page="Work Flow Activities">
+    <DashboardLayout page="Work Flow Activity">
       <section className="w-full">
         <div className="w-[90%] mx-auto py-5">
           <div className="mt-4 flex gap-4 justify-between items-center">
-            {/* <button
-              onClick={() => {
-                setSelectedAction(null);
-                setOpenModal(true);
-              }}
-              className="text-pumpkin border border-pumpkin px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium"
-              disabled={loading}
-            >
-              {loading ? "Loading..." : "Create Work Flow Action"} <FaPlus />
-            </button> */}
           </div>
         </div>
 
         <WorkFlowActivityTable
           tableData={paginatedActivities}
           onEdit={handleEditAction}
-          // onDelete={handleDeleteAction}
         />
 
         {totalPages > 1 && (
@@ -150,14 +110,14 @@ const WorkFlowActivityPage = () => {
         )}
 
         {openModal && (
-          <EditWorkFlowActivityModal
+          <WorkFlowActivityModal
             isOpen={openModal}
             onClose={() => {
               setOpenModal(false);
               setSelectedAction(null);
             }}
             refreshWorkflows={() => fetchWorkflowActivities(userTIN)}
-            selectedAction={selectedAction}
+            selectedActivity={selectedAction} // ✅ Updated prop name
             roles={roles}
           />
         )}
@@ -167,6 +127,7 @@ const WorkFlowActivityPage = () => {
 };
 
 export default WorkFlowActivityPage;
+
 
 
 

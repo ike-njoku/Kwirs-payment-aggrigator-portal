@@ -2,9 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { AxiosGet } from "../../../services/http-service";
 import { toast } from "react-toastify";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
+
+// 👇 Add IDs that should be excluded (no initiation stage)
+const INVALID_WF_TYPE_IDS = [1, 4];
 
 const WorkflowModal = ({ isOpen, onClose, refreshWorkflows }) => {
   const [documentId, setDocumentId] = useState("");
@@ -15,17 +19,19 @@ const WorkflowModal = ({ isOpen, onClose, refreshWorkflows }) => {
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-  // Fetch workflow types when modal is opened
   useEffect(() => {
     if (!isOpen) return;
 
     const fetchWorkflowTypes = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/WFlow/GetWFTypes`);
+        const response = await AxiosGet(`${API_BASE_URL}/api/WFlow/GetWFTypes`);
         console.log("Workflow Types Response:", response);
 
         if (Array.isArray(response.data.Data)) {
-          setWfTypes(response.data.Data);
+          const validTypes = response.data.Data.filter(
+            (type) => !INVALID_WF_TYPE_IDS.includes(type.WFTypeId)
+          );
+          setWfTypes(validTypes);
         } else {
           toast.error("Failed to load workflow types: Unexpected response format.");
         }
@@ -37,6 +43,15 @@ const WorkflowModal = ({ isOpen, onClose, refreshWorkflows }) => {
 
     fetchWorkflowTypes();
   }, [isOpen]);
+
+  const handleWfTypeChange = (e) => {
+    const selectedId = Number(e.target.value);
+    setSelectedWfTypeId(selectedId);
+
+    if (INVALID_WF_TYPE_IDS.includes(selectedId)) {
+      toast.warning("This workflow type cannot be initiated.");
+    }
+  };
 
   const handleCreateWorkflow = async () => {
     if (!documentId || !description || !selectedWfTypeId) {
@@ -99,7 +114,7 @@ const WorkflowModal = ({ isOpen, onClose, refreshWorkflows }) => {
             <label className="text-base font-medium text-gray-700">Workflow Type</label>
             <select
               value={selectedWfTypeId}
-              onChange={(e) => setSelectedWfTypeId(e.target.value)}
+              onChange={handleWfTypeChange}
               required
               className="w-full border-b-2 border-gray-300 h-[45px] rounded-md my-2 bg-gray-100 px-3 text-gray-700 focus:outline-none"
             >
@@ -151,6 +166,8 @@ const WorkflowModal = ({ isOpen, onClose, refreshWorkflows }) => {
 };
 
 export default WorkflowModal;
+
+
 
 
 
