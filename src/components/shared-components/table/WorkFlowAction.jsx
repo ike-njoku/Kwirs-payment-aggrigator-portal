@@ -1,5 +1,8 @@
-import React from "react";
+import React, { use } from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { useState } from "react";
+import { useEffect } from "react";
+import EditWorkflowActionModal from "../modals/EditWorkflowAction";
 
 const WorkFlowActionTable = ({
   tableHeadings = [],
@@ -7,6 +10,15 @@ const WorkFlowActionTable = ({
   onEdit,
   onDelete,
 }) => {
+  const [showEditWorkflowActionModal, setShowEditWorkflowActionModal] =
+    useState(false);
+  const [selectedWorkflowAction, setSelectedWorkflowAction] = useState(null);
+
+  const selectWorkflowAction = (workflowAction) => {
+    setSelectedWorkflowAction(workflowAction);
+    window.alert(workflowAction);
+  };
+
   return (
     <div className="overflow-x-auto bg-white rounded-lg shadow-md ml-10 mr-10">
       <table className="min-w-full table-auto border-collapse text-sm">
@@ -48,7 +60,10 @@ const WorkFlowActionTable = ({
                 </td>
                 <td className="px-6 py-3 flex items-center gap-3">
                   <button
-                    onClick={() => onEdit?.(row)}
+                    onClick={() => {
+                      selectWorkflowAction(row);
+                      setShowEditWorkflowActionModal(true);
+                    }}
                     className="text-grey-700 hover:text-grey-700 transition duration-200"
                   >
                     <FaEdit />
@@ -74,6 +89,13 @@ const WorkFlowActionTable = ({
           )}
         </tbody>
       </table>
+
+      {showEditWorkflowActionModal && (
+        <EditWorkflowActionModal
+          workflowActionDetails={selectedWorkflowAction}
+          onClose={() => setShowEditWorkflowActionModal(false)}
+        />
+      )}
     </div>
   );
 };
