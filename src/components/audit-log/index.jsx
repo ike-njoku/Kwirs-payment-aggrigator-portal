@@ -99,32 +99,26 @@ const AuditLog = () => {
   // fetching the Auditlog
   const fetchAuditLogs = async (filters = {}) => {
     setIsLoading(true);
-
+  
     const data = {
-      // Data object as second parameter
       startDate: filters.startDate || "",
       endDate: filters.endDate || "",
       UserName: filters.UserName || "",
       function: filters.function || "",
     };
+    
     try {
-      // Call AxiosPost with separate parameters (url, data) instead of an object
       const apiResponse = await AxiosPost(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Audithlog/GetAudithLog`, // URL as first parameter
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Audithlog/GetAudithLog`,
         data
       );
-      if (apiResponse.StatusCode === 200) {
-        toast.success("Audit Log gotten Successfully!");
-      } else {
-        toast.error(apiResponse.Message || "Could not get Audit Log.");
-      }
-
+  
       const actionMap = {
         I: "Create",
         U: "Update",
         D: "Delete",
       };
-
+  
       const formattedData = apiResponse.Data.map((item) => ({
         userName: item.UserName,
         date: item.Date ? new Date(item.Date).toISOString().split("T")[0] : "",
@@ -136,8 +130,19 @@ const AuditLog = () => {
         function: item.Function,
         auditLogId: item.AuditLogId,
       }));
-
+  
       setTableData(formattedData);
+  
+      // Only show toast if there's data and status is 200
+      if (apiResponse.StatusCode === 200) {
+        if (formattedData.length > 0) {
+          toast.success("Audit Log gotten Successfully!");
+        }
+        // No toast if formattedData is empty
+      } else {
+        toast.error(apiResponse.Message || "Could not get Audit Log.");
+      }
+  
       console.log("API Response:", apiResponse);
       console.log("Formatted Data:", formattedData);
     } catch (error) {
