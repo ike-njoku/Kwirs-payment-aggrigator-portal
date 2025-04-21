@@ -3,17 +3,17 @@ import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
 const WorkFlowActivityTable = ({ tableData = [], onEdit, onDelete }) => {
   const tableHeadings = [
-    "ID",                   // WFActivityId
-    "Document Type",        // WF_DocumentType
-    "Stage",                // Stage
-    "Stage Description",    // StageDescription
+    "ID", // WFActivityId
+    "Document Type", // WF_DocumentType
+    "Stage", // Stage
+    "Stage Description", // StageDescription
     "Work flow Description", // WFDescription
-    "Remark",      // isFinalAction
-    "Action"               // Action buttons
+    "Remark", // isFinalAction
+    "Action", // Action buttons
   ];
 
   return (
-    <div className="overflow-x-auto bg-white rounded-lg shadow-md">
+    <div className="overflow-x-auto bg-white rounded-lg shadow-md ml-10 mr-10">
       <table className="min-w-full table-auto border-collapse text-sm">
         <thead className="bg-pumpkin">
           <tr>
@@ -36,11 +36,21 @@ const WorkFlowActivityTable = ({ tableData = [], onEdit, onDelete }) => {
                   index % 2 === 0 ? "bg-white" : "bg-gray-50"
                 } hover:bg-gray-100`}
               >
-                <td className="px-6 py-3 text-gray-700">{row.WFActivityId || "N/A"}</td>
-                <td className="px-6 py-3 text-gray-700">{row.WF_DocumentType || "N/A"}</td>
-                <td className="px-6 py-3 text-gray-700">{row.Stage || "N/A"}</td>
-                <td className="px-6 py-3 text-gray-700">{row.StageDescription || "N/A"}</td>
-                <td className="px-6 py-3 text-gray-700">{row.WFDescription || "N/A"}</td>
+                <td className="px-6 py-3 text-gray-700">
+                  {row.WFActivityId || "N/A"}
+                </td>
+                <td className="px-6 py-3 text-gray-700">
+                  {row.WF_DocumentType || "N/A"}
+                </td>
+                <td className="px-6 py-3 text-gray-700">
+                  {row.Stage || "N/A"}
+                </td>
+                <td className="px-6 py-3 text-gray-700">
+                  {row.StageDescription || "N/A"}
+                </td>
+                <td className="px-6 py-3 text-gray-700">
+                  {row.WFDescription || "N/A"}
+                </td>
                 <td className="px-6 py-3 text-gray-700">
                   {row.isFinalAction ? "Yes" : "No"}
                 </td>
@@ -84,18 +94,3 @@ const WorkFlowActivityTable = ({ tableData = [], onEdit, onDelete }) => {
 };
 
 export default WorkFlowActivityTable;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

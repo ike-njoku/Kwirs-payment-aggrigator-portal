@@ -61,38 +61,41 @@ const WorkflowActionModal = ({ isOpen, onClose, refreshWorkflows }) => {
       toast.error("Please fill all required fields.");
       return;
     }
-
+  
     try {
       setLoading(true);
-
+  
       const payload = {
         WFTypeId: parseInt(selectedTypeId),
         StageId: parseInt(selectedStageId),
         StepId: parseInt(selectedStepId),
         RoleId: parseInt(roleId),
-        isFinalAction: isFinalAction
+        isFinalAction: isFinalAction,
       };
-
+  
       console.log("🚀 Sending payload to API:", payload);
-
+  
       const response = await AxiosPost(
         `${API_BASE_URL}/api/WFlow/CreateWFAction`,
         payload,
         {
           headers: {
-            "Content-Type": "application/json"
-          }
+            "Content-Type": "application/json",
+          },
         }
       );
-
-      console.log("✅ Full API Response:", response);
-
-      if (response?.data?.StatusCode === 200) {
+  
+      // If AxiosPost returns response.data directly:
+      console.log("✅ API Response (raw):", response);
+  
+      const { StatusCode, StatusMessage } = response;
+  
+      if (StatusCode === 200) {
         toast.success("Workflow action created successfully!");
-        refreshWorkflows?.();
+        await refreshWorkflows?.(); // ✅ refresh table
         setTimeout(() => onClose(), 1500);
       } else {
-        toast.error(response?.data?.StatusMessage || "Failed to create workflow action.");
+        toast.error(StatusMessage || "Failed to create workflow action.");
       }
     } catch (error) {
       console.error("❌ Create error:", error);
@@ -101,6 +104,9 @@ const WorkflowActionModal = ({ isOpen, onClose, refreshWorkflows }) => {
       setLoading(false);
     }
   };
+  
+  
+  
 
   if (!isOpen) return null;
 

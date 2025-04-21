@@ -1,39 +1,34 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { FaPlus } from "react-icons/fa";
 import axios from "axios";
-
+import DashboardLayout from "../../components/shared-components/layouts/DashboardLayout";
+import WorkFlowTable from "../../components/shared-components/table/WorkFlow";
+import WorkflowModal from "../../components/shared-components/modals/WorkFlowModal";
 import { AxiosGet } from "../../services/http-service";
-import DashboardLayout from "../shared-components/layouts/DashboardLayout";
-import RolePermissionTable from "../shared-components/table/PermissionTable";
-import WorkflowModal from "../shared-components/modals/WorkFlowModal";
 
 const WorkFlowPage = () => {
-  const tableHeadings = ["Action"];
+  const tableHeadings = ["Document ID", "Type", "Description","Created By", "Created Date"];
   const [workflows, setWorkflows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedWorkflow, setSelectedWorkflow] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-
   const itemsPerPage = 10;
   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
   const fetchWorkflows = async () => {
     try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/WFlow/GetWFActions`);
-      const data = Array.isArray(response.data) ? response.data : [];
-      setWorkflows(data);
-
-      // Ensure currentPage is valid if data changes
-      const newTotalPages = Math.ceil(data.length / itemsPerPage);
-      if (currentPage > newTotalPages) {
-        setCurrentPage(1);
+      const res = await AxiosGet(`${API_BASE_URL}/api/WFlow/GetWF`);
+      if (res?.data?.StatusCode === 200) {
+        const data = Array.isArray(res.data.Data) ? res.data.Data : [];
+        setWorkflows(data);
+      } else {
+        toast.error(res?.data?.StatusMessage || "Failed to load workflows.");
       }
     } catch (error) {
-      toast.error("Failed to fetch workflow actions.");
+      toast.error("Error fetching workflows.");
     } finally {
       setLoading(false);
     }
@@ -44,35 +39,25 @@ const WorkFlowPage = () => {
   }, []);
 
   const totalPages = Math.ceil(workflows.length / itemsPerPage);
-  const paginatedData = workflows.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const paginatedData = workflows.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const handleDeleteWorkflow = async (id) => {
     try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/WFlow/DeleteWFAction/${id}`);
-      if (response?.data?.StatusCode === 200) {
-        toast.success("Workflow action deleted!");
+      const res = await AxiosGet(`${API_BASE_URL}/api/WFlow/DeleteWF/${id}`);
+      if (res?.data?.StatusCode === 200) {
+        toast.success("Workflow deleted.");
         fetchWorkflows();
       } else {
-        toast.error(response?.data?.StatusMessage || "Failed to delete action.");
+        toast.error(res?.data?.StatusMessage || "Delete failed.");
       }
     } catch (error) {
-      toast.error("Delete failed. Please try again.");
+      toast.error("Failed to delete workflow.");
     }
   };
 
-  const handleEditWorkflow = async (workflow) => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/api/WFlow/GetWFActions/${workflow.WF_ActionId}`);
-      if (response?.status === 200 && response?.data) {
-        setSelectedWorkflow(response.data);
-        setIsModalOpen(true);
-      }
-    } catch (error) {
-      toast.error("Failed to load workflow details.");
-    }
+  const handleEditWorkflow = (workflow) => {
+    setSelectedWorkflow(workflow);
+    setIsModalOpen(true);
   };
 
   return (
@@ -90,7 +75,7 @@ const WorkFlowPage = () => {
           </div>
         </div>
 
-        <RolePermissionTable
+        <WorkFlowTable
           tableHeadings={tableHeadings}
           tableData={paginatedData}
           onDelete={handleDeleteWorkflow}
@@ -136,6 +121,12 @@ const WorkFlowPage = () => {
 };
 
 export default WorkFlowPage;
+
+
+
+
+
+
 
 
 
