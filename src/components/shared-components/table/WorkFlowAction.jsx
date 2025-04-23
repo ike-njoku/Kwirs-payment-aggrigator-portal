@@ -16,7 +16,6 @@ const WorkFlowActionTable = ({
 
   const selectWorkflowAction = (workflowAction) => {
     setSelectedWorkflowAction(workflowAction);
-    window.alert(workflowAction);
   };
 
   return (

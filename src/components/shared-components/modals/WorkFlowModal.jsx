@@ -8,7 +8,8 @@ import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
 
 // 👇 Add IDs that should be excluded (no initiation stage)
-const INVALID_WF_TYPE_IDS = [1, 4];
+// const INVALID_WF_TYPE_IDS = [1, 4];
+const INVALID_WF_TYPE_IDS = [];
 
 const WorkflowModal = ({ isOpen, onClose, refreshWorkflows }) => {
   const [documentId, setDocumentId] = useState("");
@@ -33,7 +34,9 @@ const WorkflowModal = ({ isOpen, onClose, refreshWorkflows }) => {
           );
           setWfTypes(validTypes);
         } else {
-          toast.error("Failed to load workflow types: Unexpected response format.");
+          toast.error(
+            "Failed to load workflow types: Unexpected response format."
+          );
         }
       } catch (error) {
         console.error("Error fetching workflow types:", error);
@@ -68,7 +71,10 @@ const WorkflowModal = ({ isOpen, onClose, refreshWorkflows }) => {
         Description: description,
       };
 
-      const response = await axios.post(`${API_BASE_URL}/api/WFlow/CreateWFlow`, payload);
+      const response = await axios.post(
+        `${API_BASE_URL}/api/WFlow/CreateWFlow`,
+        payload
+      );
       console.log("Create Workflow Response:", response);
 
       if (response?.data?.StatusCode === 200) {
@@ -79,14 +85,16 @@ const WorkflowModal = ({ isOpen, onClose, refreshWorkflows }) => {
         setSelectedWfTypeId("");
         setTimeout(() => onClose(), 1500);
       } else {
-        toast.error(response?.data?.StatusMessage || "Failed to create workflow.");
+        toast.error(
+          response?.data?.StatusMessage || "Failed to create workflow."
+        );
       }
     } catch (error) {
       console.error("Workflow creation error:", error?.response || error);
       toast.error(
         error?.response?.data?.Message ||
-        error?.response?.data?.StatusMessage ||
-        "Error creating workflow."
+          error?.response?.data?.StatusMessage ||
+          "Error creating workflow."
       );
     } finally {
       setLoading(false);
@@ -111,7 +119,9 @@ const WorkflowModal = ({ isOpen, onClose, refreshWorkflows }) => {
         >
           {/* Workflow Type */}
           <div className="w-full mb-4">
-            <label className="text-base font-medium text-gray-700">Workflow Type</label>
+            <label className="text-base font-medium text-gray-700">
+              Workflow Type
+            </label>
             <select
               value={selectedWfTypeId}
               onChange={handleWfTypeChange}
@@ -129,7 +139,9 @@ const WorkflowModal = ({ isOpen, onClose, refreshWorkflows }) => {
 
           {/* Document ID */}
           <div className="w-full mb-4">
-            <label className="text-base font-medium text-gray-700">Document ID</label>
+            <label className="text-base font-medium text-gray-700">
+              Document ID
+            </label>
             <input
               type="text"
               value={documentId}
@@ -142,7 +154,9 @@ const WorkflowModal = ({ isOpen, onClose, refreshWorkflows }) => {
 
           {/* Description */}
           <div className="w-full mb-4">
-            <label className="text-base font-medium text-gray-700">Description</label>
+            <label className="text-base font-medium text-gray-700">
+              Description
+            </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -166,17 +180,3 @@ const WorkflowModal = ({ isOpen, onClose, refreshWorkflows }) => {
 };
 
 export default WorkflowModal;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
