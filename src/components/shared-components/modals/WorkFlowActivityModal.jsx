@@ -21,12 +21,10 @@ const WorkFlowActivityModal = ({
 
   useEffect(() => {
     if (isOpen && selectedActivity) {
-      console.log("🛠️ Editing selectedActivity:", selectedActivity);
-      // Ensure selectedActivity is passed and populated correctly
       setFormData({
-        WF_ActivitId: selectedActivity?.WF_ActivitId || "", // This will now auto-fill
+        WF_ActivitId: selectedActivity?.WF_ActivitId || "",
         Approved: selectedActivity?.Approved || false,
-        Remark: selectedActivity?.Remark || "", // Ensure Remark is also pre-filled
+        Remark: selectedActivity?.Remark || "",
       });
     }
   }, [isOpen, selectedActivity]); // Re-run when `isOpen` or `selectedActivity` changes
@@ -60,10 +58,9 @@ const WorkFlowActivityModal = ({
         }
       );
 
-      if (response?.data?.StatusCode === 200) {
+      if (response?.StatusCode === 200) {
         toast.success("Workflow activity updated successfully!");
-        onUpdate?.(); // refresh parent data
-        onClose?.();
+        onClose(); // close modal
       } else {
         toast.error(response?.data?.StatusMessage || "Update failed.");
       }
@@ -76,7 +73,7 @@ const WorkFlowActivityModal = ({
   };
 
   return (
-    <ModalLayout open={isOpen} onClose={onClose}>
+    <ModalLayout open={isOpen} handleCloseModal={onClose}>
       <div className="w-full p-5">
         <h3 className="text-lg font-semibold pb-4 border-b border-gray-300 text-gray-700">
           Create Workflow Activity
