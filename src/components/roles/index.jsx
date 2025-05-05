@@ -137,7 +137,7 @@ const RolesPage = () => {
               <button
                 id="dropdownBgHoverButton"
                 data-dropdown-toggle="dropdownBgHover"
-                className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center  relative  gap-2 border border-pumpkin"
+                className="text-pumpkin dark:text-darkPumpkin2 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center  relative  gap-2 border border-pumpkin dark:border-darkPumpkin2"
                 type="button"
                 onClick={handleOpenCreateRoleModal}
               >

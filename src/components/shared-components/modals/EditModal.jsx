@@ -33,7 +33,7 @@ const EditModal = ({
               {label}
             </label>
 
-            <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
+            <div className="border-b-2 border-b-pumpkin dark:border-b-darkPumpkin2 h-[45px] w-full rounded-md my-4">
               <input
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
                 type="text"

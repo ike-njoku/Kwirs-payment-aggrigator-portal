@@ -174,7 +174,7 @@ const EditTaxOfficeModal = ({
               <label className="text-base font-medium text-gray-700">
                 {formatLabel(key)}
               </label>
-              <div className="border-b-2 border-pumpkin h-[45px] w-full rounded-md mt-2">
+              <div className="border-b-2 border-pumpkin dark:border-darkPumpkin2 h-[45px] w-full rounded-md mt-2">
                 {key === "isActive" ? (
                   <div className="flex items-center h-full px-3">
                     <SwitchIcon

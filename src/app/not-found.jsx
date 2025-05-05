@@ -5,7 +5,7 @@ import React from "react";
 
 const NotFound = () => {
   return (
-    <section className="w-full bg-white min-h-screen flex flex-col justify-center items-center py-5">
+    <section className="w-full bg-white dark:bg-darkBg min-h-screen flex flex-col justify-center items-center py-5">
       <HomeNavigation />
       <figure className=" max-w-[900px] w-[90%] mx-auto h-[500px] animate-custom-bounce">
         <Image

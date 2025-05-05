@@ -11,7 +11,6 @@ import { AxiosGet, AxiosPost } from "../../../services/http-service";
 import { toast } from "react-toastify";
 import MenuItems from "../menu-items/MenuItems";
 import LogoutButton from "../buttons/LogoutButton";
-import ThemeToggler from "../buttons/ThemeToggler";
 
 const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
   const pathname = usePathname();
@@ -86,7 +85,6 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
 
   return (
     <section className="w-full">
-      <ThemeToggler />
       {/* Sidebar */}
       <div className="fixed max-w-[250px] w-full hidden lg:block top-0 left-0 bottom-0 dark:bg-darkSurface bg-[rgba(32,32,32,1)]">
         <div className="w-full h-full py-6 text-white">

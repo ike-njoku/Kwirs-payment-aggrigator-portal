@@ -40,7 +40,7 @@ const DeleteModal = ({
         <button
           data-modal-hide="popup-modal"
           type="button"
-          className="py-2.5 px-5 ms-3 text-sm font-medium text-pumpkin focus:outline-none bg-white rounded-lg border border-pumpkin hover:bg-gray-100"
+          className="py-2.5 px-5 ms-3 text-sm font-medium text-pumpkin dark:text-darkPumpkin2 focus:outline-none bg-white rounded-lg border border-pumpkin dark:border-darkPumpkin2 hover:bg-gray-100"
           onClick={handleCloseModal}
         >
           No, cancel
