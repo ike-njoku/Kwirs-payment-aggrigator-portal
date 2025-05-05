@@ -148,7 +148,7 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
             {/* Mobile Navbar */}
             <div className="w-[90%] mx-auto lg:hidden text-black">
               <article className="w-full flex items-center justify-between">
-                <h3 className="w-full font-bold text-2xl italic">
+                <h3 className="w-full font-bold text-2xl italic dark:text-white">
                   Quantum<span className="text-pumpkin">Gateway</span>
                 </h3>
 
