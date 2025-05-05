@@ -153,7 +153,7 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
                 </h3>
 
                 <button
-                  className="text-pumpkin text-2xl"
+                  className="text-pumpkin dark:text-darkMPumpkin text-2xl"
                   onClick={handleOpenNav}
                 >
                   <FaBars />
@@ -169,8 +169,12 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
           {/* Mobile Page Title */}
           <div className="w-[90%] mx-auto lg:hidden mt-8">
             <article className="flex flex-col gap-2">
-              <h4 className="text-2xl capitalize font-semibold">{page}</h4>
-              <p className="font-light text-base">{subheading}</p>
+              <h4 className="text-2xl capitalize font-semibold dark:text-white ">
+                {page}
+              </h4>
+              <p className="font-light text-base dark:text-darkMPumpkin">
+                {subheading}
+              </p>
             </article>
           </div>
         </section>
