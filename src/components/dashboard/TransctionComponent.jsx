@@ -29,7 +29,7 @@ const TransctionComponent = (transactions, loading) => {
           <button
             id="dropdownBgHoverButton"
             data-dropdown-toggle="dropdownBgHover"
-            className="text-pumpkin focus:outline-none font-medium rounded-lg text-base px-5 py-2.5 text-center md:hidden inline-flex items-center gap-2"
+            className="text-pumpkin dark:text-darkMPumpkin focus:outline-none font-medium rounded-lg text-base px-5 py-2.5 text-center md:hidden inline-flex items-center gap-2"
             type="button"
           >
             <FaPrint />
@@ -38,7 +38,7 @@ const TransctionComponent = (transactions, loading) => {
           <button
             id="dropdownBgHoverButton"
             data-dropdown-toggle="dropdownBgHover"
-            className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 md:hidden"
+            className="text-pumpkin dark:text-darkMPumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 md:hidden"
             type="button"
           >
             <FaShareNodes />

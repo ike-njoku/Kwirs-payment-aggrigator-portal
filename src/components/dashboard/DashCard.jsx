@@ -31,7 +31,7 @@ const DashCard = ({ TIN, loading, dashboardData }) => {
   }, []);
 
   return (
-    <div className="bg-customGradient rounded-[25px] p-6 text-white mt-3 w-[373px] lg:w-full">
+    <div className="bg-customGradient dark:bg-darkCustomGradient rounded-[25px] p-6 text-white mt-3 w-[373px] lg:w-full">
       {loading ? (
         <p className="text-center text-white">Loading...</p>
       ) : dashboardData && dashboardData.TIN ? (

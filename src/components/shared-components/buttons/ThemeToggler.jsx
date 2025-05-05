@@ -2,7 +2,7 @@
 import React, { useContext, useState } from "react";
 import { ThemeContext } from "@/context/ThemeProvider";
 import { MdOutlineLightMode } from "react-icons/md";
-import { FaMoon } from "react-icons/fa6";
+import { BsMoonStarsFill } from "react-icons/bs";
 import { FaTimesCircle } from "react-icons/fa";
 
 const ThemeToggler = () => {
@@ -30,10 +30,10 @@ const ThemeToggler = () => {
       >
         <button
           onClick={handleExpandToggler}
-          className={`text-pumpkin  w-full flex gap-2 items-center justify-center`}
+          className={`text-pumpkin dark:text-darkPumpkin2  w-full flex gap-2 items-center justify-center`}
         >
           <span className={`text-3xl ${expandToggler && "text-xl"}`}>
-            {theme === "dark" ? <FaMoon /> : <MdOutlineLightMode />}
+            {theme === "dark" ? <BsMoonStarsFill /> : <MdOutlineLightMode />}
           </span>{" "}
           {expandToggler && (
             <span className="capitalize text-base">
@@ -46,7 +46,7 @@ const ThemeToggler = () => {
           <div className="w-full absolute -top-28 bg-white shadow-2xl border dark:border-none dark:shadow-none dark:bg-darkSurface dark:text-white rounded-lg py-2">
             <div className="w-full flex justify-end pb-2 px-3">
               <button className="ml-auto" onClick={closeToggler}>
-                <FaTimesCircle className="text-pumpkin dark:text-darkMPumpkin text-lg" />
+                <FaTimesCircle className="text-pumpkin dark:text-darkPumpkin2 text-lg" />
               </button>
             </div>
 
