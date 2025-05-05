@@ -7,7 +7,7 @@ import { FaTimesCircle } from "react-icons/fa";
 
 const ThemeToggler = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
-  const [expandToggler, setExpandToggler] = useState(true);
+  const [expandToggler, setExpandToggler] = useState(false);
 
   const handleExpandToggler = () => {
     setExpandToggler(true);
