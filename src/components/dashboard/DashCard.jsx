@@ -12,7 +12,12 @@ const DashCard = ({ TIN, loading, dashboardData }) => {
   // Function to get the current date and time
   const updateDateTime = () => {
     const now = new Date();
-    const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
     const formattedDate = now.toLocaleDateString("en-US", options);
     setCurrentDate(formattedDate);
   };
@@ -41,17 +46,16 @@ const DashCard = ({ TIN, loading, dashboardData }) => {
           </article>
 
           <h4 className="font-semibold mt-5 text-white flex justify-start gap-1">
-  <span className="text-[30px] lg:text-5xl">
-    {dashboardData?.sumtotal
-      ? new Intl.NumberFormat("en-NG", {
-          style: "currency",
-          currency: "NGN",
-          minimumFractionDigits: 2, // Ensures two decimal places
-        }).format(dashboardData.sumtotal)
-      : "₦0.00"}
-  </span>
-</h4>
-
+            <span className="text-[30px] lg:text-5xl">
+              {dashboardData?.sumtotal
+                ? new Intl.NumberFormat("en-NG", {
+                    style: "currency",
+                    currency: "NGN",
+                    minimumFractionDigits: 2, // Ensures two decimal places
+                  }).format(dashboardData.sumtotal)
+                : "₦0.00"}
+            </span>
+          </h4>
 
           <div className="mt-10 flex justify-between items-end gap-3">
             <article className="text-white">
@@ -75,4 +79,3 @@ const DashCard = ({ TIN, loading, dashboardData }) => {
 };
 
 export default DashCard;
-
