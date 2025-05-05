@@ -23,9 +23,9 @@ const ThemeToggler = () => {
       }`}
     >
       <div
-        className={`w-full relative flex justify-end items-center gap-2 transition-all ${
+        className={`w-full relative flex justify-end items-center gap-2 transition-all bg-transparent backdrop-blur-sm ${
           expandToggler &&
-          "bg-white shadow-2xl border dark:shadow-none  dark:bg-darkSurface py-1 rounded-3xl dark:border-none "
+          "bg-white shadow-2xl border dark:shadow-none  dark:bg-darkSurface py-1 rounded-3xl dark:border-none backdrop-blur-none"
         }`}
       >
         <button
