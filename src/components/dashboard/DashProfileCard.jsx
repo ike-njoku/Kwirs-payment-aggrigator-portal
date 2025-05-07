@@ -7,13 +7,18 @@ import { AxiosGet } from "../../services/http-service";
 import { toast } from "react-toastify";
 
 const DashProfileCard = ({ TIN, loading, profileData }) => {
-   const [currentDate, setCurrentDate] = useState("");
+  const [currentDate, setCurrentDate] = useState("");
   const [openModal, setOpenModal] = useState(false);
 
- // Function to get the current date and time
+  // Function to get the current date and time
   const updateDateTime = () => {
     const now = new Date();
-    const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
     const formattedDate = now.toLocaleDateString("en-US", options);
     setCurrentDate(formattedDate);
   };
@@ -25,7 +30,6 @@ const DashProfileCard = ({ TIN, loading, profileData }) => {
 
     return () => clearInterval(interval); // Cleanup on unmount
   }, []);
-
 
   return (
     <>
@@ -46,25 +50,27 @@ const DashProfileCard = ({ TIN, loading, profileData }) => {
                   className="object-cover"
                 />
               </figure>
-              <h3 className="text-sm font-medium capitalize italic text-[rgb(70,70,70)]">
+              <h3 className="text-sm font-medium capitalize italic text-[rgb(70,70,70)] dark:text-white">
                 quantum<span className="text-pumpkin">Gateway</span>
               </h3>
             </article>
 
             <div className="mt-5">
-              <h4 className="font-semibold mt-5 flex justify-start gap-1 bg-gradient-to-l to-[rgb(255,117,24)] from-[rgba(255,255,255,0.6)] text-transparent bg-clip-text capitalize text-2xl lg:text-3xl">
+              <h4 className="font-semibold mt-5 flex justify-start gap-1 bg-gradient-to-l dark:to-darkPumpkin2 to-[rgb(255,117,24)] from-[#ffffff99] text-transparent bg-clip-text capitalize text-2xl lg:text-3xl">
                 {profileData?.Name || "N/A"}
               </h4>
-              <p className="text-sm font-normal leading-normal">
+              <p className="text-sm font-normal leading-normal dark:text-white">
                 {profileData?.Email || "N/A"}
               </p>
             </div>
 
             <div className="mt-10 flex justify-between items-end gap-3">
-              <p className="text-base font-semibold text-pumpkin">
+              <p className="text-base font-semibold text-pumpkin dark:text-darkPumpkin2">
                 {profileData?.TIN || "N/A"}
               </p>
-              <h3 className="font-normal text-sm">{currentDate}</h3>
+              <h3 className="font-normal text-sm dark:text-white">
+                {currentDate}
+              </h3>
             </div>
           </>
         ) : (
@@ -80,4 +86,3 @@ const DashProfileCard = ({ TIN, loading, profileData }) => {
 };
 
 export default DashProfileCard;
-

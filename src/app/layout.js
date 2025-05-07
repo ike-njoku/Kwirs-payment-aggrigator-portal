@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
-import Head from "next/head";
+
 import Script from "next/script";
 import PaymentRequestDetails from "@/context/PaymentRequestDetails";
 
@@ -18,19 +18,16 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "Quantum Gatway",
   description: "Make Payments Easy",
+  icons: {
+    icon: "/images/favicon.ico",
+    shortcut: "/images/favicon.ico",
+    apple: "/images/favicon.ico",
+  },
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <Head>
-        <link
-          rel="icon"
-          href="/images/interswitch.png"
-          type="image/png"
-          sizes="16x16"
-        />
-      </Head>
       <Script
         src="https://pay-service.icadpay.com/host/new-inline-stage-pay.js"
         strategy="lazyOnload"

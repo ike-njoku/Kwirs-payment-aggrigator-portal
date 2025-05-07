@@ -38,14 +38,14 @@ const MenuItems = ({ sidebarMenu }) => {
       {sidebarMenu.map((menu, i) => (
         <li
           key={i}
-          className={`w-full px-6  items-center text-md text-black lg:text-white capitalize py-2 ${
+          className={`w-full px-6  items-center text-md text-black dark:text-white lg:text-white capitalize py-2 ${
             pathname.includes(menu.url) &&
-            "bg-pumpkin text-white rounded-[30px]"
+            "bg-pumpkin dark:bg-darkPumpkin2 text-white rounded-[30px]"
           }`}
         >
           <span
             className={`flex items-center gap-1 ${
-              showDropdown == i && "text-pumpkin"
+              showDropdown == i && "text-pumpkin dark:text-darkPumpkin2"
             }`}
           >
             <FaUsers />
@@ -63,14 +63,14 @@ const MenuItems = ({ sidebarMenu }) => {
               {menu?.submenu?.map((subMenu, j) => (
                 <li
                   key={j}
-                  className={`w-full px-2 flex gap-2 items-center text-md text-black lg:text-white capitalize ${
+                  className={`w-full px-2 flex gap-2 items-center text-md text-black dark:text-white lg:text-white capitalize ${
                     pathname.includes(subMenu.URL) &&
-                    "bg-pumpkin text-white rounded-[30px]"
+                    "bg-pumpkin dark:bg-darkPumpkin2 text-white rounded-[30px]"
                   }`}
                 >
                   <Link
                     href={subMenu?.URL}
-                    className="hover:text-pumpkin  flex gap-2 items-center"
+                    className="hover:text-pumpkin dark:hover:text-darkPumpkin2  flex gap-2 items-center"
                   >
                     <FaTasks /> {subMenu?.ResourceName}
                   </Link>

@@ -7,7 +7,7 @@ import { authenticateUser } from "../../services/auth-service";
 import { AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
 import MenuItems from "./menu-items/MenuItems";
-import LogoutButton from "./buttons/LogoutButton"
+import LogoutButton from "./buttons/LogoutButton";
 
 const MobileNavbar = ({ openNav, handleCloseNav }) => {
   const [_sidebarMenu, setSideBarMenu] = useState(sidebarMenu);
@@ -41,9 +41,12 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
         openNav ? "translate-x-0" : "translate-x-[1000px]"
       } fixed bg-[rgba(0,0,0,0.7)] top-0 left-0 right-0 bottom-0 transition-all z-[24]`}
     >
-      <div className="w-full max-w-[300px] h-full p-6 bg-white  overflow-auto">
+      <div className="w-full max-w-[300px] h-full p-6 bg-white dark:bg-darkSurface overflow-auto">
         <div className="flex justify-end">
-          <button className="text-pumpkin text-2xl" onClick={handleCloseNav}>
+          <button
+            className="text-pumpkin dark:text-darkMPumpkin text-2xl"
+            onClick={handleCloseNav}
+          >
             <IoMdClose />
           </button>
         </div>
@@ -57,17 +60,19 @@ const MobileNavbar = ({ openNav, handleCloseNav }) => {
             />
           </figure>
           <article className="flex flex-col gap-1">
-            <h5 className="text-base capitalize text-black font-semibold">
+            <h5 className="text-base capitalize text-black dark:text-white font-semibold">
               Jane Doe
             </h5>
-            <p className="text-black font-light text-sm">Software Engineer</p>
+            <p className="text-black font-light text-sm dark:text-white">
+              Software Engineer
+            </p>
           </article>
         </div>
 
         <div className="w-full py-5 mt-10">
           <MenuItems sidebarMenu={_sidebarMenu} />
         </div>
-        <LogoutButton/>
+        <LogoutButton />
       </div>
     </section>
   );

@@ -77,16 +77,16 @@ const ChangePasswordPage = () => {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h3 className="text-lg font-semibold mb-4 text-center">
+    <main className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-darkBg p-4">
+      <div className="bg-white dark:bg-darkSurface dark:shadow-[#3d312a] dark:shadow-md p-6 rounded-lg shadow-lg w-full max-w-md">
+        <h3 className="text-lg font-semibold mb-4 text-center dark:text-white">
           Change Password
         </h3>
 
         <div>
           <label
             htmlFor="oldPassword"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-gray-700 dark:text-white"
           >
             Old Password
           </label>
@@ -102,7 +102,7 @@ const ChangePasswordPage = () => {
         <div className="mt-4">
           <label
             htmlFor="newPassword"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-gray-700 dark:text-white"
           >
             New Password
           </label>
@@ -118,7 +118,7 @@ const ChangePasswordPage = () => {
         <div className="mt-4">
           <label
             htmlFor="confirmPassword"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-gray-700 dark:text-white"
           >
             Confirm New Password
           </label>
@@ -133,7 +133,7 @@ const ChangePasswordPage = () => {
 
         <div className="mt-6 flex justify-end">
           <button
-            className="bg-pumpkin text-white px-4 py-2 rounded-md"
+            className="bg-pumpkin dark:bg-darkPumpkin2 text-white px-4 py-2 rounded-md"
             onClick={handleChangePassword}
             disabled={loading}
           >

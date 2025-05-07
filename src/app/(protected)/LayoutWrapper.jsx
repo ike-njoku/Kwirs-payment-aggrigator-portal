@@ -2,6 +2,7 @@
 import { authenticateUser } from "@/services/auth-service";
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import ThemeToggler from "@/components/shared-components/buttons/ThemeToggler";
 
 const LayoutWrapper = ({ children }) => {
   const router = useRouter();
@@ -17,7 +18,12 @@ const LayoutWrapper = ({ children }) => {
     return null;
   }
 
-  return <div>{children}</div>;
+  return (
+    <div>
+      <ThemeToggler />
+      {children}
+    </div>
+  );
 };
 
 export default LayoutWrapper;

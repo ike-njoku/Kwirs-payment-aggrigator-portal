@@ -237,7 +237,7 @@ const CustomTable = ({
             tableType === "resource" ? "xl:table-fixed" : "lg:table-fixed"
           }`}
         >
-          <thead className="text-xs text-white uppercase bg-pumpkin">
+          <thead className="text-xs text-white uppercase bg-pumpkin dark:bg-darkPumpkin2">
             <tr>
               {tableHeadings.map((heading, i) => (
                 <th scope="col" className="px-6 py-3" key={i}>

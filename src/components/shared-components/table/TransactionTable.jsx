@@ -31,7 +31,7 @@ const TransactionTable = ({ transactions, loading }) => {
   return (
     <div className="relative overflow-x-auto h-auto shadow-md sm:rounded-lg">
       <table className="w-full text-sm text-left text-gray-500">
-        <thead className="text-xs text-white uppercase bg-pumpkin">
+        <thead className="text-xs text-white uppercase bg-pumpkin dark:bg-darkPumpkin2">
           <tr>
             {tableHeadings.map((heading, i) => (
               <th scope="col" className="px-6 py-3" key={i}>

@@ -49,7 +49,7 @@ const EditSendEmail = ({
               <label className="text-base font-medium text-gray-700">
                 {field.label}
               </label>
-              <div className="border-b-2 border-pumpkin h-[45px] w-full rounded-md mt-2">
+              <div className="border-b-2 border-pumpkin dark:border-darkPumpkin2 h-[45px] w-full rounded-md mt-2">
                 <input
                   type={field.type}
                   name={field.name}

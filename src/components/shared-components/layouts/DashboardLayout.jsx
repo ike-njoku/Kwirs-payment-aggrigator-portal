@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { sidebarMenu } from "../../../utils/app_data";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -86,7 +86,7 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
   return (
     <section className="w-full">
       {/* Sidebar */}
-      <div className="fixed max-w-[250px] w-full hidden lg:block top-0 left-0 bottom-0 bg-[rgba(32,32,32,1)]">
+      <div className="fixed max-w-[250px] w-full hidden lg:block top-0 left-0 bottom-0 dark:bg-darkSurface bg-[rgba(32,32,32,1)]">
         <div className="w-full h-full py-6 text-white">
           <h3 className="w-full font-bold text-xl italic px-8 my-5">
             Quantum<span className="text-pumpkin">Gateway</span>
@@ -100,15 +100,15 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
       </div>
 
       {/* Main Content */}
-      <div className="w-full lg:relative lg:left-[250px] lg:w-[calc(100%-250px)] min-h-screen">
+      <div className="w-full lg:relative lg:left-[250px] lg:w-[calc(100%-250px)] min-h-screen dark:bg-darkBg">
         <section className="w-full">
-          <div className="lg:text-pumpkin w-full py-6 shadow-lg">
+          <div className="lg:text-pumpkin w-full py-6 shadow-lg dark:shadow-[#575757] dark:shadow-sm">
             <div className="w-[90%] mx-auto lg:flex justify-between gap-5 items-center hidden">
               <article className="flex flex-col gap-2">
-                <h4 className="text-4xl capitalize text-pumpkin font-semibold">
+                <h4 className="text-4xl capitalize text-pumpkin dark:text-white font-semibold">
                   {page}
                 </h4>
-                <p className="text-pumpkin font-light text-base">
+                <p className="text-pumpkin dark:text-darkMPumpkin font-light text-base">
                   {subheading}
                 </p>
               </article>
@@ -146,12 +146,12 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
             {/* Mobile Navbar */}
             <div className="w-[90%] mx-auto lg:hidden text-black">
               <article className="w-full flex items-center justify-between">
-                <h3 className="w-full font-bold text-2xl italic">
+                <h3 className="w-full font-bold text-2xl italic dark:text-white">
                   Quantum<span className="text-pumpkin">Gateway</span>
                 </h3>
 
                 <button
-                  className="text-pumpkin text-2xl"
+                  className="text-pumpkin dark:text-darkMPumpkin text-2xl"
                   onClick={handleOpenNav}
                 >
                   <FaBars />
@@ -167,8 +167,12 @@ const DashboardLayout = ({ page = "Dashboard", subheading = "", children }) => {
           {/* Mobile Page Title */}
           <div className="w-[90%] mx-auto lg:hidden mt-8">
             <article className="flex flex-col gap-2">
-              <h4 className="text-2xl capitalize font-semibold">{page}</h4>
-              <p className="font-light text-base">{subheading}</p>
+              <h4 className="text-2xl capitalize font-semibold dark:text-white ">
+                {page}
+              </h4>
+              <p className="font-light text-base dark:text-darkMPumpkin">
+                {subheading}
+              </p>
             </article>
           </div>
         </section>
