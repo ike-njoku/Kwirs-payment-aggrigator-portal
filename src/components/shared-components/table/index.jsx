@@ -119,6 +119,31 @@ const CustomTable = ({
           </>
         );
 
+        case "vendor": // Another table type
+        return (
+          <>
+            <td
+              scope="row"
+              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
+            >
+              {tableInfo.Id}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.VendorsName}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.VendorsAddress}
+            </td>
+        
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.VendorsPhone}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.VendorsEmail}
+            </td>
+          </>
+        );
+
       case "send-email": // Another table type
         return (
           <>
