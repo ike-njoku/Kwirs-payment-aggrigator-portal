@@ -7,9 +7,9 @@ import SelectTaxOffice from "../SelectTaxOffice";
 const GetBulkPaymentModal = ({ handleCloseModal, handleCreateModal }) => {
   const [mode, setMode] = useState("batch"); // "batch" or "date"
   const [batchNumber, setBatchNumber] = useState("");
-  const [taxOfficeId, setTaxOfficeId] = useState("KUB");
-  const [startDate, setStartDate] = useState("2024-05-09");
-  const [endDate, setEndDate] = useState("2026-05-10");
+  const [taxOfficeId, setTaxOfficeId] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFormSubmit = (e) => {
