@@ -8,6 +8,7 @@ import CreateRoleModel from "../shared-components/modals/CreateRoleModel";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
 import CreatePaymentMethod from "../shared-components/modals/createPaymentMethod";
+import CreateVendor from "../shared-components/modals/CreateVendor";
 
 const Vendors = () => {
   const tableHeadings = [
@@ -20,6 +21,7 @@ const Vendors = () => {
   ];
   const [tableData, setTableData] = useState(roleTableData);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [editingVendor, setEditingVendor] = useState(null);
   const [openEditPaymentModal, setOpenEditModal] = useState(false);
   const [openPaymentMethodModal, setOpenPaymentMethodModal] = useState(false);
   const [authenticatedUser, setAuthenticatedUser] = useState({});
@@ -33,88 +35,88 @@ const Vendors = () => {
     setOpenEditModal(true);
   };
 
-  // deleting items
-  const handleDeleteItem = async (paymentMethodId) => {
-    try {
-      const deleteResponse = await AxiosGet(
-        // Use AxiosDelete if API supports DELETE
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/PaymentMethod/Delete/${paymentMethodId}`
-      );
-      console.log("delete response:", deleteResponse);
-      if (
-        deleteResponse?.status === 200 ||
-        deleteResponse?.StatusCode === 200
-      ) {
-        toast.success("Payment method deleted successfully");
-
-        // Update state to remove the deleted payment method
-        setTableData((prevData) =>
-          prevData.filter((item) => item.PaymentMethod !== paymentMethodId)
-        );
-
-        setOpenDeleteModal(false);
-      } else {
-        toast.error("Could not delete payment method");
-      }
-    } catch (error) {
-      console.error("Delete Error:", error.response?.data || error);
-      toast.error("An error occurred while deleting the payment method");
-    }
+  const handleEditVdendor = (vendor) => {
+    console.log("Editing vendor:", vendor); // Debug log
+    setEditingVendor(vendor);
+    setOpenEditModal(true);
   };
+
+// deleting Vendors
+const handleDeleteItem = async (vendorId) => {
+  try {
+    // Use AxiosDelete if available, or implement a proper DELETE request
+    console.log("Vendor ID to delete:", vendorId);
+console.log("Full URL:", `${process.env.NEXT_PUBLIC_BASE_URL}/api/Vendors/Delete/${vendorId}`);
+    const deleteResponse = await AxiosGet(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Vendors/Delete/${vendorId}`
+    );
+    
+    console.log("delete response:", deleteResponse);
+    
+    // Check response based on your API's structure
+    if (deleteResponse?.status === 200 || deleteResponse?.StatusCode === 200) {
+      toast.success("Vendor deleted successfully");
+
+      // Update state to remove the deleted vendor
+      setTableData((prevData) =>
+        prevData.filter((item) => item.vendorId !== vendorId) // Changed to vendorId
+      );
+
+      setOpenDeleteModal(false);
+    } else {
+      toast.error(deleteResponse?.StatusMessage || "Could not delete vendor");
+    }
+  } catch (error) {
+    console.error("Delete Error:", error.response?.data || error);
+    toast.error("An error occurred while deleting the vendor");
+  }
+};
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("authDetails"));
     setAuthenticatedUser(user);
   }, []);
 
-  // handle edit Payment Method
-  const handleEditItem = async (
-    description,
-    requireAuthorization,
-    updateBy = "admin",
-    paymentMethodId
-  ) => {
-    if (!paymentMethodId) {
-      toast.error("Payment method ID is required");
-      console.error("Error: Payment method ID is missing");
-      return;
-    }
+  // handle edit Vendors
+  // handle edit Vendors
+// handle edit Vendors
+// Update your edit handler to set the vendor data
 
-    console.log("Editing Payment Method ID:", paymentMethodId);
-    console.log("Update By:", updateBy); // Log to verify
 
-    // Prepare the payload to match backend expectations
-    const updatedPaymentMethod = {
-      updateBy, // Ensure "admin" is passed correctly
-      description,
-      requireAuthorization,
-      paymentMethodId,
-    };
+// Update your handleEditItem function
+const handleEditItem = async (vendorName, email, address, phone) => {
+  if (!editingVendor?.vendorId) {
+    toast.error("Vendor ID is required");
+    return;
+  }
 
-    console.log("Updated Payload Sent to API:", updatedPaymentMethod); // Debugging log
-
-    try {
-      const updateRoleResponse = await AxiosPost(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/PaymentMethod/Update`,
-        updatedPaymentMethod
-      );
-
-      console.log("API Response:", updateRoleResponse); // Log full API response
-
-      if (updateRoleResponse.StatusCode === 200) {
-        toast.success("Payment Method Updated");
-        getAllPaymentMethod();
-      } else {
-        toast.error(
-          updateRoleResponse.StatusMessage || "Could not update Payment Method"
-        );
-        console.error("Update Failed:", updateRoleResponse);
-      }
-    } catch (error) {
-      console.error("API Error:", error.response?.data || error.message);
-      toast.error("An error occurred while updating the Payment Method");
-    }
+  const updatedVendor = {
+    vendorId: editingVendor.vendorId, // Use the original ID
+    vendorName,
+    email,
+    address,
+    phone
   };
+
+  try {
+    const response = await AxiosPost(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Vendors/Update`,
+      updatedVendor
+    );
+
+    if (response.StatusCode === 200) {
+      toast.success("Vendor updated successfully");
+      GetAllVendors();
+      setOpenEditModal(false);
+    } else {
+      toast.error(response.StatusMessage || "Update failed");
+    }
+  } catch (error) {
+    console.error("Update error:", error);
+    toast.error("Failed to update vendor");
+  }
+};
+
 
   const handleCloseCreatePaymentMethodModal = () => {
     setOpenPaymentMethodModal(false);
@@ -124,38 +126,45 @@ const Vendors = () => {
     setOpenPaymentMethodModal(true);
   };
 
-  // hand create payment method
-  const handleCreatePaymentMethod = async (
-    description,
-    requireAuthorization,
-    createdBy = "admin"
+  // hand create Vendors
+  const handleCreateVendor = async (
+    vendorId,
+    vendorName,
+    email,
+    address,
+    phone
   ) => {
     setIsLoading(true);
-
-    const newPaymentMethod = {
-      Description: description,
-      CreatedBy: createdBy,
-      Authorization: requireAuthorization,
+  
+    const newVendor = {
+      vendorId: vendorId,
+      vendorName: vendorName,
+      email: email,
+      Address: address,
+      phone: phone
     };
-    // newPaymentMethod.Description = description;
-    // newPaymentMethod.CreatedBy = createdBy;
-    // newPaymentMethod.Authorization = requireAuthorization;
-
-    const createPaymentMethod = await AxiosPost(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/PaymentMethod/Create`,
-      newPaymentMethod
-    );
-    console.log("create response:s", createPaymentMethod);
-
-    if (createPaymentMethod.StatusCode !== 200) {
-      toast.error("Could not create Payment method");
-      return;
+  
+    try {
+      const createResponse = await AxiosPost(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Vendors/Create`,
+        newVendor
+      );
+  
+      if (createResponse.StatusCode !== 200) {
+        toast.error(createResponse.StatusMessage || "Could not create Vendor");
+        setIsLoading(false);
+        return;
+      }
+  
+      toast.success("Vendor created successfully");
+      GetAllVendors(); // Refresh the vendor list
+      setIsLoading(false);
+      setOpenPaymentMethodModal(false); // Close the modal
+    } catch (error) {
+      console.error("Create Vendor Error:", error);
+      toast.error("An error occurred while creating the vendor");
+      setIsLoading(false);
     }
-    setIsLoading(false);
-    toast.success(" created successfully");
-    newPaymentMethod.dateCreated = new Date().toISOString().split("T")[0];
-    setTableData([...tableData, newPaymentMethod]);
-    GetAllVendors();
   };
 
   useEffect(() => {
@@ -176,13 +185,12 @@ const Vendors = () => {
 
       let tableData = apiResponse.data.Data.map((item) => ({
         ...item,
-        Id: item.vendorId,
+        VendorsId: item.vendorId,
         VendorsName: item.vendorName,
         VendorsAddress: item.address,
         VendorsEmail: item.email,
-        VendorsPhone: item.Phone
-          ? new Date(item.UpdateDate).toISOString().split("T")[0]
-          : null,
+        VendorsPhone: item.phone
+       
       }));
 
       setTableData(tableData);
@@ -195,7 +203,7 @@ const Vendors = () => {
   };
 
   return (
-    <DashboardLayout page="Payment Method">
+    <DashboardLayout page="Vendors">
       <section className="w-full">
         <div className=" w-[90%] mx-auto py-5">
           <div className=" w-full lg:mt-10">
@@ -219,14 +227,17 @@ const Vendors = () => {
               isEllipseDropdwon={true}
               tableType="vendor"
               handleDelete={handleDelete}
-              handleEdit={handleEdit}
+              handleEdit={handleEditVdendor}
               openDeleteModal={openDeleteModal}
               setOpenDeleteModal={setOpenDeleteModal}
+
               setOpenEditModal={setOpenEditModal}
               // openEditModal={openEditPaymentModal}
-              openEditPaymentModal={openEditPaymentModal}
+              // openEditPaymentModal={openEditPaymentModal}
+              openEditVendorModal={openEditPaymentModal}
               setOpenEditPaymentModal={setOpenEditModal}
               handleDeleteItem={handleDeleteItem}
+              editingVendor={editingVendor}
               handleEditItem={handleEditItem}
               label="me"
               heading="Update PaymentMethod"
@@ -235,12 +246,14 @@ const Vendors = () => {
         </div>
 
         {openPaymentMethodModal && (
-          <CreatePaymentMethod
+          <CreateVendor
             handleCloseModal={handleCloseCreatePaymentMethodModal}
-            handleCreateModal={handleCreatePaymentMethod}
+            handleCreateModal={handleCreateVendor}
             isLoading={isLoading}
           />
+        
         )}
+
       </section>
     </DashboardLayout>
   );
