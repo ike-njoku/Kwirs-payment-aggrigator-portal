@@ -7,6 +7,7 @@ import EditResourceModal from "../modals/EditResourceModal";
 import EditPaymentMethodModal from "../modals/EditPaymentMethodModal";
 import EditTaxOfficeModal from "../modals/EditTaxofficeModal";
 import EditSendEmail from "../modals/EditSendEmail";
+import EditVendorModal from "../modals/EditVendorsModal";
 
 const CustomTable = ({
   tableData,
@@ -17,9 +18,11 @@ const CustomTable = ({
   handleEdit,
   openEditTaxOfficeModal,
   openDeleteModal,
+  openEditVendorModal,
   setOpenDeleteModal,
   setOpenEditResourceModal,
   openEditResourceModal,
+  editingVendor,
   openEditModal,
   openEditPaymentModal,
   setOpenEditModal,
@@ -41,6 +44,9 @@ const CustomTable = ({
     setOpenEditResourceModal(false);
   };
 
+  const handleCloseEditVendorModal = () => {
+    setOpenEditModal(false)
+  };
   const handleCloseEditModal = () => {
     setOpenEditModal(false);
   };
@@ -126,7 +132,7 @@ const CustomTable = ({
               scope="row"
               className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
             >
-              {tableInfo.Id}
+              {tableInfo.VendorsId}
             </td>
             <td className="px-6 py-4 text-gray-900 capitalize">
               {tableInfo.VendorsName}
@@ -289,7 +295,8 @@ const CustomTable = ({
                           id={
                             tableInfo.TaxOfficeId ||
                             tableInfo.id ||
-                            tableInfo.paymentMethodId
+                            tableInfo.paymentMethodId ||
+                            tableInfo.VendorsId 
                           }
                           item={tableInfo}
                           showDelete={tableType !== "send-email"} // Hide delete for "send-email"
@@ -346,6 +353,31 @@ const CustomTable = ({
           label={label}
         />
       )}
+
+{/* {openEditPaymentModal && (
+        <EditPaymentMethodModal
+          handleCloseModal={handleClosePaymentMethodModal}
+          index={selectedItem}
+          handleEditModal={handleEditItem}
+          heading={heading}
+          label={label}
+        />
+      )} */}
+
+{openEditVendorModal && (
+         <EditVendorModal
+         handleCloseModal={handleCloseEditVendorModal}
+         index={selectedItem}
+         vendorData={editingVendor}
+         handleEditModal={handleEditItem}
+         heading={heading}
+         label={label}
+        />
+      )}
+
+    
+
+      
       {openEditEmailModal && (
         <EditSendEmail
           handleCloseModal={handleCloseEmailsModal}
