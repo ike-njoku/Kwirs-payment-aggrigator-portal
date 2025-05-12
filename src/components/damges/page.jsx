@@ -4,11 +4,9 @@ import DashboardLayout from "../shared-components/layouts/DashboardLayout";
 import CustomTable from "../shared-components/table";
 import { roleTableData } from "../../utils/table_data";
 import { FaPlus } from "react-icons/fa";
-import CreateRoleModel from "../shared-components/modals/CreateRoleModel";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
-import CreatePaymentMethod from "../shared-components/modals/createPaymentMethod";
-import CreateVendor from "../shared-components/modals/CreateVendor";
+import CreateDamages from "../shared-components/modals/CreateDamages";
 
 const Damages = () => {
   const tableHeadings = [
@@ -16,7 +14,7 @@ const Damages = () => {
     "Store",
     "Description",
     "SIV No",
-     "quantity",
+    "quantity",
     "Issued Date",
     "Created Date",
     "Actions",
@@ -24,168 +22,140 @@ const Damages = () => {
   const [tableData, setTableData] = useState(roleTableData);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [editingVendor, setEditingVendor] = useState(null);
-  const [openEditPaymentModal, setOpenEditModal] = useState(false);
-  const [openPaymentMethodModal, setOpenPaymentMethodModal] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [openCreateModal, setOpenCreateModal] = useState(false);
   const [authenticatedUser, setAuthenticatedUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+
+  // Pagination States
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 6;
+  const totalPages = Math.ceil(tableData.length / rowsPerPage);
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = tableData.slice(indexOfFirstRow, indexOfLastRow);
+
+  // Pagination Handlers
+  const nextPage = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
 
   const handleDelete = () => {
     setOpenDeleteModal(true);
   };
 
-  const handleEdit = () => {
-    setOpenEditModal(true);
-  };
-
-  const handleEditVdendor = (vendor) => {
-    console.log("Editing vendor:", vendor); // Debug log
+  const handleEdit = (vendor) => {
+    console.log("Editing vendor:", vendor);
     setEditingVendor(vendor);
     setOpenEditModal(true);
   };
 
-// deleting Vendors
-const handleDeleteItem = async (vendorId) => {
-  try {
-    // Use AxiosDelete if available, or implement a proper DELETE request
-    console.log("Vendor ID to delete:", vendorId);
-console.log("Full URL:", `${process.env.NEXT_PUBLIC_BASE_URL}/api/Vendors/Delete/${vendorId}`);
-    const deleteResponse = await AxiosGet(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Vendors/Delete/${vendorId}`
-    );
-    
-    console.log("delete response:", deleteResponse);
-    
-    // Check response based on your API's structure
-    if (deleteResponse?.status === 200 || deleteResponse?.StatusCode === 200) {
-      toast.success("Vendor deleted successfully");
+  const handleDeleteItem = async (damageId) => {
+    try {
+      console.log("Damage ID to delete:", damageId);
+      const deleteResponse = await AxiosGet(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/Damages/Delete/${damageId}`
+      );
+      
+      if (deleteResponse?.status === 200 || deleteResponse?.StatusCode === 200) {
+        toast.success("Damage record deleted successfully");
+        setTableData((prevData) =>
+          prevData.filter((item) => item.damageId !== damageId)
+        );
+        setOpenDeleteModal(false);
+      } else {
+        toast.error(deleteResponse?.StatusMessage || "Could not delete damage record");
+      }
+    } catch (error) {
+      console.error("Delete Error:", error.response?.data || error);
+      toast.error("An error occurred while deleting the damage record");
+    }
+  };
 
-      // Update state to remove the deleted vendor
-      setTableData((prevData) =>
-        prevData.filter((item) => item.vendorId !== vendorId) // Changed to vendorId
+  const handleEditItem = async (vendorName, email, address, phone) => {
+    if (!editingVendor?.vendorId) {
+      toast.error("Vendor ID is required");
+      return;
+    }
+
+    const updatedVendor = {
+      vendorId: editingVendor.vendorId,
+      vendorName,
+      email,
+      address,
+      phone
+    };
+
+    try {
+      const response = await AxiosPost(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Vendors/Update`,
+        updatedVendor
       );
 
-      setOpenDeleteModal(false);
-    } else {
-      toast.error(deleteResponse?.StatusMessage || "Could not delete vendor");
+      if (response.StatusCode === 200) {
+        toast.success("Vendor updated successfully");
+        GetAllDamages();
+        setOpenEditModal(false);
+      } else {
+        toast.error(response.StatusMessage || "Update failed");
+      }
+    } catch (error) {
+      console.error("Update error:", error);
+      toast.error("Failed to update vendor");
     }
-  } catch (error) {
-    console.error("Delete Error:", error.response?.data || error);
-    toast.error("An error occurred while deleting the vendor");
-  }
-};
-
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("authDetails"));
-    setAuthenticatedUser(user);
-  }, []);
-
-  // handle edit Vendors
-  // handle edit Vendors
-// handle edit Vendors
-// Update your edit handler to set the vendor data
-
-
-// Update your handleEditItem function
-const handleEditItem = async (vendorName, email, address, phone) => {
-  if (!editingVendor?.vendorId) {
-    toast.error("Vendor ID is required");
-    return;
-  }
-
-  const updatedVendor = {
-    vendorId: editingVendor.vendorId, // Use the original ID
-    vendorName,
-    email,
-    address,
-    phone
   };
 
-  try {
-    const response = await AxiosPost(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Vendors/Update`,
-      updatedVendor
-    );
-
-    if (response.StatusCode === 200) {
-      toast.success("Vendor updated successfully");
-      GetAllVendors();
-      setOpenEditModal(false);
-    } else {
-      toast.error(response.StatusMessage || "Update failed");
-    }
-  } catch (error) {
-    console.error("Update error:", error);
-    toast.error("Failed to update vendor");
-  }
-};
-
-// woeking
-  const handleCloseCreatePaymentMethodModal = () => {
-    setOpenPaymentMethodModal(false);
-  };
-
-  const handleOpenCreatePaymentMethodModal = () => {
-    setOpenPaymentMethodModal(true);
-  };
-
-  // hand create Vendors
-  const handleCreateVendor = async (
-    vendorId,
-    vendorName,
-    email,
-    address,
-    phone
-  ) => {
+  const handleCreateDamage = async (damageData) => {
     setIsLoading(true);
   
-    const newVendor = {
-      vendorId: vendorId,
-      vendorName: vendorName,
-      email: email,
-      Address: address,
-      phone: phone
+    const newDamage = {
+      ItemCode: Number(damageData.ItemCode),
+      damageid: Number(damageData.damageid),
+      Date: new Date().toISOString(),
+      storeBranchId: Number(damageData.storeBranchId),
+      createdBy: "Admin",
+      description: damageData.description,
+      qty: Number(damageData.qty),
+      SIV: damageData.SIV
     };
   
     try {
       const createResponse = await AxiosPost(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Vendors/Create`,
-        newVendor
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/Damages/Create`,
+        newDamage
       );
   
-      if (createResponse.StatusCode !== 200) {
-        toast.error(createResponse.StatusMessage || "Could not create Vendor");
+      if (createResponse?.StatusCode !== 200) {
+        toast.error(createResponse?.StatusMessage || "Could not create damage report");
         setIsLoading(false);
         return;
       }
   
-      toast.success("Vendor created successfully");
-      GetAllVendors(); // Refresh the vendor list
+      toast.success("Damage report created successfully");
+      GetAllDamages();
       setIsLoading(false);
-      setOpenPaymentMethodModal(false); // Close the modal
+      setOpenCreateModal(false);
     } catch (error) {
-      console.error("Create Vendor Error:", error);
-      toast.error("An error occurred while creating the vendor");
+      console.error("Create Damage Error:", error);
+      toast.error("An error occurred while creating the damage report");
       setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    GetAllVendors();
-  }, []);
-
-  // get all vendors 
-  const GetAllVendors = async () => {
+  const GetAllDamages = async () => {
     try {
       const apiResponse = await AxiosGet(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/Damages/GetAll`
       );
 
       if (!apiResponse || !apiResponse.data) {
-        toast.error("Could not fetch Damages ");
+        toast.error("Could not fetch Damages");
         return;
       }
-      console.log("apiResponse", apiResponse);
-      // Check if the response has the expected structure
 
       let tableData = apiResponse.data.Data.map((item) => ({
         ...item,
@@ -199,47 +169,46 @@ const handleEditItem = async (vendorName, email, address, phone) => {
       }));
 
       setTableData(tableData);
-
-      console.log("tableData", tableData);
+      setCurrentPage(1); // Reset to first page when data changes
     } catch (error) {
-      toast.error("An error occurred while fetching Vendors ");
+      toast.error("An error occurred while fetching Damages");
       console.error("Fetch error:", error);
     }
   };
 
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("authDetails"));
+    setAuthenticatedUser(user);
+    GetAllDamages();
+  }, []);
+
   return (
     <DashboardLayout page="Damages">
       <section className="w-full">
-        <div className=" w-[90%] mx-auto py-5">
-          <div className=" w-full lg:mt-10">
-            {/* search bar and filter options here */}
+        <div className="w-[90%] mx-auto py-5">
+          <div className="w-full lg:mt-10">
             <section className="w-full mb-3 flex justify-end items-center gap-5 lg:justify-start">
               <button
-                id="dropdownBgHoverButton"
-                data-dropdown-toggle="dropdownBgHover"
-                className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center  relative  gap-2 border border-pumpkin"
+                className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
                 type="button"
-                onClick={handleOpenCreatePaymentMethodModal}
+                onClick={() => setOpenCreateModal(true)}
               >
                 Add Damages
                 <FaPlus />
               </button>
             </section>
-            {/* table */}
+
             <CustomTable
               tableHeadings={tableHeadings}
-              tableData={tableData}
+              tableData={currentRows}
               isEllipseDropdwon={true}
               tableType="damages"
               handleDelete={handleDelete}
-              handleEdit={handleEditVdendor}
+              handleEdit={handleEdit}
               openDeleteModal={openDeleteModal}
               setOpenDeleteModal={setOpenDeleteModal}
-
               setOpenEditModal={setOpenEditModal}
-              // openEditModal={openEditPaymentModal}
-              // openEditPaymentModal={openEditPaymentModal}
-              openEditVendorModal={openEditPaymentModal}
+              openEditVendorModal={openEditModal}
               setOpenEditPaymentModal={setOpenEditModal}
               handleDeleteItem={handleDeleteItem}
               editingVendor={editingVendor}
@@ -247,18 +216,45 @@ const handleEditItem = async (vendorName, email, address, phone) => {
               label="me"
               heading="Update PaymentMethod"
             />
+
+            {/* Pagination Controls */}
+            <div className="flex justify-between items-center mt-4 px-4 py-2 bg-gray-100">
+              <button
+                onClick={prevPage}
+                disabled={currentPage === 1}
+                className={`px-4 py-2 text-sm font-medium rounded ${
+                  currentPage === 1
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-pumpkin text-white hover:bg-orange-600"
+                }`}
+              >
+                Previous
+              </button>
+              <span className="text-sm font-medium">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={nextPage}
+                disabled={currentPage >= totalPages}
+                className={`px-4 py-2 text-sm font-medium rounded ${
+                  currentPage >= totalPages
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-pumpkin text-white hover:bg-orange-600"
+                }`}
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
 
-        {openPaymentMethodModal && (
-          <CreateVendor
-            handleCloseModal={handleCloseCreatePaymentMethodModal}
-            handleCreateModal={handleCreateVendor}
+        {openCreateModal && (
+          <CreateDamages
+            handleCloseModal={() => setOpenCreateModal(false)}
+            handleCreateModal={handleCreateDamage}
             isLoading={isLoading}
           />
-        
         )}
-
       </section>
     </DashboardLayout>
   );
