@@ -243,6 +243,39 @@ const CustomTable = ({
             </td> */}
           </>
         );
+
+        case "damages": // Another table type
+        return (
+          <>
+            <td
+              scope
+              className="px-3 py-4 font-medium text-gray-900 capitalize break-words "
+            >
+            {tableInfo.damageId || "null"}
+            </td>
+            
+            <td className="px-6 py-4 text-gray-900 capitalize">
+            {tableInfo.store || "null"}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.description}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.SIVNo}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.quantity || "null"}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.IssuedDate || "null"}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.createdDate || "null"}
+            </td>
+          
+          </>
+        );
+
       default: // Default table type
         return (
           <>
