@@ -72,7 +72,7 @@ const CreateVendor = ({
                 type="text"
                 value={vendorName}
                 onChange={(e) => setVendorName(e.target.value)}
-                placeholder="Enter Id"
+                placeholder="Enter Name"
               />
             </div>
           </div>
@@ -90,7 +90,7 @@ const CreateVendor = ({
                 type="text"
                 value={Address}
                 onChange={(e) => setVendorAddress(e.target.value)}
-                placeholder="Enter Id"
+                placeholder="Enter Address "
               />
             </div>
           </div>
@@ -109,7 +109,7 @@ const CreateVendor = ({
                 type="text"
                 value={email}
                 onChange={(e) => setVendorEmail(e.target.value)}
-                placeholder="Enter Id"
+                placeholder="Enter Email"
               />
             </div>
           </div>
