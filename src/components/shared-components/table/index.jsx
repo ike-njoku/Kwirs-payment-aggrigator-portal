@@ -328,7 +328,7 @@ const CustomTable = ({
                           id={
                             tableInfo.TaxOfficeId ||
                             tableInfo.id ||
-                            tableInfo.paymentMethodId ||
+                            tableInfo.paymentMethodId || tableInfo.danageId ||
                             tableInfo.VendorsId 
                           }
                           item={tableInfo}
