@@ -6,18 +6,18 @@ import { roleTableData } from "../../utils/table_data";
 import { FaPlus } from "react-icons/fa";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
-import CreateDamages from "../shared-components/modals/CreateDamages";
+import CreateVendor from "../shared-components/modals/CreateVendor";
 
-const Damages = () => {
+const ReturnOutward = () => {
   const tableHeadings = [
-    "Id",
-    "Store",
+    "Outward Id",
+    "Vendor Name",
     "Description",
-    "SIV No",
-    "quantity",
-    "Issued Date",
-    "Created Date",
+    "Quantity",
+    "Store",
+    "Return Date",
     "Actions",
+    
   ];
   const [tableData, setTableData] = useState(roleTableData);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -29,7 +29,7 @@ const Damages = () => {
 
   // Pagination States
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 6;
+  const rowsPerPage = 5;
   const totalPages = Math.ceil(tableData.length / rowsPerPage);
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
@@ -48,31 +48,31 @@ const Damages = () => {
     setOpenDeleteModal(true);
   };
 
-  const handleEdit = (vendor) => {
+  const handleEditVendor = (vendor) => {
     console.log("Editing vendor:", vendor);
     setEditingVendor(vendor);
     setOpenEditModal(true);
   };
 
-  const handleDeleteItem = async (damageId) => {
+  const handleDeleteItem = async (vendorId) => {
     try {
-      console.log("Damage ID to delete:", damageId);
+      console.log("Vendor ID to delete:", vendorId);
       const deleteResponse = await AxiosGet(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/Damages/Delete/${damageId}`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Vendors/Delete/${vendorId}`
       );
       
       if (deleteResponse?.status === 200 || deleteResponse?.StatusCode === 200) {
-        toast.success("Damage record deleted successfully");
+        toast.success("Vendor deleted successfully");
         setTableData((prevData) =>
-          prevData.filter((item) => item.damageId !== damageId)
+          prevData.filter((item) => item.vendorId !== vendorId)
         );
         setOpenDeleteModal(false);
       } else {
-        toast.error(deleteResponse?.StatusMessage || "Could not delete damage record");
+        toast.error(deleteResponse?.StatusMessage || "Could not delete vendor");
       }
     } catch (error) {
       console.error("Delete Error:", error.response?.data || error);
-      toast.error("An error occurred while deleting the damage record");
+      toast.error("An error occurred while deleting the vendor");
     }
   };
 
@@ -98,7 +98,7 @@ const Damages = () => {
 
       if (response.StatusCode === 200) {
         toast.success("Vendor updated successfully");
-        GetAllDamages();
+        GetAllVendors();
         setOpenEditModal(false);
       } else {
         toast.error(response.StatusMessage || "Update failed");
@@ -109,72 +109,68 @@ const Damages = () => {
     }
   };
 
-  const handleCreateDamage = async (damageData) => {
+  const handleCreateVendor = async (vendorId, vendorName, email, address, phone) => {
     setIsLoading(true);
   
-    const newDamage = {
-      ItemCode: Number(damageData.ItemCode),
-      damageid: Number(damageData.damageid),
-      Date: new Date().toISOString(),
-      storeBranchId: Number(damageData.storeBranchId),
-      createdBy: "Admin",
-      description: damageData.description,
-      qty: Number(damageData.qty),
-      SIV: damageData.SIV
+    const newVendor = {
+      vendorId: vendorId,
+      vendorName: vendorName,
+      email: email,
+      Address: address,
+      phone: phone
     };
   
     try {
       const createResponse = await AxiosPost(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/Damages/Create`,
-        newDamage
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Vendors/Create`,
+        newVendor
       );
   
-      if (createResponse?.StatusCode !== 200) {
-        toast.error(createResponse?.StatusMessage || "Could not create damage report");
+      if (createResponse.StatusCode !== 200) {
+        toast.error(createResponse.StatusMessage || "Could not create Vendor");
         setIsLoading(false);
         return;
       }
   
-      toast.success("Damage report created successfully");
-      GetAllDamages();
+      toast.success("Vendor created successfully");
+      GetAllVendors();
       setIsLoading(false);
       setOpenCreateModal(false);
     } catch (error) {
-      console.error("Create Damage Error:", error);
-      toast.error("An error occurred while creating the damage report");
+      console.error("Create Vendor Error:", error);
+      toast.error("An error occurred while creating the vendor");
       setIsLoading(false);
     }
   };
 
-
-// get all damages 
-  const GetAllDamages = async () => {
+  const GetAllVendors = async () => {
     try {
       const apiResponse = await AxiosGet(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/Damages/GetAll`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/ReturnOutward/GetAll`
       );
 
       if (!apiResponse || !apiResponse.data) {
-        toast.error("Could not fetch Damages");
+        toast.error("Could not fetch Vendors");
         return;
       }
-      console.log("Damages data:", apiResponse.data.Data);
+console.log("API Response:", apiResponse.data.Data);
+
 
       let tableData = apiResponse.data.Data.map((item) => ({
         ...item,
-        damageId: item.DamageId,
-        store: item.Store        ,
-        Description: item.Description,
-        quantity: item.qty,
-        SIVNo: item.SIVNo,
-        IssuedDate: item.IssuedDate,
-        createdDate: item.createdDate,
+        rOutwardId: item.rOutwardId,
+        description: item.description        ,
+        qty: item.qty,
+        Store: item.Store,
+        vendorName: item.VendorName,
+        ReturnDate: item.ReturnDate
+
       }));
 
       setTableData(tableData);
       setCurrentPage(1); // Reset to first page when data changes
     } catch (error) {
-      toast.error("An error occurred while fetching Damages");
+      toast.error("An error occurred while fetching Vendors");
       console.error("Fetch error:", error);
     }
   };
@@ -182,11 +178,11 @@ const Damages = () => {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("authDetails"));
     setAuthenticatedUser(user);
-    GetAllDamages();
+    GetAllVendors();
   }, []);
 
   return (
-    <DashboardLayout page="Damages">
+    <DashboardLayout page="Return Outward">
       <section className="w-full">
         <div className="w-[90%] mx-auto py-5">
           <div className="w-full lg:mt-10">
@@ -196,7 +192,7 @@ const Damages = () => {
                 type="button"
                 onClick={() => setOpenCreateModal(true)}
               >
-                Add Damages
+                Create Return Outward
                 <FaPlus />
               </button>
             </section>
@@ -205,9 +201,9 @@ const Damages = () => {
               tableHeadings={tableHeadings}
               tableData={currentRows}
               isEllipseDropdwon={true}
-              tableType="damages"
+              tableType="returnoutward"
               handleDelete={handleDelete}
-              handleEdit={handleEdit}
+              handleEdit={handleEditVendor}
               openDeleteModal={openDeleteModal}
               setOpenDeleteModal={setOpenDeleteModal}
               setOpenEditModal={setOpenEditModal}
@@ -217,7 +213,7 @@ const Damages = () => {
               editingVendor={editingVendor}
               handleEditItem={handleEditItem}
               label="me"
-              heading="Update PaymentMethod"
+              heading="Update Outward"
             />
 
             {/* Pagination Controls */}
@@ -252,9 +248,9 @@ const Damages = () => {
         </div>
 
         {openCreateModal && (
-          <CreateDamages
+          <CreateVendor
             handleCloseModal={() => setOpenCreateModal(false)}
-            handleCreateModal={handleCreateDamage}
+            handleCreateModal={handleCreateVendor}
             isLoading={isLoading}
           />
         )}
@@ -263,4 +259,4 @@ const Damages = () => {
   );
 };
 
-export default Damages;
+export default ReturnOutward;
