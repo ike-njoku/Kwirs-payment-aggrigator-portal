@@ -244,6 +244,39 @@ const CustomTable = ({
           </>
         );
 
+        case "returnoutward": // Another table type
+        return (
+          <>
+            <td
+              scope
+              className="px-3 py-4 font-medium text-gray-900 capitalize break-words "
+            >
+              {tableInfo.rOutwardId}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.VendorName || "null"}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.description
+              }
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.qty}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.Store}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.ReturnDate || "null"}
+            </td>
+          
+
+            {/* <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.IsActive}
+            </td> */}
+          </>
+        );
+
         case "damages": // Another table type
         return (
           <>
@@ -258,7 +291,7 @@ const CustomTable = ({
             {tableInfo.store || "null"}
             </td>
             <td className="px-6 py-4 text-gray-900 capitalize">
-              {tableInfo.description}
+              {tableInfo.Description}
             </td>
             <td className="px-6 py-4 text-gray-900 capitalize">
               {tableInfo.SIVNo}
@@ -328,7 +361,7 @@ const CustomTable = ({
                           id={
                             tableInfo.TaxOfficeId ||
                             tableInfo.id ||
-                            tableInfo.paymentMethodId || tableInfo.danageId ||
+                            tableInfo.paymentMethodId || tableInfo.damageId ||
                             tableInfo.VendorsId 
                           }
                           item={tableInfo}
