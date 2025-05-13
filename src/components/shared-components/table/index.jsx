@@ -8,6 +8,8 @@ import EditPaymentMethodModal from "../modals/EditPaymentMethodModal";
 import EditTaxOfficeModal from "../modals/EditTaxofficeModal";
 import EditSendEmail from "../modals/EditSendEmail";
 import EditVendorModal from "../modals/EditVendorsModal";
+import EditDamagesModal from "../modals/EditDamagesModal";
+import EditDamageModal from "../modals/EditDamagesModal";
 
 const CustomTable = ({
   tableData,
@@ -19,6 +21,7 @@ const CustomTable = ({
   openEditTaxOfficeModal,
   openDeleteModal,
   openEditVendorModal,
+  openEditDamageModal,
   setOpenDeleteModal,
   setOpenEditResourceModal,
   openEditResourceModal,
@@ -45,6 +48,10 @@ const CustomTable = ({
   };
 
   const handleCloseEditVendorModal = () => {
+    setOpenEditModal(false)
+  };
+
+  const handleCloseEditDamagerModal = () => {
     setOpenEditModal(false)
   };
   const handleCloseEditModal = () => {
@@ -282,7 +289,7 @@ const CustomTable = ({
           <>
             <td
               scope
-              className="px-3 py-4 font-medium text-gray-900 capitalize break-words "
+              className="px-6 py-4 font-medium text-gray-900 capitalize break-words "
             >
             {tableInfo.damageId || "null"}
             </td>
@@ -441,8 +448,19 @@ const CustomTable = ({
         />
       )}
 
-    
 
+{openEditDamageModal && (
+         <EditDamagesModal
+         handleCloseModal={handleCloseEditDamagerModal}
+         index={selectedItem}
+         damageData={editingVendor}
+         handleEditModal={handleEditItem}
+         heading={heading}
+         label={label}
+        />
+      )}
+
+    
       
       {openEditEmailModal && (
         <EditSendEmail
