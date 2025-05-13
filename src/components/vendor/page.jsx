@@ -146,21 +146,42 @@ const Vendors = () => {
       const apiResponse = await AxiosGet(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/Vendors/GetAll`
       );
-
+  
       if (!apiResponse || !apiResponse.data) {
         toast.error("Could not fetch Vendors");
         return;
       }
-
+  
+      // Date formatting function (in case you need it for future date fields)
+      const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        try {
+          const date = new Date(dateString);
+          return date.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            // hour: '2-digit',
+            // minute: '2-digit',
+            hour12: true
+          });
+        } catch (error) {
+          console.error("Error formatting date:", dateString, error);
+          return dateString; // Return original if formatting fails
+        }
+      };
+  
       let tableData = apiResponse.data.Data.map((item) => ({
         ...item,
         VendorsId: item.vendorId,
         VendorsName: item.vendorName,
         VendorsAddress: item.address,
         VendorsEmail: item.email,
-        VendorsPhone: item.phone
+        VendorsPhone: item.phone,
+        // If you have date fields in the future, format them like this:
+        // formattedDateField: formatDate(item.originalDateField)
       }));
-
+  
       setTableData(tableData);
       setCurrentPage(1); // Reset to first page when data changes
     } catch (error) {
@@ -168,7 +189,6 @@ const Vendors = () => {
       console.error("Fetch error:", error);
     }
   };
-
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("authDetails"));
     setAuthenticatedUser(user);

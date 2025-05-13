@@ -76,6 +76,7 @@ const Damages = () => {
     }
   };
 
+//   handle edit damage
   const handleEditItem = async (vendorName, email, address, phone) => {
     if (!editingVendor?.vendorId) {
       toast.error("Vendor ID is required");
@@ -147,38 +148,63 @@ const Damages = () => {
   };
 
 
+
 // get all damages 
-  const GetAllDamages = async () => {
+const GetAllDamages = async () => {
     try {
       const apiResponse = await AxiosGet(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/Damages/GetAll`
       );
-
+  
       if (!apiResponse || !apiResponse.data) {
         toast.error("Could not fetch Damages");
         return;
       }
       console.log("Damages data:", apiResponse.data.Data);
-
+  
+      // Date formatting function
+      const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        
+        try {
+          const date = new Date(dateString);
+          return date.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            // hour: '2-digit',
+            // minute: '2-digit',
+            hour12: true
+          });
+        } catch (error) {
+          console.error("Error formatting date:", dateString, error);
+          return dateString; // Return original if formatting fails
+        }
+      };
+  
       let tableData = apiResponse.data.Data.map((item) => ({
         ...item,
+        ItemCode: item.ItemCode,
         damageId: item.DamageId,
-        store: item.Store        ,
+        store: item.Store,
         Description: item.Description,
         quantity: item.qty,
         SIVNo: item.SIVNo,
-        IssuedDate: item.IssuedDate,
-        createdDate: item.createdDate,
+        IssuedDate: formatDate(item.IssuedDate), // Formatted date
+        createdDate: formatDate(item.createdDate), // Formatted date
+        // Keep original dates in case you need them for sorting
+        originalIssuedDate: item.IssuedDate,
+        originalCreatedDate: item.createdDate
       }));
-
+  
       setTableData(tableData);
+        console.log("Formatted table data:", tableData);
       setCurrentPage(1); // Reset to first page when data changes
     } catch (error) {
       toast.error("An error occurred while fetching Damages");
       console.error("Fetch error:", error);
     }
   };
-
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("authDetails"));
     setAuthenticatedUser(user);
@@ -211,7 +237,7 @@ const Damages = () => {
               openDeleteModal={openDeleteModal}
               setOpenDeleteModal={setOpenDeleteModal}
               setOpenEditModal={setOpenEditModal}
-              openEditVendorModal={openEditModal}
+              openEditDamageModal={openEditModal}
               setOpenEditPaymentModal={setOpenEditModal}
               handleDeleteItem={handleDeleteItem}
               editingVendor={editingVendor}
