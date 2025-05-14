@@ -369,7 +369,7 @@ const CustomTable = ({
                             tableInfo.TaxOfficeId ||
                             tableInfo.id ||
                             tableInfo.paymentMethodId || tableInfo.damageId ||
-                            tableInfo.VendorsId 
+                            tableInfo.VendorsId || tableInfo.rOutwardId
                           }
                           item={tableInfo}
                           showDelete={tableType !== "send-email"} // Hide delete for "send-email"
