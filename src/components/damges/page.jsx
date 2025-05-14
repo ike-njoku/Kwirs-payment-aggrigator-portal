@@ -77,38 +77,41 @@ const Damages = () => {
   };
 
 //   handle edit damage
-  const handleEditItem = async (vendorName, email, address, phone) => {
-    if (!editingVendor?.vendorId) {
-      toast.error("Vendor ID is required");
-      return;
-    }
+// Handle edit damage
+const handleEditItem = async (updatedDamage) => {
+  if (!updatedDamage?.damageId) {
+    toast.error("Damage ID is required");
+    return;
+  }
 
-    const updatedVendor = {
-      vendorId: editingVendor.vendorId,
-      vendorName,
-      email,
-      address,
-      phone
-    };
-
-    try {
-      const response = await AxiosPost(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Vendors/Update`,
-        updatedVendor
-      );
-
-      if (response.StatusCode === 200) {
-        toast.success("Vendor updated successfully");
-        GetAllDamages();
-        setOpenEditModal(false);
-      } else {
-        toast.error(response.StatusMessage || "Update failed");
+  try {
+    const response = await AxiosPost(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/Damages/Update`,
+      {
+        damageId: updatedDamage.damageId,
+        itemCode: updatedDamage.itemCode,
+        storeBranchId: updatedDamage.storeBranchId,
+        description: updatedDamage.description,
+        quantity: updatedDamage.quantity,
+        sivNumber: updatedDamage.sivNumber,
+        // Include these fields if your API requires them
+        createdBy: updatedDamage.createdBy || "Admin",
+        date: updatedDamage.date || new Date().toISOString()
       }
-    } catch (error) {
-      console.error("Update error:", error);
-      toast.error("Failed to update vendor");
+    );
+
+    if (response.StatusCode === 200) {
+      toast.success("Damage record updated successfully");
+      GetAllDamages(); // Refresh the damages list
+      setOpenEditModal(false);
+    } else {
+      toast.error(response.StatusMessage || "Update failed");
     }
-  };
+  } catch (error) {
+    console.error("Update error:", error);
+    toast.error("Failed to update damage record");
+  }
+};
 
   const handleCreateDamage = async (damageData) => {
     setIsLoading(true);
@@ -240,7 +243,7 @@ const GetAllDamages = async () => {
               openEditDamageModal={openEditModal}
               setOpenEditPaymentModal={setOpenEditModal}
               handleDeleteItem={handleDeleteItem}
-              editingVendor={editingVendor}
+              selectedDamage={editingVendor}
               handleEditItem={handleEditItem}
               label="me"
               heading="Update PaymentMethod"

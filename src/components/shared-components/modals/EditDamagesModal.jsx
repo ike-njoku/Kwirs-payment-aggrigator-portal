@@ -10,85 +10,83 @@ const EditDamagesModal = ({
   isLoading
 }) => {
   const [formData, setFormData] = useState({
-    ItemCode: "",
-    damageid: "",
+    itemCode: "",
+    damageId: "",
     storeBranchId: "",
     description: "",
-    qty: "",
-    SIV: ""
+    quantity: "",
+    sivNumber: ""
   });
 
   useEffect(() => {
     if (damageData) {
-      console.log("Received damageData:", damageData); // Debug log
+      console.log("Received damageData:", damageData);
       setFormData({
-        ItemCode: damageData.ItemCode || damageData.itemCode || damageData.ItemCode || "",
-        damageid: damageData.damageid || damageData.damageId || "",
+        itemCode: damageData.itemCode || damageData.ItemCode || "",
+        damageId: damageData.damageId || damageData.damageid || "",
         storeBranchId: damageData.storeBranchId || damageData.storeId || "",
         description: damageData.description || damageData.Description || "",
-        qty: damageData.qty || damageData.quantity || "",
-        SIV: damageData.SIV || damageData.SIVNo || ""
+        quantity: damageData.quantity || damageData.qty || "",
+        sivNumber: damageData.sivNumber || damageData.SIV || ""
       });
     }
   }, [damageData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Validate quantity is a positive number
+    if (isNaN(formData.quantity) || formData.quantity <= 0) {
+      toast.error("Please enter a valid quantity");
+      return;
+    }
+
     handleEditModal({
-      ...formData,
-      ItemCode: Number(formData.ItemCode),
-      damageid: Number(formData.damageid),
+      itemCode: formData.itemCode,
+      damageId: formData.damageId,
       storeBranchId: Number(formData.storeBranchId),
-      qty: Number(formData.qty),
-      createdBy: "Admin",
-      Date: new Date().toISOString()
+      description: formData.description,
+      quantity: Number(formData.quantity),
+      sivNumber: formData.sivNumber,
+      // These fields remain unchanged from original
+      createdBy: damageData.createdBy || "Admin",
+      date: damageData.date || new Date().toISOString()
     });
   };
 
   if (!damageData) {
-    console.log("No damageData provided"); // Debug log
+    console.log("No damageData provided");
     return null;
   }
-
 
   return (
     <ModalLayout handleCloseModal={handleCloseModal}>
       <div className="w-full p-5">
         <h3 className="my-5 text-lg font-semibold pb-4 border-b border-b-gray-500 text-gray-700">
-          Edit Damage Record (ID: {damageData.damageid || damageData.damageId})
+          Edit Damage Record (ID: {formData.damageId})
         </h3>
         <form className="w-full" onSubmit={handleSubmit}>
-          {/* Read-only fields */}
-         {/* Read-only fields */}
+          {/* Read-only Item Code */}
           <div className="w-full">
             <label className="text-base font-medium text-gray-700">
               Item Code
             </label>
-            <div className="border-b-2 border-b-gray-300 h-[45px] w-full rounded-md my-4 bg-gray-100">
-              <input
-                className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="text"
-                value={formData.ItemCode}
-                readOnly
-              />
+            <div className="border-b-2 border-b-gray-300 h-[45px] w-full rounded-md my-4 bg-gray-100 flex items-center px-3">
+              <span className="text-gray-700">{formData.itemCode}</span>
             </div>
           </div>
 
+          {/* Read-only Damage ID */}
           <div className="w-full">
             <label className="text-base font-medium text-gray-700">
               Damage ID
             </label>
-            <div className="border-b-2 border-b-gray-300 h-[45px] w-full rounded-md my-4 bg-gray-100">
-              <input
-                className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="text"
-                value={formData.damageid}
-                readOnly
-              />
+            <div className="border-b-2 border-b-gray-300 h-[45px] w-full rounded-md my-4 bg-gray-100 flex items-center px-3">
+              <span className="text-gray-700">{formData.damageId}</span>
             </div>
           </div>
 
-          {/* Editable fields */}
+          {/* Store Branch ID */}
           <div className="w-full">
             <label className="text-base font-medium text-gray-700">
               Store Branch ID
@@ -105,6 +103,7 @@ const EditDamagesModal = ({
             </div>
           </div>
 
+          {/* Description */}
           <div className="w-full">
             <label className="text-base font-medium text-gray-700">
               Description
@@ -121,6 +120,7 @@ const EditDamagesModal = ({
             </div>
           </div>
 
+          {/* Quantity */}
           <div className="w-full">
             <label className="text-base font-medium text-gray-700">
               Quantity
@@ -129,15 +129,17 @@ const EditDamagesModal = ({
               <input
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
                 type="number"
-                value={formData.qty}
-                onChange={(e) => setFormData({...formData, qty: e.target.value})}
+                min="0.01"
+                step="0.01"
+                value={formData.quantity}
+                onChange={(e) => setFormData({...formData, quantity: e.target.value})}
                 placeholder="Enter Quantity"
                 required
-                step="0.01" // Allows decimal values
               />
             </div>
           </div>
 
+          {/* SIV Number */}
           <div className="w-full">
             <label className="text-base font-medium text-gray-700">
               SIV Number
@@ -146,11 +148,33 @@ const EditDamagesModal = ({
               <input
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
                 type="text"
-                value={formData.SIV}
-                onChange={(e) => setFormData({...formData, SIV: e.target.value})}
+                value={formData.sivNumber}
+                onChange={(e) => setFormData({...formData, sivNumber: e.target.value})}
                 placeholder="Enter SIV Number"
                 required
               />
+            </div>
+          </div>
+
+          {/* Read-only fields */}
+          <div className="grid grid-cols-2 gap-4 mt-6">
+            <div>
+              <label className="text-sm font-medium text-gray-500">
+                Created By
+              </label>
+              <div className="border-b-2 border-b-gray-300 h-[45px] w-full rounded-md my-2 bg-gray-100 flex items-center px-3">
+                <span className="text-gray-700">{damageData.createdBy || "Admin"}</span>
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-500">
+                Date Created
+              </label>
+              <div className="border-b-2 border-b-gray-300 h-[45px] w-full rounded-md my-2 bg-gray-100 flex items-center px-3">
+                <span className="text-gray-700">
+                  {damageData.date ? new Date(damageData.date).toLocaleString() : "Just now"}
+                </span>
+              </div>
             </div>
           </div>
 
