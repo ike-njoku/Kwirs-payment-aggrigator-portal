@@ -25,7 +25,7 @@ const EditDamagesModal = ({
         itemCode: damageData.itemCode || damageData.ItemCode || "",
         damageId: damageData.damageId || damageData.damageid || "",
         storeBranchId: damageData.storeBranchId || damageData.storeId || "",
-        description: damageData.description || damageData.Description || "",
+        description: damageData.Description || damageData.Description || "",
         quantity: damageData.quantity || damageData.qty || "",
         sivNumber: damageData.sivNumber || damageData.SIV || ""
       });
@@ -66,15 +66,22 @@ const EditDamagesModal = ({
           Edit Damage Record (ID: {formData.damageId})
         </h3>
         <form className="w-full" onSubmit={handleSubmit}>
-          {/* Read-only Item Code */}
+         
           <div className="w-full">
-            <label className="text-base font-medium text-gray-700">
-              Item Code
-            </label>
-            <div className="border-b-2 border-b-gray-300 h-[45px] w-full rounded-md my-4 bg-gray-100 flex items-center px-3">
-              <span className="text-gray-700">{formData.itemCode}</span>
-            </div>
-          </div>
+  <label className="text-base font-medium text-gray-700">
+    Item Code
+  </label>
+  <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
+    <input
+      className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
+      type="text"  // Changed to text to allow alphanumeric codes
+      value={formData.itemCode}
+      onChange={(e) => setFormData({...formData, itemCode: e.target.value})}
+      placeholder="Enter Item Code"
+      required
+    />
+  </div>
+</div>
 
           {/* Read-only Damage ID */}
           <div className="w-full">
@@ -156,27 +163,7 @@ const EditDamagesModal = ({
             </div>
           </div>
 
-          {/* Read-only fields */}
-          <div className="grid grid-cols-2 gap-4 mt-6">
-            <div>
-              <label className="text-sm font-medium text-gray-500">
-                Created By
-              </label>
-              <div className="border-b-2 border-b-gray-300 h-[45px] w-full rounded-md my-2 bg-gray-100 flex items-center px-3">
-                <span className="text-gray-700">{damageData.createdBy || "Admin"}</span>
-              </div>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-500">
-                Date Created
-              </label>
-              <div className="border-b-2 border-b-gray-300 h-[45px] w-full rounded-md my-2 bg-gray-100 flex items-center px-3">
-                <span className="text-gray-700">
-                  {damageData.date ? new Date(damageData.date).toLocaleString() : "Just now"}
-                </span>
-              </div>
-            </div>
-          </div>
+       
 
           <AuthButtons
             label="Update Damage Record"
