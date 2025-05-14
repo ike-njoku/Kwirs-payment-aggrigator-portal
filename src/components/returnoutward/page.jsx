@@ -81,37 +81,41 @@ const ReturnOutward = () => {
     }
   };
 
-//   Create Return Outward 
-  const handleEditItem = async (vendorName, email, address, phone) => {
-    if (!editingVendor?.vendorId) {
-      toast.error("Vendor ID is required");
+//   edit Return Outward 
+const handleEditOutward = async (rOutwardId, itemCode, storeBranchId, description, vendor, qty) => {
+    if (!rOutwardId) {
+      toast.error("Outward ID is required");
       return;
     }
-
-    const updatedVendor = {
-      vendorId: editingVendor.vendorId,
-      vendorName,
-      email,
-      address,
-      phone
+  
+    const updatedOutward = {
+      rOutwardId, // Required identifier
+      ItemCode: Number(itemCode),
+      storeBranchId: Number(storeBranchId),
+      description,
+      vendor: Number(vendor),
+      qty: Number(qty),
+      // These fields remain unchanged
+      Date: new Date().toISOString(), // You might want to keep original date
+      createdBy: "Admin" // Or keep original creator
     };
-
+  
     try {
       const response = await AxiosPost(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/ReturnOutward/Create`,
-        updatedVendor
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/ReturnOutward/Update`,
+        updatedOutward
       );
-
+  
       if (response.StatusCode === 200) {
-        toast.success("Vendor updated successfully");
-        GetAllVendors();
+        toast.success("Outward updated successfully");
+        GetAllOutwards(); // Refresh the list
         setOpenEditModal(false);
       } else {
         toast.error(response.StatusMessage || "Update failed");
       }
     } catch (error) {
       console.error("Update error:", error);
-      toast.error("Failed to update vendor");
+      toast.error("Failed to update outward");
     }
   };
 
@@ -154,38 +158,48 @@ const handleCreateOutward = async (ItemCode, rOutwardId, storeBranchId, descript
     }
   };
 
-//   get all outwards 
-  const GetAllOutwards = async () => {
+// Get all outwards 
+const GetAllOutwards = async () => {
     try {
       const apiResponse = await AxiosGet(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/ReturnOutward/GetAll`
       );
-
+  
       if (!apiResponse || !apiResponse.data) {
-        toast.error("Could not fetch Vendors");
+        toast.error("Could not fetch Outwards");
         return;
       }
-console.log("API Response:", apiResponse.data.Data);
-
+  
+      console.log("API Response:", apiResponse.data.Data);
+  
+      const formatDate = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+       
+        });
+      };
+  
       let tableData = apiResponse.data.Data.map((item) => ({
         ...item,
         rOutwardId: item.rOutwardId,
-        description: item.description        ,
+        description: item.description,
         qty: item.qty,
         Store: item.Store,
         VendorName: item.vendorName,
-        ReturnDate: item.ReturnDate
-
+        ReturnDate: formatDate(item.ReturnDate) // Format the date here
       }));
-
+  
       setTableData(tableData);
       setCurrentPage(1); // Reset to first page when data changes
     } catch (error) {
-      toast.error("An error occurred while fetching Vendors");
+      toast.error("An error occurred while fetching Outwards");
       console.error("Fetch error:", error);
     }
   };
-
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("authDetails"));
     setAuthenticatedUser(user);
@@ -218,11 +232,11 @@ console.log("API Response:", apiResponse.data.Data);
               openDeleteModal={openDeleteModal}
               setOpenDeleteModal={setOpenDeleteModal}
               setOpenEditModal={setOpenEditModal}
-              openEditVendorModal={openEditModal}
+              openEditOutwardModal={openEditModal}
               setOpenEditPaymentModal={setOpenEditModal}
               handleDeleteItem={handleDeleteItem}
-              editingVendor={editingVendor}
-              handleEditItem={handleEditItem}
+              selectedOutward={editingVendor}
+              handleEditItem={handleEditOutward}
               label="me"
               heading="Update Outward"
             />
