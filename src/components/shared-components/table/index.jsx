@@ -10,6 +10,7 @@ import EditSendEmail from "../modals/EditSendEmail";
 import EditVendorModal from "../modals/EditVendorsModal";
 import EditDamagesModal from "../modals/EditDamagesModal";
 import EditDamageModal from "../modals/EditDamagesModal";
+import EditOutwardModal from "../modals/EditOutwardModal";
 
 const CustomTable = ({
   tableData,
@@ -21,11 +22,14 @@ const CustomTable = ({
   openEditTaxOfficeModal,
   openDeleteModal,
   openEditVendorModal,
+  openEditOutwardModal,
   openEditDamageModal,
   setOpenDeleteModal,
   setOpenEditResourceModal,
+  selectedDamage,
   openEditResourceModal,
   editingVendor,
+  selectedOutward,
   openEditModal,
   openEditPaymentModal,
   setOpenEditModal,
@@ -48,6 +52,10 @@ const CustomTable = ({
   };
 
   const handleCloseEditVendorModal = () => {
+    setOpenEditModal(false)
+  };
+
+  const handleCloseEditOutwardModal = () => {
     setOpenEditModal(false)
   };
 
@@ -448,12 +456,25 @@ const CustomTable = ({
         />
       )}
 
+{openEditOutwardModal && (
+         <EditOutwardModal
+         handleCloseModal={handleCloseEditOutwardModal}
+         index={selectedItem}
+         outwardData={selectedOutward}
+         handleEditModal={handleEditItem}
+         heading={heading}
+         label={label}
+        />
+      )}
+
+      
+
 
 {openEditDamageModal && (
          <EditDamagesModal
          handleCloseModal={handleCloseEditDamagerModal}
          index={selectedItem}
-         damageData={editingVendor}
+         damageData={selectedDamage}
          handleEditModal={handleEditItem}
          heading={heading}
          label={label}
