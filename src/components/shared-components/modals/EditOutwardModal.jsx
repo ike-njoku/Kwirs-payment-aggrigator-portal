@@ -2,14 +2,17 @@
 import React, { useState, useEffect } from "react";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
+import { toast } from "react-toastify";
 
 const EditOutwardModal = ({
   handleCloseModal,
-  outwardData, // Existing outward data
-  handleEditModal, // This will follow your pattern
+  outwardData,
+  handleEditModal,
   isLoading
 }) => {
-  // Initialize state with existing outward data
+  const [items, setItems] = useState([]);
+  const [vendors, setVendors] = useState([]);
+  const [storeBranches, setStoreBranches] = useState([]);
   const [formData, setFormData] = useState({
     itemCode: "",
     storeBranchId: "",
@@ -18,7 +21,39 @@ const EditOutwardModal = ({
     description: ""
   });
 
-  // Update form when outwardData changes
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch Items
+        const itemsResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/ItemDetails/GetAll`
+        );
+        const itemsData = await itemsResponse.json();
+        if (itemsData.StatusCode === 200) setItems(itemsData.Data);
+
+        // Fetch Vendors
+        const vendorsResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/Vendors/GetAll`
+        );
+        const vendorsData = await vendorsResponse.json();
+        if (vendorsData.StatusCode === 200) setVendors(vendorsData.Data);
+
+        // Fetch Store Branches
+        const branchesResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/StoreBranches/GetAll`
+        );
+        const branchesData = await branchesResponse.json();
+        if (branchesData.StatusCode === 200) setStoreBranches(branchesData.Data);
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        toast.error("Error loading data");
+      }
+    };
+
+    fetchData();
+  }, []);
+
   useEffect(() => {
     if (outwardData) {
       setFormData({
@@ -34,21 +69,24 @@ const EditOutwardModal = ({
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Validate quantity is a positive number
     if (isNaN(formData.qty) || formData.qty <= 0) {
       toast.error("Please enter a valid quantity");
       return;
     }
 
-    // Following your pattern of passing individual parameters
     handleEditModal(
-      outwardData.rOutwardId, // Can't be changed
+      outwardData.rOutwardId,
       Number(formData.itemCode),
       Number(formData.storeBranchId),
       formData.description,
       Number(formData.vendor),
       Number(formData.qty)
     );
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   if (!outwardData) return null;
@@ -70,54 +108,72 @@ const EditOutwardModal = ({
             </div>
           </div>
 
-          {/* Item Code */}
+          {/* Item Selection Dropdown */}
           <div className="w-full">
             <label className="text-base font-medium text-gray-700">
-              Item Code
+              Select Item
             </label>
             <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-              <input
+              <select
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="number"
+                name="itemCode"
                 value={formData.itemCode}
-                onChange={(e) => setFormData({...formData, itemCode: e.target.value})}
-                placeholder="Item Code"
+                onChange={handleChange}
                 required
-              />
+              >
+                <option value="">Select an item</option>
+                {items.map(item => (
+                  <option key={item.itemCode} value={item.itemCode}>
+                    {item.description} 
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
-          {/* Store Branch ID */}
+          {/* Store Branch Selection Dropdown */}
           <div className="w-full">
             <label className="text-base font-medium text-gray-700">
-              Store Branch ID
+              Select Store Branch
             </label>
             <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-              <input
+              <select
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="number"
+                name="storeBranchId"
                 value={formData.storeBranchId}
-                onChange={(e) => setFormData({...formData, storeBranchId: e.target.value})}
-                placeholder="Store Branch ID"
+                onChange={handleChange}
                 required
-              />
+              >
+                <option value="">Select a store branch</option>
+                {storeBranches.map(branch => (
+                  <option key={branch.branchId} value={branch.branchId}>
+                    {branch.branchName} 
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
-          {/* Vendor ID */}
+          {/* Vendor Selection Dropdown */}
           <div className="w-full">
             <label className="text-base font-medium text-gray-700">
-              Vendor ID
+              Select Vendor
             </label>
             <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-              <input
+              <select
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="number"
+                name="vendor"
                 value={formData.vendor}
-                onChange={(e) => setFormData({...formData, vendor: e.target.value})}
-                placeholder="Vendor ID"
+                onChange={handleChange}
                 required
-              />
+              >
+                <option value="">Select a vendor</option>
+                {vendors.map(vendor => (
+                  <option key={vendor.vendorId} value={vendor.vendorId}>
+                    {vendor.vendorName} 
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -130,9 +186,10 @@ const EditOutwardModal = ({
               <input
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
                 type="number"
+                name="qty"
                 min="1"
                 value={formData.qty}
-                onChange={(e) => setFormData({...formData, qty: e.target.value})}
+                onChange={handleChange}
                 placeholder="Quantity"
                 required
               />
@@ -148,13 +205,13 @@ const EditOutwardModal = ({
               <input
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
                 type="text"
+                name="description"
                 value={formData.description}
-                onChange={(e) => setFormData({...formData, description: e.target.value})}
+                onChange={handleChange}
                 placeholder="Description"
               />
             </div>
           </div>
-
 
           <AuthButtons
             label="Update Outward"
