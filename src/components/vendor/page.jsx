@@ -74,6 +74,7 @@ const Vendors = () => {
     }
   };
 
+  // handle edit vendor 
   const handleEditItem = async (vendorName, email, address, phone) => {
     if (!editingVendor?.vendorId) {
       toast.error("Vendor ID is required");
@@ -107,6 +108,8 @@ const Vendors = () => {
     }
   };
 
+
+// handle create vendor
   const handleCreateVendor = async (vendorId, vendorName, email, address, phone) => {
     setIsLoading(true);
   

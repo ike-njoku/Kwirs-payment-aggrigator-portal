@@ -59,7 +59,7 @@ const CustomTable = ({
     setOpenEditModal(false)
   };
 
-  const handleCloseEditDamagerModal = () => {
+  const handleCloseEditDamageModal = () => {
     setOpenEditModal(false)
   };
   const handleCloseEditModal = () => {
@@ -472,7 +472,7 @@ const CustomTable = ({
 
 {openEditDamageModal && (
          <EditDamagesModal
-         handleCloseModal={handleCloseEditDamagerModal}
+         handleCloseModal={handleCloseEditDamageModal}
          index={selectedItem}
          damageData={selectedDamage}
          handleEditModal={handleEditItem}

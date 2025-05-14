@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
+import { toast } from "react-toastify";
 
 const EditDamagesModal = ({
   handleCloseModal,
@@ -9,6 +10,8 @@ const EditDamagesModal = ({
   handleEditModal,
   isLoading
 }) => {
+  const [items, setItems] = useState([]);
+  const [storeBranches, setStoreBranches] = useState([]);
   const [formData, setFormData] = useState({
     itemCode: "",
     damageId: "",
@@ -19,8 +22,40 @@ const EditDamagesModal = ({
   });
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch Items
+        const itemsResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/ItemDetails/GetAll`
+        );
+        const itemsData = await itemsResponse.json();
+        if (itemsData.StatusCode === 200) {
+          setItems(itemsData.Data);
+        } else {
+          toast.error("Failed to fetch items");
+        }
+
+        // Fetch Store Branches
+        const branchesResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/StoreBranches/GetAll`
+        );
+        const branchesData = await branchesResponse.json();
+        if (branchesData.StatusCode === 200) {
+          setStoreBranches(branchesData.Data);
+        } else {
+          toast.error("Failed to fetch store branches");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        toast.error("Error loading data");
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
     if (damageData) {
-      console.log("Received damageData:", damageData);
       setFormData({
         itemCode: damageData.itemCode || damageData.ItemCode || "",
         damageId: damageData.damageId || damageData.damageid || "",
@@ -35,7 +70,6 @@ const EditDamagesModal = ({
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Validate quantity is a positive number
     if (isNaN(formData.quantity) || formData.quantity <= 0) {
       toast.error("Please enter a valid quantity");
       return;
@@ -48,16 +82,17 @@ const EditDamagesModal = ({
       description: formData.description,
       quantity: Number(formData.quantity),
       sivNumber: formData.sivNumber,
-      // These fields remain unchanged from original
       createdBy: damageData.createdBy || "Admin",
       date: damageData.date || new Date().toISOString()
     });
   };
 
-  if (!damageData) {
-    console.log("No damageData provided");
-    return null;
-  }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  if (!damageData) return null;
 
   return (
     <ModalLayout handleCloseModal={handleCloseModal}>
@@ -66,22 +101,28 @@ const EditDamagesModal = ({
           Edit Damage Record (ID: {formData.damageId})
         </h3>
         <form className="w-full" onSubmit={handleSubmit}>
-         
+          {/* Item Selection Dropdown */}
           <div className="w-full">
-  <label className="text-base font-medium text-gray-700">
-    Item Code
-  </label>
-  <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-    <input
-      className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-      type="text"  // Changed to text to allow alphanumeric codes
-      value={formData.itemCode}
-      onChange={(e) => setFormData({...formData, itemCode: e.target.value})}
-      placeholder="Enter Item Code"
-      required
-    />
-  </div>
-</div>
+            <label className="text-base font-medium text-gray-700">
+              Select Item
+            </label>
+            <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
+              <select
+                className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
+                name="itemCode"
+                value={formData.itemCode}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select an item</option>
+                {items.map(item => (
+                  <option key={item.itemCode} value={item.itemCode}>
+                    {item.description} 
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
 
           {/* Read-only Damage ID */}
           <div className="w-full">
@@ -93,20 +134,26 @@ const EditDamagesModal = ({
             </div>
           </div>
 
-          {/* Store Branch ID */}
+          {/* Store Branch Selection Dropdown */}
           <div className="w-full">
             <label className="text-base font-medium text-gray-700">
-              Store Branch ID
+              Select Store Branch
             </label>
             <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-              <input
+              <select
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="number"
+                name="storeBranchId"
                 value={formData.storeBranchId}
-                onChange={(e) => setFormData({...formData, storeBranchId: e.target.value})}
-                placeholder="Enter Store Branch ID"
+                onChange={handleChange}
                 required
-              />
+              >
+                <option value="">Select a store branch</option>
+                {storeBranches.map(branch => (
+                  <option key={branch.branchId} value={branch.branchId}>
+                    {branch.branchName} 
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -119,8 +166,9 @@ const EditDamagesModal = ({
               <input
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
                 type="text"
+                name="description"
                 value={formData.description}
-                onChange={(e) => setFormData({...formData, description: e.target.value})}
+                onChange={handleChange}
                 placeholder="Enter Description"
                 required
               />
@@ -136,10 +184,11 @@ const EditDamagesModal = ({
               <input
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
                 type="number"
+                name="quantity"
                 min="0.01"
                 step="0.01"
                 value={formData.quantity}
-                onChange={(e) => setFormData({...formData, quantity: e.target.value})}
+                onChange={handleChange}
                 placeholder="Enter Quantity"
                 required
               />
@@ -155,15 +204,14 @@ const EditDamagesModal = ({
               <input
                 className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
                 type="text"
+                name="sivNumber"
                 value={formData.sivNumber}
-                onChange={(e) => setFormData({...formData, sivNumber: e.target.value})}
+                onChange={handleChange}
                 placeholder="Enter SIV Number"
                 required
               />
             </div>
           </div>
-
-       
 
           <AuthButtons
             label="Update Damage Record"

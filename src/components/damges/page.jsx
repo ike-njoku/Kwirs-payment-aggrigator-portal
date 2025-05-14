@@ -76,11 +76,17 @@ const Damages = () => {
     }
   };
 
-//   handle edit damage
+
 // Handle edit damage
+// Handle edit damage with improved error handling
+// Handle edit damage - structured like vendor update
+// Handle edit damage with proper ID validation
+// Updated handleEditItem function to match the modal's usage
 const handleEditItem = async (updatedDamage) => {
-  if (!updatedDamage?.damageId) {
-    toast.error("Damage ID is required");
+  // Convert damageId to number and validate
+  const damageIdNum = Number(updatedDamage.damageId || updatedDamage.damageid);
+  if (!damageIdNum || isNaN(damageIdNum)) {
+    toast.error("Valid Damage ID is required");
     return;
   }
 
@@ -88,21 +94,20 @@ const handleEditItem = async (updatedDamage) => {
     const response = await AxiosPost(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/Damages/Update`,
       {
-        damageId: updatedDamage.damageId,
-        itemCode: updatedDamage.itemCode,
-        storeBranchId: updatedDamage.storeBranchId,
+        ItemCode: Number(updatedDamage.itemCode),
+        damageid: damageIdNum,
+        storeBranchId: Number(updatedDamage.storeBranchId),
         description: updatedDamage.description,
-        quantity: updatedDamage.quantity,
-        sivNumber: updatedDamage.sivNumber,
-        // Include these fields if your API requires them
+        qty: Number(updatedDamage.quantity),
+        SIV: updatedDamage.sivNumber,
         createdBy: updatedDamage.createdBy || "Admin",
-        date: updatedDamage.date || new Date().toISOString()
+        Date: updatedDamage.date || new Date().toISOString()
       }
     );
 
     if (response.StatusCode === 200) {
       toast.success("Damage record updated successfully");
-      GetAllDamages(); // Refresh the damages list
+      GetAllDamages();
       setOpenEditModal(false);
     } else {
       toast.error(response.StatusMessage || "Update failed");
@@ -113,6 +118,7 @@ const handleEditItem = async (updatedDamage) => {
   }
 };
 
+// handle create damage 
   const handleCreateDamage = async (damageData) => {
     setIsLoading(true);
   
@@ -246,7 +252,7 @@ const GetAllDamages = async () => {
               selectedDamage={editingVendor}
               handleEditItem={handleEditItem}
               label="me"
-              heading="Update PaymentMethod"
+              heading="Update Damage"
             />
 
             {/* Pagination Controls */}
