@@ -12,6 +12,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const ItemUnitsPage = () => {
   const [loading, setLoading] = useState(false);
+      const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedAgency, setSelectedAgency] = useState(null);
   const [selectedItemUnit, setSelectedItemUnit] = useState([]);
@@ -19,6 +20,9 @@ const ItemUnitsPage = () => {
   const [openAgencyModal, setOpenAgencyModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [error, setError] = useState("");
+    const [selectedUnit, setSelectedUnit] = useState(null);
+    const [selectedItem, setSelectedItem] = useState(null); 
+  
 
 // ✅ Fetch Item Units Function
 const fetchItemUnits = async () => {
@@ -48,7 +52,7 @@ const fetchItemUnits = async () => {
   const handleEditUnit = (unitCode) => {
     const selected = itemUnits.find((item) => item.unitCode === unitCode);
     if (selected) {
-      setSelectedItemUnit(selected);
+      setSelectedItem(selected);
       setOpenEditModal(true);
     }
   };
@@ -70,6 +74,7 @@ const fetchItemUnits = async () => {
       if (response?.data?.StatusCode === 200) {
         toast.success(response.data.StatusMessage || "Item unit deleted successfully!");
         fetchItemUnits(); // ✅ Refresh data after deleting
+        setOpenDeleteModal(false);
       } else {
         toast.error(response.data.StatusMessage || "Delete failed.");
       }
@@ -79,6 +84,11 @@ const fetchItemUnits = async () => {
     }
   };
   
+    // ✅ Modal close
+    const handleCloseModal = () => {
+      setOpenEditModal(false);
+      setSelectedItem(null);
+    };
 
   return (
     <DashboardLayout page="Item Unit">
@@ -106,10 +116,24 @@ const fetchItemUnits = async () => {
             <CustomTable
             tableHeadings={["Unit Code", "Description", "Actions"]}
             tableData={itemUnits}
-            handleEdit={handleEditUnit}
-            handleDelete={handleDeleteItemUnit}
+            setOpenDeleteModal={setOpenDeleteModal}
+            handleItem={handleDeleteItemUnit}  // ✅ Important
+            // handleItem={handleItem} // ✅ make sure this is passed
+            openDeleteModal={openDeleteModal}
+            setOpenEditModal={setOpenEditModal}
+            openEditModal={openEditModal}
+            handleEditItem={(item) => {
+              setSelectedItem(item);
+              setOpenEditModal(true);
+            }}
+            handleDeleteItem={(id) => {
+              setSelectedItem(id);
+              setOpenDeleteModal(true);
+            }}
             loading={loading}
+            text="Are You Sure You Want To Delete Item Unit?"
           />
+          
           
           )}
         </div>
@@ -125,14 +149,15 @@ const fetchItemUnits = async () => {
 
 
     {/* ✅ Edit Item Unit Modal */}
-{openEditModal && selectedItemUnit && (
+    {openEditModal && selectedItem && (
   <EditItemUnitModal
     isOpen={openEditModal}
     onClose={() => setOpenEditModal(false)}
-    itemUnit={selectedItemUnit} // Pass the selected item unit data
-    refreshItemUnits={refreshItemUnits} // Pass the function to refresh item units
+    itemUnit={selectedItem}
+    refreshItemUnits={refreshItemUnits}
   />
 )}
+
 
 
 

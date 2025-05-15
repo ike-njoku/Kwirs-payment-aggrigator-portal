@@ -12,45 +12,41 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const ItemCategoryPage = () => {
   const [loading, setLoading] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedAgency, setSelectedAgency] = useState(null);
   const [itemCategories, setItemCategories] = useState([]);
   const [openAgencyModal, setOpenAgencyModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [error, setError] = useState("");
+  const [selectedItemId, setSelectedItemId] = useState(null); // Only for delete
 
-  // ✅ Fetch Item Categories Function
+  // ✅ Fetch Item Categories
   const fetchItemCategories = async () => {
     try {
+      setLoading(true);
       const response = await AxiosGet(`${API_BASE_URL}/api/Inventory/ItemCategory/GetAll`);
       if (response?.data?.Data) {
         setItemCategories(response.data.Data);
+        console.log("✅ Categories:", response.data.Data); // Optional debug
       } else {
-        setItemCategories([]); // ✅ Prevents undefined state
+        setItemCategories([]);
       }
     } catch (error) {
       console.error("❌ Error fetching item categories:", error);
       toast.error("Failed to fetch item categories");
+      setError("Failed to fetch data.");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  // ✅ Refresh data whenever a change occurs
-  const refreshItemCategories = () => {
-    fetchItemCategories();
   };
 
   useEffect(() => {
-    refreshItemCategories();
+    fetchItemCategories();
   }, []);
 
-  const handleEditCategory = (catCode) => {
-    const selected = itemCategories.find((item) => item.catCode === catCode);
-    if (selected) {
-      setSelectedCategory(selected);
-      setOpenEditModal(true);
-    }
+  const refreshItemCategories = () => {
+    fetchItemCategories();
   };
-  
 
   // ✅ Handle Delete
   const handleDeleteItemCategory = async (itemCategoryId) => {
@@ -60,13 +56,11 @@ const ItemCategoryPage = () => {
     }
 
     try {
-      const response = await AxiosGet(
-        `${API_BASE_URL}/api/Inventory/ItemCategory/Delete/${itemCategoryId}`
-      );
-
+      const response = await AxiosGet(`${API_BASE_URL}/api/Inventory/ItemCategory/Delete/${itemCategoryId}`);
       if (response?.data?.StatusCode === 200) {
         toast.success(response.data.StatusMessage || "Item category deleted successfully!");
-        fetchItemCategories(); // ✅ Refresh data after deleting
+        fetchItemCategories();
+        setOpenDeleteModal(false);
       } else {
         toast.error(response.data.StatusMessage || "Delete failed.");
       }
@@ -92,7 +86,7 @@ const ItemCategoryPage = () => {
           </div>
         </div>
 
-        {/* ✅ Table */}
+        {/* ✅ Table Section */}
         <div className="w-[90%] mx-auto mt-6">
           {loading ? (
             <p className="text-gray-600">Loading...</p>
@@ -102,9 +96,21 @@ const ItemCategoryPage = () => {
             <CustomTable
               tableHeadings={["Category Code", "Description", "Account Code", "Actions"]}
               tableData={itemCategories}
-              handleEdit={handleEditCategory}
-              handleDelete={handleDeleteItemCategory}
+              setOpenDeleteModal={setOpenDeleteModal}
+              openDeleteModal={openDeleteModal}
+              handleItem={handleDeleteItemCategory}
+              setOpenEditModal={setOpenEditModal}
+              openEditModal={openEditModal}
+              handleEditItem={(item) => {
+                setSelectedCategory(item); // ✅ Correctly set category for edit
+                setOpenEditModal(true);
+              }}
+              handleDeleteItem={(id) => {
+                setSelectedItemId(id);
+                setOpenDeleteModal(true);
+              }}
               loading={loading}
+              text="Are You Sure You Want To Delete Item Category?"
             />
           )}
         </div>
@@ -114,32 +120,22 @@ const ItemCategoryPage = () => {
           <ItemCategoryModal
             isOpen={openAgencyModal}
             onClose={() => setOpenAgencyModal(false)}
-            refreshItemCategories={refreshItemCategories} // ✅ Auto-refresh on close
+            refreshItemCategories={refreshItemCategories}
           />
         )}
 
-        {/* ✅ Edit Agency Modal */}
+        {/* ✅ Edit Item Category Modal */}
         {openEditModal && selectedCategory && (
-  <EditItemCategoryModal
-    isOpen={openEditModal}
-    onClose={() => setOpenEditModal(false)}
-    categoryData={selectedCategory}
-    refreshItemCategories={refreshItemCategories}
-  />
-)}
-
-
-
+          <EditItemCategoryModal
+            isOpen={openEditModal}
+            onClose={() => setOpenEditModal(false)}
+            categoryData={selectedCategory}
+            refreshItemCategories={refreshItemCategories}
+          />
+        )}
       </section>
     </DashboardLayout>
   );
 };
 
 export default ItemCategoryPage;
-
-
-
-
-
-
-
