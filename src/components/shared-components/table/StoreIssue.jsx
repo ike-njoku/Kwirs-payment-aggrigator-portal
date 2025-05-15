@@ -126,7 +126,7 @@ const CustomTable = ({
         />
       )}
 
-{openEditModal && selectedItem && (
+    {openEditModal && selectedItem && (
   <EditModal
     handleCloseModal={handleCloseEditModal}
     index={selectedItem}
