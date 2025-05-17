@@ -31,7 +31,7 @@ const SelectStoreBranch = ({ branchId, setBranchId }) => {
   return (
     <div className="w-full">
       <label className="text-base font-medium text-gray-700" htmlFor="branchId">
-        Select Store Branch
+         Store Branch
       </label>
 
       <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
@@ -41,7 +41,7 @@ const SelectStoreBranch = ({ branchId, setBranchId }) => {
           onChange={(e) => setBranchId(e.target.value)}
           required
         >
-          <option value="">Store Branch</option>
+          <option value="">Select Store Branch</option>
           {branches.length > 0 ? (
             branches.map((branch) => (
               <option key={branch.branchId} value={branch.branchId}>

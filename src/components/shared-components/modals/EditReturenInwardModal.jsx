@@ -2,23 +2,24 @@
 import React, { useState } from "react";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
-import SelectVendor from "../SelectVendor";
+import SelectItems from "../SelectItems";
+import SelectStoreBranch from "../SelectStoreBranch";
+import SelectCustomers from "../SelectCustomers";
 
-const EditBankAccountModal = ({
+const EditReturnInwardModal = ({
   handleCloseModal,
   index,
   handleEditModal,
   heading,
 }) => {
-  const [createdBy, setCreatedBy] = useState(index.createdBy);
+  const [createdBy, setCreatedBy] = useState(index.createdBy || "Admin");
   const [ItemCode, setItemCode] = useState(index.ItemCode);
-  const [Store, setStore] = useState(index.Store);
-  const [description, setdescription] = useState(index.description);
+  const [rInwardId, setrInwardId] = useState(index.rInwardId);
+  const [storeBranchId, setstoreBranchId] = useState(index.Store);
   const [qty, setqty] = useState(index.qty);
-  const [rOutwardId, setrOutwardId] = useState(index.rOutwardId);
-  const [vendorName, setvendorName] = useState(index.vendorName);
+  const [customerId, setcustomerId] = useState(index.CustomerName);
   const [isLoading, setIsLoading] = useState(false);
-// j
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -26,11 +27,10 @@ const EditBankAccountModal = ({
     handleEditModal(index, {
       createdBy,
       ItemCode,
-      Store,
-      description,
+      rInwardId,
+      storeBranchId,
       qty,
-      rOutwardId,
-      vendorName,
+      customerId,
     });
 
     setIsLoading(false);
@@ -41,74 +41,39 @@ const EditBankAccountModal = ({
     <ModalLayout handleCloseModal={handleCloseModal}>
       <div className="w-full p-5">
         <h3 className="my-5 text-lg font-semibold pb-4 border-b border-b-gray-500 text-gray-700">
-          {heading}
+          {heading || "Edit Return Inward"}
         </h3>
 
         <form className="w-full" onSubmit={handleFormSubmit}>
-          <div className="w-full">
-            <label className="text-base font-medium text-gray-700">Store</label>
-            <input
-              type="text"
-              className="w-full h-[45px] my-4 px-3 bg-gray-100 text-gray-700 rounded-md border-b-2 border-b-pumpkin focus:outline-none"
-              value={Store}
-              onChange={(e) => setStore(e.target.value)}
-              placeholder="Enter store name"
-            />
-          </div>
+          {/* Item Code */}
+          <SelectItems selectedItem={ItemCode} setSelectedItem={setItemCode} />
 
-          <div className="w-full">
-            <label className="text-base font-medium text-gray-700">
-              Description
-            </label>
-            <input
-              type="text"
-              className="w-full h-[45px] my-4 px-3 bg-gray-100 text-gray-700 rounded-md border-b-2 border-b-pumpkin focus:outline-none"
-              value={description}
-              onChange={(e) => setdescription(e.target.value)}
-              placeholder="Enter description"
-            />
-          </div>
+          {/* Store Branch */}
+          <SelectStoreBranch
+            branchId={storeBranchId}
+            setBranchId={setstoreBranchId}
+          />
 
+          {/* Quantity */}
           <div className="w-full">
             <label className="text-base font-medium text-gray-700">
               Quantity
             </label>
             <input
               type="number"
+              min="0"
               className="w-full h-[45px] my-4 px-3 bg-gray-100 text-gray-700 rounded-md border-b-2 border-b-pumpkin focus:outline-none"
               value={qty}
-              onChange={(e) => setqty(Number(e.target.value))}
-              placeholder="Enter quantity"
+              onChange={(e) => setqty(e.target.value)}
+              placeholder="Enter Quantity"
             />
           </div>
 
-          <div className="w-full">
-            <label className="text-base font-medium text-gray-700">
-              rOutward ID
-            </label>
-            <input
-              type="text"
-              className="w-full h-[45px] my-4 px-3 bg-gray-100 text-gray-700 rounded-md border-b-2 border-b-pumpkin focus:outline-none"
-              value={rOutwardId}
-              onChange={(e) => setrOutwardId(e.target.value)}
-              placeholder="Enter rOutward ID"
-            />
-          </div>
-
-          {/* <SelectVendor vendorId={vendorName} setVendorId={setvendorName} /> */}
-
-          <div className="w-full">
-            <label className="text-base font-medium text-gray-700">
-              Vendor Name
-            </label>
-            <input
-              type="text"
-              className="w-full h-[45px] my-4 px-3 bg-gray-100 text-gray-700 rounded-md border-b-2 border-b-pumpkin focus:outline-none"
-              value={vendorName}
-              onChange={(e) => setvendorName(e.target.value)}
-              placeholder="Enter vendor name"
-            />
-          </div>
+          {/* Customer */}
+          <SelectCustomers
+            selectedCustomer={customerId}
+            setSelectedCustomer={setcustomerId}
+          />
 
           <AuthButtons
             label="Update"
@@ -121,4 +86,4 @@ const EditBankAccountModal = ({
   );
 };
 
-export default EditBankAccountModal;
+export default EditReturnInwardModal;
