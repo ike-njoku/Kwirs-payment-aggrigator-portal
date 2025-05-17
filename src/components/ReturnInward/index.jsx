@@ -64,7 +64,7 @@ const BankAccountPage = () => {
       toast.error("Please provide all required fields.");
       return;
     }
-
+// 
     const newResourceData = {
       createdBy: newResourceURL.createdBy,
       ItemCode: parseInt(newResourceURL.ItemCode),

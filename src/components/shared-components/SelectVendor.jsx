@@ -34,7 +34,7 @@ const SelectVendor = ({ vendorId, setVendorId }) => {
         className="text-base font-medium text-gray-700"
         htmlFor="vendorId"
       >
-        Select Vendor
+        Vendor
       </label>
 
       <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
