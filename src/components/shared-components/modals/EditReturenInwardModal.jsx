@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
+import SelectVendor from "../SelectVendor";
 
 const EditBankAccountModal = ({
   handleCloseModal,
@@ -17,7 +18,7 @@ const EditBankAccountModal = ({
   const [rOutwardId, setrOutwardId] = useState(index.rOutwardId);
   const [vendorName, setvendorName] = useState(index.vendorName);
   const [isLoading, setIsLoading] = useState(false);
-
+// j
   const handleFormSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -44,8 +45,6 @@ const EditBankAccountModal = ({
         </h3>
 
         <form className="w-full" onSubmit={handleFormSubmit}>
-
-
           <div className="w-full">
             <label className="text-base font-medium text-gray-700">Store</label>
             <input
@@ -95,6 +94,8 @@ const EditBankAccountModal = ({
               placeholder="Enter rOutward ID"
             />
           </div>
+
+          {/* <SelectVendor vendorId={vendorName} setVendorId={setvendorName} /> */}
 
           <div className="w-full">
             <label className="text-base font-medium text-gray-700">

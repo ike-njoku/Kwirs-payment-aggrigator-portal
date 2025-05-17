@@ -97,7 +97,7 @@ const CustomTable = ({
                     {/* {tableInfo.ReturnDate} */}
                     {new Date(tableInfo.ReturnDate).toLocaleDateString()}
                   </td>
-
+{/* gd */}
                   <td className="px-6 py-4 text-gray-900">
                     {isEllipseDropdwon ? (
                       <EllipseDropdown
