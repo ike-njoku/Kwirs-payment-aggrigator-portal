@@ -63,7 +63,7 @@ const CustomTable = ({
                     scope="row"
                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
                   >
-                    {tableInfo.rOutwardId}
+                    {tableInfo.rInwardId}
                   </td>
                   <td
                     scope="row"
@@ -88,23 +88,23 @@ const CustomTable = ({
                     scope="row"
                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
                   >
-                    {tableInfo.vendorName}
+                    {tableInfo.CustomerName}
                   </td>
                   <td
                     scope="row"
                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
                   >
                     {/* {tableInfo.ReturnDate} */}
-                    {new Date(tableInfo.ReturnDate).toLocaleDateString()}
+                    {new Date(tableInfo.IssuedDate).toLocaleDateString()}
                   </td>
-{/* gd */}
+                  {/* gd */}
                   <td className="px-6 py-4 text-gray-900">
                     {isEllipseDropdwon ? (
                       <EllipseDropdown
                         handleDelete={handleDelete}
                         handleEdit={handleEdit}
                         setSelectedItem={setSelectedItem}
-                        id={tableInfo.rOutwardId}
+                        id={tableInfo.rInwardId}
                         item={tableInfo}
                       />
                     ) : (

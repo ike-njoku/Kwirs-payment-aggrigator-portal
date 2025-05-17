@@ -4,13 +4,15 @@ import ModalLayout from "./ModalLayout";
 import AuthButtons from "../buttons/AuthButtons";
 import SelectVendor from "../SelectVendor";
 import SelectStoreBranch from "../SelectStoreBranch";
+import SelectItems from "../SelectItems";
+import SelectCustomers from "../SelectCustomers";
 
 
 
 const CreateTaxTypeModal = ({ handleCloseModal, handleCreateModal }) => {
   const createdBy = "Admin";
   const [ItemCode, setItemCode] = useState("");
-  const [rInwardId, setrInwardId] = useState("");
+  const [rInwardId, setrInwardId] = useState("2");
   const [storeBranchId, setstoreBranchId] = useState(" ");
   const [qty, setqty] = useState(" ");
   const [customerId, setcustomerId] = useState(" ");
@@ -55,38 +57,12 @@ const CreateTaxTypeModal = ({ handleCloseModal, handleCreateModal }) => {
 
         <form className="w-full" onSubmit={handleFormSubmit}>
           {/* Item Code */}
-          <div className="w-full">
-            <label className="text-base font-medium text-gray-700">
-              Item Code
-            </label>
-            <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-              <input
-                className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="text"
-                value={ItemCode}
-                onChange={(e) => setItemCode(e.target.value)}
-                placeholder="Enter Item Code"
-                required
-              />
-            </div>
-          </div>
+          
+
+          <SelectItems selectedItem={ItemCode} setSelectedItem={setItemCode} />
 
           {/* Return Outward ID */}
-          <div className="w-full">
-            <label className="text-base font-medium text-gray-700">
-              Return Outward ID
-            </label>
-            <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-              <input
-                type="text"
-                className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                value={rInwardId}
-                onChange={(e) => setrInwardId(e.target.value)}
-                placeholder="Enter Return Outward ID"
-                required
-              />
-            </div>
-          </div>
+          
 
           {/* storeBranchId Branch ID */}
           <SelectStoreBranch
@@ -113,22 +89,8 @@ const CreateTaxTypeModal = ({ handleCloseModal, handleCreateModal }) => {
           </div>
 
           {/* customer id */}
-          <div className="w-full">
-            <label className="text-base font-medium text-gray-700">
-              Customer ID
-            </label>
-            <div className="border-b-2 border-b-pumpkin h-[45px] w-full rounded-md my-4">
-              <input
-                className="w-full h-full bg-gray-100 px-3 focus:outline-none text-gray-700"
-                type="text"
-                value={customerId}
-                onChange={(e) => setcustomerId(e.target.value)}
-                placeholder="Enter Customer ID "
-                required
-              />
-            </div>
-          </div>
-
+          <SelectCustomers selectedCustomer={customerId} setSelectedCustomer={setcustomerId} />
+         
 
           <AuthButtons
             label="Create"

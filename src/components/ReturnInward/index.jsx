@@ -17,12 +17,22 @@ import { MAIN_MENU, SUB_MENU } from "../../utils/constants";
 const BankAccountPage = () => {
   const router = useRouter();
 
+  // }  "rInwardId": 102,
+  //           "description": "TV Console Updated",
+  //           "qty": 7.0,
+  //           "Store": "Branch 1",
+  //           "CustomerName": "Customer 1",
+  //           "IssuedDate": "2025-05-14T10:52:45.373",
+  //           "createdBy": "Admin",
+  //           "createdDate": "2025-05-14T10:54:20.25"
+  //       },
+
   const tableHeadings = [
-    "Item Code",
+    "rInward Id",
     "Description",
     "Qty",
     "Store Branch Id",
-    "Vendor",
+    "Customer Name",
     " Date",
     "Action",
   ];
@@ -64,7 +74,7 @@ const BankAccountPage = () => {
       toast.error("Please provide all required fields.");
       return;
     }
-// 
+    //
     const newResourceData = {
       createdBy: newResourceURL.createdBy,
       ItemCode: parseInt(newResourceURL.ItemCode),
@@ -74,7 +84,6 @@ const BankAccountPage = () => {
       qty: parseFloat(newResourceURL.qty),
       Date: new Date().toISOString(),
     };
-    
 
     try {
       const createResourceResponse = await AxiosPost(
@@ -126,7 +135,7 @@ const BankAccountPage = () => {
 
   const fetchAllResources = async () => {
     const apiResponse = await AxiosGet(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/ReturnOutward/GetAll`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/ReturnInward/GetAll`
     );
 
     if (!apiResponse) {
@@ -145,24 +154,24 @@ const BankAccountPage = () => {
       return;
     }
 
-    // "rOutwardId": 123,
-    // "description": "TV Console Updated",
-    // "qty": 7.0,
-    // "Store": "Branch 1",
-    // "vendorName": "Vendor 19",
-    // "ReturnDate": "2025-05-08T11:23:31.333",
-    // "createdBy": "Admin",
-    // "createdDate": "2025-05-12T06:16:18.067"
+    // }  "rInwardId": 102,
+    //           "description": "TV Console Updated",
+    //           "qty": 7.0,
+    //           "Store": "Branch 1",
+    //           "CustomerName": "Customer 1",
+    //           "IssuedDate": "2025-05-14T10:52:45.373",
+    //           "createdBy": "Admin",
+    //           "createdDate": "2025-05-14T10:54:20.25"
+    //       },
 
     // Ensure correct key mapping
     const formattedData = tableData.map((item) => ({
-      rOutwardId: item.rOutwardId,
+      rInwardId: item.rInwardId,
       description: item.description,
       qty: item.qty,
       Store: item.Store,
-      vendorName: item.vendorName,
-      ReturnDate: item.ReturnDate,
-      BankaccountId: item.BankaccountId,
+      CustomerName: item.CustomerName,
+      IssuedDate: item.IssuedDate,
       createdBy: item.createdBy,
       createdDate: item.createdDate,
     }));
