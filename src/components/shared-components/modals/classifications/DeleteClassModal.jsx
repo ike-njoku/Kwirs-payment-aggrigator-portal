@@ -21,7 +21,7 @@ const DeleteClassModal = ({ handleCloseModal, deleteItem }) => {
           />
         </svg>
         <h3 className="mb-5 text-lg font-normal">
-          Are you sure you want to delete this inventory item?
+          Are you sure you want to delete this classification item?
         </h3>
         <button
           data-modal-hide="popup-modal"

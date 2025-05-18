@@ -14,28 +14,13 @@ import { toast } from "react-toastify";
 
 const InventoryPage = () => {
   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-  const [inventoryTableData, setInventoryTableData] = useState(inventoryData);
+  const [inventoryTableData, setInventoryTableData] = useState([]);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [selectedInventory, setSelectedInventory] = useState(null);
   const [openDeleteInventoryModal, setOpenDeleteInventoryModal] =
     useState(false);
   const [loading, setLoading] = useState(false);
-
-  const fetchAllInventory = async () => {
-    try {
-      setLoading(true);
-      const response = await AxiosGet(
-        `${API_BASE_URL}api/Inventory/ItemDetails/GetAll`
-      );
-
-      console.log({ response });
-    } catch (error) {}
-  };
-
-  useEffect(() => {
-    fetchAllInventory();
-  }, []);
 
   const handleOpenEditInventoryModal = (index) => {
     setSelectedInventory(inventoryTableData[index]);
@@ -58,16 +43,6 @@ const InventoryPage = () => {
     setOpenDeleteInventoryModal(false);
   };
 
-  const handleDeleteInventoryItem = () => {
-    // Logic to delete the inventory item
-    const updatedInventoryData = inventoryTableData.filter(
-      (item, i) => item.itemCode !== selectedInventory.itemCode
-    );
-
-    setInventoryTableData(updatedInventoryData);
-    setOpenDeleteInventoryModal(false);
-  };
-
   const handleAddNewInventoryItem = (inventory) => {
     // Logic to add a new inventory item
     console.log("New Inventory Item:", inventory);
@@ -84,6 +59,38 @@ const InventoryPage = () => {
       )
     );
     setOpenEditModal(false);
+  };
+  const fetchAllInventory = async () => {
+    try {
+      setLoading(true);
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/Inventory/ItemDetails/GetAll`
+      );
+
+      if (response.data.StatusCode !== 200) {
+        toast.error(response.data.StatusMessage);
+        return;
+      }
+      setInventoryTableData(response.data.Data);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      toast.error("An error occurred.");
+    }
+  };
+
+  useEffect(() => {
+    fetchAllInventory();
+  }, []);
+
+  const handleDeleteInventoryItem = async () => {
+    try {
+      console.log("1", selectedInventory);
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/Inventory/ItemDetails/Delete${selectedInventory.ItemCode}`
+      );
+      console.log(response);
+    } catch (error) {}
   };
 
   return (
@@ -133,6 +140,7 @@ const InventoryPage = () => {
         <CreateInventoryModal
           handleCloseModal={handleCloseCreateInventoryModal}
           handleAddNewInventoryItem={handleAddNewInventoryItem}
+          fetchAllInventory={fetchAllInventory}
         />
       )}
 
@@ -141,6 +149,7 @@ const InventoryPage = () => {
           handleCloseModal={handleCloseEditInventoryModal}
           selectedItem={selectedInventory}
           handleEditInventoryItem={handleEditInventoryItem}
+          fetchAllInventory={fetchAllInventory}
         />
       )}
 

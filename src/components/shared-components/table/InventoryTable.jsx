@@ -12,39 +12,18 @@ const InventoryTable = ({
 }) => {
   const tableHeadings = [
     "Item Code",
-    "Item Name",
-    "Class",
-    "Category",
-    "Customer",
-    "Vendor",
-    "Item Price",
-    "Quantity",
-    "Date Issued",
+    "Bar Code",
+    "Description",
+    "Classification",
+    "Cost",
+    "Unit",
+    "Reorder",
+    "OP Balance",
+    "Max",
+    "Status",
     "Actions",
   ];
-  const categoryList = [
-    "Category 1",
-    "Category 2",
-    "Category 3",
-    "Category 4",
-    "Category 5",
-  ];
-  // const [currentTableData, setCurrentTableData] = useState(tableData);
-  const [editingIndex, setEditingIndex] = useState(null);
 
-  // const [categoryData, setCategoryData] = useState("select category");
-
-  const handleChangeItemCategory = (index, newCategory) => {
-    const updated = [...tableData];
-    updated[index].category = newCategory;
-    setCurrentTableData(updated);
-  };
-
-  const handleChangeQty = (index, newQty) => {
-    const updated = [...tableData];
-    updated[index].itemUnits = newQty;
-    setCurrentTableData(updated);
-  };
   return (
     <div className="overflow-x-auto bg-white rounded-lg shadow-md w-full flex flex-nowrap custom-scrollbar">
       <table className="table-auto md:table-fixed flex-shrink-0">
@@ -83,61 +62,27 @@ const InventoryTable = ({
                   {row.itemCode}
                 </td>
                 <td className="px-5 py-3 text-sm text-gray-700">
-                  {row.itemName}
+                  {row.barcode}
                 </td>
                 <td className="px-5 py-3 text-sm text-gray-700">
-                  {row.itemClass}
-                </td>
-                <td className="px-5 py-3 text-sm text-gray-700">
-                  <select
-                    name="catgeory"
-                    className="outline-none bg-gray-200 rounded-md text-sm cursor-pointer"
-                    value={row.category}
-                    onChange={(e) =>
-                      handleChangeItemCategory(index, e.target.value)
-                    }
-                  >
-                    {categoryList.map((category, index) => (
-                      <option value={category} className="" key={index}>
-                        {category}
-                      </option>
-                    ))}
-                  </select>
+                  {row.description}
                 </td>
 
                 <td className="px-5 py-3 text-sm text-gray-700">
-                  {row.customer}
+                  {row.ItemClassification}
                 </td>
+                <td className="px-5 py-3 text-sm text-gray-700">{row.cost}</td>
+                <td className="px-5 py-3 text-sm text-gray-700">{row.Unit}</td>
                 <td className="px-5 py-3 text-sm text-gray-700">
-                  {row.vendor}
+                  {row.reorder}
                 </td>
+
                 <td className="px-5 py-3 text-sm text-gray-700">
-                  {row.itemPrice}
+                  {row.opBalance}
                 </td>
+                <td className="px-5 py-3 text-sm text-gray-700">{row.max}</td>
                 <td className="px-5 py-3 text-sm text-gray-700">
-                  <span className="flex gap-2 items-center">
-                    <input
-                      type="number"
-                      className="w-full max-w-[50px] border border-gray-300 disabled:border-none disabled:bg-gray-200 px-1 outline-none"
-                      value={row.itemUnits}
-                      disabled={editingIndex !== index}
-                      onChange={(e) => {
-                        handleChangeQty(index, e.target.value);
-                      }}
-                    />
-                    {editingIndex === index ? (
-                      <button onClick={() => setEditingIndex(null)}>
-                        <FaCheck />
-                      </button>
-                    ) : (
-                      <button onClick={() => setEditingIndex(index)}>
-                        <FaEdit />
-                      </button>
-                    )}
-                  </span>
-                </td>
-                <td className="px-5 py-3 text-sm text-gray-700">
-                  {row.dateIssued}
+                  {row.status}
                 </td>
                 <td className="px-5 py-3 text-sm text-gray-700 flex gap-2">
                   <button onClick={() => handleEdit(index)}>

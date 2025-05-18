@@ -99,7 +99,7 @@ const ClassificationsPage = () => {
 
       if (response?.data?.StatusCode === 200) {
         toast.success(
-          response.data.StatusMessage || "Agency deleted successfully!"
+          response.data.StatusMessage || "Classification deleted successfully!"
         );
         fetchAllClass();
       } else {

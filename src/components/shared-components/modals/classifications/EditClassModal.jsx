@@ -50,6 +50,7 @@ const EditClassModal = ({
       toast.success("Classification updated successfully!");
       fetchAllClass();
       setLoading(false);
+      handleCloseModal();
     } catch (error) {
       console.log("Error", error);
       setLoading(false);

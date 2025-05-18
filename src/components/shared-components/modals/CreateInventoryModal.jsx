@@ -1,50 +1,56 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ModalLayout from "./ModalLayout";
 import ModalTextInput from "../inputs/ModalTextInput";
 import ModalSelect from "../inputs/ModalSelect";
+import { AxiosGet, AxiosPost } from "@/services/http-service";
+import { toast } from "react-toastify";
 
 const CreateInventoryModal = ({
   handleCloseModal,
   handleAddNewInventoryItem,
+  fetchAllInventory,
 }) => {
-  const categoryList = [
-    "Category 1",
-    "Category 2",
-    "Category 3",
-    "Category 4",
-    "Category 5",
-  ];
-
-  const customerList = [
-    "Customer 1",
-    "Customer 2",
-    "Customer 3",
-    "Customer 4",
-    "Customer 5",
-  ];
-
-  const vendorList = [
-    "Vendor 1",
-    "Vendor 2",
-    "Vendor 3",
-    "Vendor 4",
-    "Vendor 5",
-  ];
-
-  const storeList = ["Store 1", "Store 2", "Store 3", "Store 4", "Store 5"];
+  const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
   const [loading, setLoading] = useState(false);
   const [inventoryData, setInventoryData] = useState({
-    itemName: "",
-    itemCode: "",
-    itemClass: "",
-    itemPrice: "",
-    itemUnits: "",
-    category: "",
-    customer: "",
-    vendor: "",
-    storeIssue: "",
+    itemCode: 0,
+    description: "",
+    barcode: "",
+    cost: 0.0,
+    max: 0.0,
+    reorder: 0.0,
+    Active: false,
+    Unit: "Box",
+    opBalance: 0.0,
+    ItemClassification: "",
   });
+  const [classifications, setClassifications] = useState([]);
+
+  const fetchAllClass = async () => {
+    try {
+      setLoading(true);
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/Inventory/ItemClassification/GetAll`
+      );
+
+      if (response.status !== 200) {
+        toast.error("An error occurred");
+        setLoading(false);
+        return;
+      }
+
+      setClassifications(response.data.Data);
+      setLoading(false);
+    } catch (error) {
+      console.log("ERROR", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllClass();
+  }, []);
 
   const handleChangeValue = (e) => {
     const { name, value } = e.target;
@@ -54,14 +60,41 @@ const CreateInventoryModal = ({
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newInventoryData = {
-      ...inventoryData,
-      dateIssued: new Date().toLocaleDateString(),
-    };
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      const payload = {
+        active: inventoryData.Active,
+        ItemCode: Number(inventoryData.itemCode),
+        cost: Number(inventoryData.cost),
+        max: Number(inventoryData.max),
+        reorder: Number(inventoryData.reorder),
+        openingBalance: Number(inventoryData.opBalance),
+        classCode: 1,
+        unitcode: 1,
+        description: inventoryData.description,
+        barcode: inventoryData.barcode,
+      };
+      const response = await AxiosPost(
+        `${API_BASE_URL}/api/Inventory/ItemDetails/Create`,
+        payload
+      );
+      console.log({ response });
+      if (response.StatusCode === 500) {
+        toast.error(response.StatusMessage);
+        setLoading(false);
+        return;
+      }
 
-    handleAddNewInventoryItem(newInventoryData);
+      toast.success("New Inventory added successfully!");
+
+      fetchAllInventory();
+      setLoading(false);
+      handleCloseModal();
+    } catch (error) {
+      setLoading(false);
+      toast.error(response.StatusMessage);
+    }
   };
   return (
     <ModalLayout handleCloseModal={handleCloseModal}>
@@ -72,103 +105,90 @@ const CreateInventoryModal = ({
 
         <form className="w-full mt-4" onSubmit={handleSubmit}>
           <ModalTextInput
-            label="Name"
-            name="itemName"
-            placeholder="Enter item name"
+            label="Description"
+            name="description"
+            placeholder="Enter item description"
             type="text"
-            value={inventoryData.itemName}
+            value={inventoryData.description}
             handleChange={handleChangeValue}
           />
           <ModalTextInput
-            label="Code"
+            label="Item Code"
             name="itemCode"
             placeholder="Enter item code"
-            type="text"
+            type="number"
             value={inventoryData.itemCode}
             handleChange={handleChangeValue}
           />
           <ModalTextInput
-            label="Units"
-            name="itemUnits"
-            placeholder="Enter item unit"
-            type="number"
-            value={inventoryData.itemUnits}
-            handleChange={handleChangeValue}
-          />
-          <ModalTextInput
-            label="Price"
-            name="itemPrice"
-            placeholder="Enter item price"
-            type="number"
-            value={inventoryData.itemPrice}
-            handleChange={handleChangeValue}
-          />
-          <ModalTextInput
-            label="Class"
-            name="itemClass"
-            placeholder="Enter item class"
+            label="Barcode"
+            name="barcode"
+            placeholder="Enter barcode"
             type="text"
-            value={inventoryData.itemClass}
+            value={inventoryData.barcode}
             handleChange={handleChangeValue}
           />
-          <ModalSelect
-            label="Category"
-            name="category"
-            placeholder="Select Category"
-            value={inventoryData.category}
-            handleChange={handleChangeValue}
-            optionData={categoryList.map((category, index) => (
-              <option key={index} value={category}>
-                {category}
-              </option>
-            ))}
-          />
-          <ModalSelect
-            label="Customer"
-            name="customer"
-            placeholder="Select Customer"
-            value={inventoryData.customer}
-            handleChange={handleChangeValue}
-            optionData={customerList.map((category, index) => (
-              <option key={index} value={category}>
-                {category}
-              </option>
-            ))}
-          />
-          <ModalSelect
-            label="Vendor"
-            name="vendor"
-            placeholder="Select Vendor"
-            optionData={vendorList.map((category, index) => (
-              <option key={index} value={category}>
-                {category}
-              </option>
-            ))}
-            value={inventoryData.vendor}
+          <ModalTextInput
+            label="Cost"
+            name="cost"
+            placeholder="Enter item cost"
+            type="number"
+            value={inventoryData.cost}
             handleChange={handleChangeValue}
           />
+          <ModalTextInput
+            label="Max"
+            name="max"
+            placeholder="Enter max quantity"
+            type="number"
+            value={inventoryData.max}
+            handleChange={handleChangeValue}
+          />
+          <ModalTextInput
+            label="Reorder"
+            name="reorder"
+            placeholder="Enter reorder level"
+            type="number"
+            value={inventoryData.reorder}
+            handleChange={handleChangeValue}
+          />
+          <ModalTextInput
+            label="Opening Balance"
+            name="opBalance"
+            placeholder="Enter opening balance"
+            type="number"
+            value={inventoryData.opBalance}
+            handleChange={handleChangeValue}
+          />
+          <ModalTextInput
+            label="Unit"
+            name="Unit"
+            placeholder="Enter unit"
+            type="text"
+            value={inventoryData.Unit}
+            handleChange={handleChangeValue}
+          />
+
           <ModalSelect
-            label="Store"
-            name="storeIssue"
-            placeholder="Select Store"
-            optionData={storeList.map((category, index) => (
-              <option key={index} value={category}>
-                {category}
+            label="Classification"
+            name="ItemClassification"
+            placeholder="Select item classification"
+            value={inventoryData.ItemClassification}
+            handleChange={handleChangeValue}
+            optionData={classifications.map((classificationInfo, index) => (
+              <option key={index} value={classificationInfo.description}>
+                {classificationInfo.description}
               </option>
             ))}
-            value={inventoryData.storeIssue}
-            handleChange={handleChangeValue}
           />
 
           {/* Submit Button */}
           <button
             type="submit"
             className="w-full py-2 bg-pumpkin text-white font-semibold rounded-md"
-
-            // disabled={loading}
+            disabled={loading}
           >
-            {/* {loading ? "Processing..." : "Create Inventory"} */}
-            {"Create Inventory"}
+            {loading ? "Processing..." : "Create Inventory"}
           </button>
         </form>
       </div>
