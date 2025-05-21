@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useFlutterwave, closePaymentModal } from "flutterwave-react-v3";
+import { useFlutterwave } from "flutterwave-react-v3";
+// remove closePaymentModal import is problemati
 import { PaymentRequest } from "@/context/PaymentRequestDetails";
 
 const PayWithFlutterWave = () => {
@@ -95,7 +96,7 @@ const PayWithFlutterWave = () => {
         } else {
           console.log("Payment failed.");
         }
-        closePaymentModal();
+        // closePaymentModal(); ucomment this later
       },
       onClose: () => console.log("Payment canceled."),
     });
