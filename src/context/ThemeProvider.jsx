@@ -4,7 +4,7 @@ import React, { createContext, useEffect, useState } from "react";
 export const ThemeContext = createContext();
 
 const ThemeProvider = ({ children }) => {
-  const themeInStorage = localStorage.getItem("theme") || "light";
+  const themeInStorage = window.localStorage.getItem("theme") || "light";
   const [theme, setTheme] = useState(themeInStorage); // Fixed: Initialize with themeInStorage
   const toggleTheme = (mode) => {
     setTheme(mode);
