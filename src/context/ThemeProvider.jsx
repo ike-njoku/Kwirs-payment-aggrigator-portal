@@ -4,10 +4,12 @@ import React, { createContext, useEffect, useState } from "react";
 export const ThemeContext = createContext();
 
 const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-
+  const themeInStorage =
+    typeof window !== "undefined"
+      ? localStorage.getItem("theme") || "light"
+      : "light"; // Fixed: Added check for window
+  const [theme, setTheme] = useState(themeInStorage); // Fixed: Initialize with themeInStorage
   const toggleTheme = (mode) => {
-    // setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
     setTheme(mode);
   };
 
