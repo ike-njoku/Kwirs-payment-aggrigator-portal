@@ -7,7 +7,7 @@ const ThemeProvider = ({ children }) => {
   const themeInStorage =
     typeof window !== "undefined"
       ? localStorage.getItem("theme") || "light"
-      : "light"; // Fixed: Added check for window
+      : "light";
   const [theme, setTheme] = useState(themeInStorage); // Fixed: Initialize with themeInStorage
   const toggleTheme = (mode) => {
     setTheme(mode);
