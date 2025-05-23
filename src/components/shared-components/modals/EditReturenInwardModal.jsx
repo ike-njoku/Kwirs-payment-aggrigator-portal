@@ -6,6 +6,17 @@ import SelectItems from "../SelectItems";
 import SelectStoreBranch from "../SelectStoreBranch";
 import SelectCustomers from "../SelectCustomers";
 
+
+// {
+//   "ItemCode": 1000,
+//    "rInwardId": 102,
+//    "Date": "2025-05-14T10:52:45.3749335+01:00",
+//    "storeBranchId": 2,
+//    "createdBy": "Admin",
+//    "customerId": 1000,
+//    "qty": 7.0
+//  }
+
 const EditReturnInwardModal = ({
   handleCloseModal,
   index,
@@ -18,6 +29,8 @@ const EditReturnInwardModal = ({
   const [storeBranchId, setstoreBranchId] = useState(index.Store);
   const [qty, setqty] = useState(index.qty);
   const [customerId, setcustomerId] = useState(index.CustomerName);
+  const [date, setDate] = useState(index.Date || new Date().toISOString());
+
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFormSubmit = (e) => {
@@ -31,6 +44,7 @@ const EditReturnInwardModal = ({
       storeBranchId,
       qty,
       customerId,
+      Date: date, // Add this
     });
 
     setIsLoading(false);
