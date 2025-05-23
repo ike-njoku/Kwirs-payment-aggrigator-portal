@@ -6,6 +6,7 @@ import { MdPayment } from "react-icons/md";
 import { AxiosGet } from "../services/http-service";
 import { HiBuildingOffice2 } from "react-icons/hi2";
 import { MdOutlinePayment } from "react-icons/md";
+import { Carter_One } from "next/font/google";
 
 export const sidebarMenu = [
   {
@@ -38,3 +39,35 @@ export const profileData = {
   // mDay: null,
   // mMonth: null,
 };
+export const inventoryData = [
+  {
+    itemCode: 1001,
+    description: "TV Console",
+    barcode: "sample string 10",
+    cost: 7.0,
+    max: 6.0,
+    reorder: 5.0,
+    Active: true,
+    Unit: "Box",
+    opBalance: 9.0,
+    ItemClassification: "Desk",
+  },
+];
+
+export const classData = [
+  {
+    classCode: 1,
+    description: "Chair",
+    catCode: 1,
+  },
+  {
+    classCode: 2,
+    description: "Table",
+    catCode: 2,
+  },
+  {
+    classCode: 3,
+    description: "Book",
+    catCode: 3,
+  },
+];

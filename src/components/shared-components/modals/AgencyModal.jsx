@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import ModalLayout from "./ModalLayout"; 
+import ModalLayout from "./ModalLayout";
 import { AxiosPost, AxiosGet } from "../../../services/http-service";
 import { toast } from "react-toastify";
 
@@ -44,7 +44,9 @@ const AgencyModal = ({ onClose, fetchAllAgencies }) => {
   // ✅ Fetch Agencies Function
   const fetchAgencies = async () => {
     try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/GetAllAgencies`);
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/Agencies/GetAllAgencies`
+      );
       if (response?.data?.Data) {
         setAgencies(response.data.Data);
       } else {
@@ -81,7 +83,10 @@ const AgencyModal = ({ onClose, fetchAllAgencies }) => {
     console.log("🚀 Sending API request with:", agencyData);
 
     try {
-      const response = await AxiosPost(`${API_BASE_URL}/api/Agencies/Create`, agencyData);
+      const response = await AxiosPost(
+        `${API_BASE_URL}/api/Agencies/Create`,
+        agencyData
+      );
       console.log("✅ Full API Response:", response);
 
       if (!response || response.StatusCode !== 200) {
@@ -99,7 +104,6 @@ const AgencyModal = ({ onClose, fetchAllAgencies }) => {
 
       fetchAllAgencies();
 
-
       // ✅ Call refresh function if provided (triggers parent update)
       if (typeof refreshAgencies === "function") {
         refreshAgencies();
@@ -109,7 +113,6 @@ const AgencyModal = ({ onClose, fetchAllAgencies }) => {
       if (typeof onClose === "function") {
         onClose();
       }
-
     } catch (error) {
       console.error("❌ Error creating agency:", error);
       toast.error("An error occurred. Please try again.");
@@ -130,7 +133,9 @@ const AgencyModal = ({ onClose, fetchAllAgencies }) => {
 
           {/* Agency Code */}
           <div className="w-full mb-4">
-            <label className="text-base font-medium text-gray-700">Agency Code</label>
+            <label className="text-base font-medium text-gray-700">
+              Agency Code
+            </label>
             <input
               type="text"
               className="w-full border-b-2 border-gray-300 h-[45px] bg-gray-100 px-3 focus:outline-none text-gray-700"
@@ -142,7 +147,9 @@ const AgencyModal = ({ onClose, fetchAllAgencies }) => {
 
           {/* Description */}
           <div className="w-full mb-4">
-            <label className="text-base font-medium text-gray-700">Description</label>
+            <label className="text-base font-medium text-gray-700">
+              Description
+            </label>
             <input
               type="text"
               className="w-full border-b-2 border-gray-300 h-[45px] bg-gray-100 px-3 focus:outline-none text-gray-700"
@@ -167,17 +174,3 @@ const AgencyModal = ({ onClose, fetchAllAgencies }) => {
 };
 
 export default AgencyModal;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
