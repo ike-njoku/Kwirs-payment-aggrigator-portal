@@ -116,7 +116,7 @@ const BankAccountPage = () => {
   const handleDeleteItem = async (ResourceId) => {
     try {
       const deleteResponse = await AxiosGet(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/ReturnOutward/Delete/${ResourceId}`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/ReturnInward/Delete/${ResourceId}`
       );
 
       if (deleteResponse?.data?.StatusCode === 200) {
@@ -154,15 +154,6 @@ const BankAccountPage = () => {
       return;
     }
 
-    // }  "rInwardId": 102,
-    //           "description": "TV Console Updated",
-    //           "qty": 7.0,
-    //           "Store": "Branch 1",
-    //           "CustomerName": "Customer 1",
-    //           "IssuedDate": "2025-05-14T10:52:45.373",
-    //           "createdBy": "Admin",
-    //           "createdDate": "2025-05-14T10:54:20.25"
-    //       },
 
     // Ensure correct key mapping
     const formattedData = tableData.map((item) => ({
@@ -180,7 +171,7 @@ const BankAccountPage = () => {
   };
 
   const handleEditItem = async (_index, updateParameters) => {
-    const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/ReturnOutward/Update`;
+    const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/ReturnInward/Update`;
 
     const payLoad = {
       ...updateParameters,

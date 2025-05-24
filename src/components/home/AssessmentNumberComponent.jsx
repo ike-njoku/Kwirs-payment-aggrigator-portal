@@ -90,6 +90,7 @@ const AssessmentNumberComponent = ({
             PRN is not associated with any invoice...
           </p>
         )}
+        {/* . */}
         {/* ✅ Show loading state */}
         {/* {paymentPRN} */}
         {/* 6446-2223-9604 */}
