@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../shared-components/layouts/DashboardLayout";
 import ClassificationsTable from "../shared-components/table/ClassificationsTable";
-import { classData } from "@/utils/app_data";
+
 import InventorySearchBar from "../inventory/InventorySearchBar";
 import { FaPlus } from "react-icons/fa";
 import CreateClassModal from "../shared-components/modals/classifications/CreateClass";
@@ -20,6 +20,12 @@ const ClassificationsPage = () => {
   const [selectedClass, setSelectedClass] = useState(null);
   const [openDeleteClassModal, setOpenDeleteClassModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [filteredTableData, setFilteredTableData] = useState([]);
+  const [searchValue, setSearchValue] = useState("");
+
+  const handleSearchChange = (e) => {
+    setSearchValue(e.target.value);
+  };
 
   const handleOpenEditClassModal = (index) => {
     setSelectedClass(classTableData[index]);
@@ -70,7 +76,7 @@ const ClassificationsPage = () => {
         setLoading(false);
         return;
       }
-
+      console.log(response.data.Data);
       setClassTableData(response.data.Data);
       setLoading(false);
     } catch (error) {
@@ -109,6 +115,55 @@ const ClassificationsPage = () => {
     } catch (error) {}
   };
 
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (searchValue.trim()) {
+        setLoading(true);
+        const lower = Number(searchValue);
+        const filtered = classTableData.filter(
+          (item) => Number(item?.classCode) === lower
+        );
+
+        console.log("Filtered Data:", filtered);
+        setFilteredTableData(filtered);
+        setLoading(false);
+      } else {
+        setFilteredTableData([]);
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchValue, classTableData]);
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 8;
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentRows, setCurrentRows] = useState([]);
+
+  useEffect(() => {
+    const activeData =
+      filteredTableData.length > 0 ? filteredTableData : classTableData;
+    const newTotalPages = Math.ceil(activeData.length / rowsPerPage);
+    setTotalPages(newTotalPages);
+
+    if (currentPage > newTotalPages && newTotalPages > 10) {
+      setCurrentPage(1);
+    }
+
+    const indexOfLastRow = currentPage * rowsPerPage;
+    const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+    setCurrentRows(activeData.slice(indexOfFirstRow, indexOfLastRow));
+  }, [classTableData, currentPage, filteredTableData]);
+
+  const nextPage = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
   return (
     <>
       <DashboardLayout page="Classifications">
@@ -117,25 +172,59 @@ const ClassificationsPage = () => {
             <div className="w-full lg:mt-10">
               <section className="w-full mb-6 mt-8">
                 <div className="flex justify-end w-full gap-4">
-                  <InventorySearchBar />
+                  <InventorySearchBar
+                    searchValue={searchValue}
+                    handleChange={handleSearchChange}
+                    placeholder="Search by class code"
+                  />
 
                   <button
                     onClick={() => setOpenCreateModal(true)}
                     className="text-pumpkin dark:text-darkPumpkin2 font-medium rounded-lg text-sm px-5 py-2.5 border border-pumpkin flex items-center gap-2 dark:border-darkPumpkin2"
-                    // disabled={loading}
                   >
                     {"Create Class"}
-                    {/* {loading ? "Processing..." : "Create an Agency"} */}
+
                     <FaPlus />
                   </button>
                 </div>
                 <div className="mt-3 w-full">
                   <ClassificationsTable
-                    tableData={classTableData}
+                    tableData={currentRows}
                     handleEdit={handleOpenEditClassModal}
                     handleDelete={handleOpenDeleteClassModal}
                     loading={loading}
                   />
+
+                  {(classTableData.length > rowsPerPage ||
+                    filteredTableData.length > rowsPerPage) && (
+                    <div className="flex justify-between items-center mt-4 px-4 py-2 bg-gray-100">
+                      <button
+                        onClick={prevPage}
+                        disabled={currentPage === 1}
+                        className={`px-4 py-2 text-sm font-medium rounded ${
+                          currentPage === 1
+                            ? "bg-gray-300 cursor-not-allowed"
+                            : "bg-pumpkin text-white hover:bg-orange-600"
+                        }`}
+                      >
+                        Previous
+                      </button>
+                      <span className="text-sm font-medium">
+                        Page {currentPage} of {totalPages}
+                      </span>
+                      <button
+                        onClick={nextPage}
+                        disabled={currentPage >= totalPages}
+                        className={`px-4 py-2 text-sm font-medium rounded ${
+                          currentPage >= totalPages
+                            ? "bg-gray-300 cursor-not-allowed"
+                            : "bg-pumpkin text-white hover:bg-orange-600"
+                        }`}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
                 </div>
               </section>
             </div>

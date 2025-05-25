@@ -1,15 +1,7 @@
-"use client";
-import React, { useState } from "react";
+import React from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
-import { FaCheck } from "react-icons/fa6";
 
-const InventoryTable = ({
-  tableData,
-  loading,
-  handleDelete,
-  handleEdit,
-  setCurrentTableData,
-}) => {
+const InventoryTable = ({ tableData, loading, handleDelete, handleEdit }) => {
   const tableHeadings = [
     "Item Code",
     "Bar Code",
@@ -25,7 +17,7 @@ const InventoryTable = ({
   ];
 
   return (
-    <div className="overflow-x-auto bg-white rounded-lg shadow-md w-full flex flex-nowrap custom-scrollbar">
+    <div className="overflow-x-auto bg-white rounded-lg shadow-md w-full flex flex-nowrap custom-scrollbar-2">
       <table className="table-auto md:table-fixed flex-shrink-0">
         <thead className="bg-pumpkin">
           <tr>
