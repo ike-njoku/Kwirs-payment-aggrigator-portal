@@ -134,7 +134,6 @@ const BankAccountPage = () => {
   };
 
   const handleEditItem = async (_index, updateParameters) => {
-
     const updateResourceURL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/StoreBranches/Update`;
 
     const payLoad = {

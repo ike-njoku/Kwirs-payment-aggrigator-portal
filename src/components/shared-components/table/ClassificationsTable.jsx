@@ -14,7 +14,7 @@ const ClassificationsTable = ({
     "Actions",
   ];
   return (
-    <div className="overflow-x-auto bg-white rounded-lg shadow-md w-full flex flex-nowrap custom-scrollbar">
+    <div className="overflow-x-auto bg-white rounded-lg shadow-md w-full flex flex-nowrap custom-scrollbar-2">
       <table className="table-auto w-full flex-shrink-0 ">
         <thead className="bg-pumpkin">
           <tr>
