@@ -2,7 +2,7 @@ import React from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-const PrintButton = ({ data, fileName = "return_inward_list" }) => {
+const PrintButton = ({ data, fileName = "data_file" }) => {
   const generatePDF = () => {
     if (!data || !data.length) {
       alert("No data available to print.");
