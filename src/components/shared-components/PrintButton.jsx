@@ -49,7 +49,7 @@ const PrintButton = ({ data, fileName = "return_inward_list" }) => {
   return (
     <button
       onClick={generatePDF}
-      className="bg-pumpkin flex gap-2 text-white px-4 py-2 rounded-lg hover:bg-black"
+      className="text-pumpkin flex gap-2 bd-white border border-pumpkin px-4 py-1 rounded-lg hover:bg-gray-100"
     >
       Print{" "}
       <svg
