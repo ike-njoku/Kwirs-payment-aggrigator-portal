@@ -7,6 +7,10 @@ import EditResourceModal from "../modals/EditResourceModal";
 import EditPaymentMethodModal from "../modals/EditPaymentMethodModal";
 import EditTaxOfficeModal from "../modals/EditTaxofficeModal";
 import EditSendEmail from "../modals/EditSendEmail";
+import EditVendorModal from "../modals/EditVendorsModal";
+import EditDamagesModal from "../modals/EditDamagesModal";
+import EditDamageModal from "../modals/EditDamagesModal";
+import EditOutwardModal from "../modals/EditOutwardModal";
 
 const CustomTable = ({
   tableData,
@@ -17,9 +21,15 @@ const CustomTable = ({
   handleEdit,
   openEditTaxOfficeModal,
   openDeleteModal,
+  openEditVendorModal,
+  openEditOutwardModal,
+  openEditDamageModal,
   setOpenDeleteModal,
   setOpenEditResourceModal,
+  selectedDamage,
   openEditResourceModal,
+  editingVendor,
+  selectedOutward,
   openEditModal,
   openEditPaymentModal,
   setOpenEditModal,
@@ -41,6 +51,17 @@ const CustomTable = ({
     setOpenEditResourceModal(false);
   };
 
+  const handleCloseEditVendorModal = () => {
+    setOpenEditModal(false)
+  };
+
+  const handleCloseEditOutwardModal = () => {
+    setOpenEditModal(false)
+  };
+
+  const handleCloseEditDamageModal = () => {
+    setOpenEditModal(false)
+  };
   const handleCloseEditModal = () => {
     setOpenEditModal(false);
   };
@@ -116,6 +137,31 @@ const CustomTable = ({
             {/* <td className="px-6 py-4 text-gray-900 capitalize">
               {tableInfo.Authorization}
             </td> */}
+          </>
+        );
+
+        case "vendor": // Another table type
+        return (
+          <>
+            <td
+              scope="row"
+              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize"
+            >
+              {tableInfo.VendorsId}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.VendorsName}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.VendorsAddress}
+            </td>
+        
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.VendorsPhone}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.VendorsEmail}
+            </td>
           </>
         );
 
@@ -212,6 +258,72 @@ const CustomTable = ({
             </td> */}
           </>
         );
+
+        case "returnoutward": // Another table type
+        return (
+          <>
+            <td
+              scope
+              className="px-3 py-4 font-medium text-gray-900 capitalize break-words "
+            >
+              {tableInfo.rOutwardId}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.VendorName || "null"}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.description
+              }
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.qty}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.Store}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.ReturnDate || "null"}
+            </td>
+          
+
+            {/* <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.IsActive}
+            </td> */}
+          </>
+        );
+
+        case "damages": // Another table type
+        return (
+          <>
+            <td
+              scope
+              className="px-6 py-4 font-medium text-gray-900 capitalize break-words "
+            >
+            {tableInfo.damageId || "null"}
+            </td>
+            
+            <td className="px-6 py-4 text-gray-900 capitalize">
+            {tableInfo.store || "null"}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.Description}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.SIVNo}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.quantity || "null"}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.IssuedDate || "null"}
+            </td>
+            <td className="px-6 py-4 text-gray-900 capitalize">
+              {tableInfo.createdDate || "null"}
+            </td>
+          
+          </>
+        );
+
       default: // Default table type
         return (
           <>
@@ -264,7 +376,8 @@ const CustomTable = ({
                           id={
                             tableInfo.TaxOfficeId ||
                             tableInfo.id ||
-                            tableInfo.paymentMethodId
+                            tableInfo.paymentMethodId || tableInfo.damageId ||
+                            tableInfo.VendorsId || tableInfo.rOutwardId
                           }
                           item={tableInfo}
                           showDelete={tableType !== "send-email"} // Hide delete for "send-email"
@@ -321,6 +434,55 @@ const CustomTable = ({
           label={label}
         />
       )}
+
+{/* {openEditPaymentModal && (
+        <EditPaymentMethodModal
+          handleCloseModal={handleClosePaymentMethodModal}
+          index={selectedItem}
+          handleEditModal={handleEditItem}
+          heading={heading}
+          label={label}
+        />
+      )} */}
+
+{openEditVendorModal && (
+         <EditVendorModal
+         handleCloseModal={handleCloseEditVendorModal}
+         index={selectedItem}
+         vendorData={editingVendor}
+         handleEditModal={handleEditItem}
+         heading={heading}
+         label={label}
+        />
+      )}
+
+{openEditOutwardModal && (
+         <EditOutwardModal
+         handleCloseModal={handleCloseEditOutwardModal}
+         index={selectedItem}
+         outwardData={selectedOutward}
+         handleEditModal={handleEditItem}
+         heading={heading}
+         label={label}
+        />
+      )}
+
+      
+
+
+{openEditDamageModal && (
+         <EditDamagesModal
+         handleCloseModal={handleCloseEditDamageModal}
+         index={selectedItem}
+         damageData={selectedDamage}
+         handleEditModal={handleEditItem}
+         heading={heading}
+         label={label}
+        />
+      )}
+
+    
+      
       {openEditEmailModal && (
         <EditSendEmail
           handleCloseModal={handleCloseEmailsModal}
