@@ -19,17 +19,16 @@ const PrintButton = ({ data, fileName = "data_file" }) => {
     autoTable(doc, {
       head: [headers],
       body: rows,
-      startY: 20,
+      startY: 10,
       theme: "plain", // plain = no borders
       headStyles: {
         fillColor: [255, 117, 24], // pumpkin
         textColor: [255, 255, 255],
-        halign: "center",
         fontStyle: "bold",
       },
       styles: {
-        fontSize: 10,
-        cellPadding: 4,
+        fontSize: 5,
+        cellPadding: 1,
         lineWidth: 0, // removes all borders
         textColor: [0, 0, 0], // black text
       },
@@ -49,9 +48,9 @@ const PrintButton = ({ data, fileName = "data_file" }) => {
   return (
     <button
       onClick={generatePDF}
-      className="text-pumpkin flex gap-2 bd-white border border-pumpkin px-4 py-1 rounded-lg hover:bg-gray-100"
+      className="text-pumpkin flex gap-2 bd-white border text-[14pxp]  border-pumpkin px-2 py-2 rounded-lg hover:bg-gray-100"
     >
-      Print{" "}
+      <p>Print</p>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
