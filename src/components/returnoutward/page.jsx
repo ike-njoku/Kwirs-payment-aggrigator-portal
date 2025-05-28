@@ -1,16 +1,19 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import DashboardLayout from "../shared-components/layouts/DashboardLayout";
 import CustomTable from "../shared-components/table";
 import { roleTableData } from "../../utils/table_data";
-import { FaPlus, FaFilter } from "react-icons/fa";
+import { FaPlus, FaFilter, FaDownload } from "react-icons/fa";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
-import CreateOutward from "../shared-components/modals/CreateOutward";
+// import CreateReturnOutward from "../shared-components/modals/CreateReturnOutward"; 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { usePDF } from 'react-to-pdf';
+import CreateOutward from "../shared-components/modals/CreateOutward";
 
 const ReturnOutward = () => {
+  const { toPDF, targetRef } = usePDF({filename: 'return-outward-report.pdf'});
   const tableHeadings = [
     "Outward Id",
     "Vendor Name",
@@ -314,9 +317,9 @@ const ReturnOutward = () => {
       <section className="w-full">
         <div className="w-[90%] mx-auto py-5">
           <div className="w-full lg:mt-10">
-            <section className="w-full mb-3 flex flex-col gap-4">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div className="w-full md:w-auto flex flex-col md:flex-row items-start md:items-center gap-4">
+            <section className="w-full mb-3">
+              <div className="flex flex-row justify-between items-center gap-4">
+                <div className="flex items-center gap-4">
                   {/* Filter Dropdown Button */}
                   <div className="relative">
                     <button
@@ -461,35 +464,46 @@ const ReturnOutward = () => {
                   )}
                 </div>
                 
-                <button
-                  className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
-                  type="button"
-                  onClick={() => setOpenCreateModal(true)}
-                >
-                  Create Return Outward
-                  <FaPlus />
-                </button>
+                <div className="flex items-center gap-4">
+                  <button
+                    className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
+                    type="button"
+                    onClick={() => setOpenCreateModal(true)}
+                  >
+                    Add Return Outward
+                    <FaPlus />
+                  </button>
+                  <button
+                    onClick={() => toPDF()}
+                    className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
+                  >
+                    Download PDF
+                    <FaDownload />
+                  </button>
+                </div>
               </div>
             </section>
 
-            <CustomTable
-              tableHeadings={tableHeadings}
-              tableData={currentRows}
-              isEllipseDropdwon={true}
-              tableType="returnoutward"
-              handleDelete={handleDelete}
-              handleEdit={handleEditVendor}
-              openDeleteModal={openDeleteModal}
-              setOpenDeleteModal={setOpenDeleteModal}
-              setOpenEditModal={setOpenEditModal}
-              openEditOutwardModal={openEditModal}
-              setOpenEditPaymentModal={setOpenEditModal}
-              handleDeleteItem={handleDeleteItem}
-              selectedOutward={editingVendor}
-              handleEditItem={handleEditOutward}
-              label="me"
-              heading="Update Outward"
-            />
+            <div ref={targetRef}>
+              <CustomTable
+                tableHeadings={tableHeadings}
+                tableData={currentRows}
+                isEllipseDropdwon={true}
+                tableType="returnoutward"
+                handleDelete={handleDelete}
+                handleEdit={handleEditVendor}
+                openDeleteModal={openDeleteModal}
+                setOpenDeleteModal={setOpenDeleteModal}
+                setOpenEditModal={setOpenEditModal}
+                openEditReturnOutwardModal={openEditModal}
+                setOpenEditPaymentModal={setOpenEditModal}
+                handleDeleteItem={handleDeleteItem}
+                selectedReturnOutward={editingVendor}
+                handleEditItem={handleEditOutward}
+                label="me"
+                heading="Update Return Outward"
+              />
+            </div>
 
             {/* Pagination Controls */}
             <div className="flex justify-between items-center mt-4 px-4 py-2 bg-gray-100">
@@ -528,6 +542,7 @@ const ReturnOutward = () => {
             handleCreateModal={handleCreateOutward}
             isLoading={isLoading}
           />
+      
         )}
       </section>
     </DashboardLayout>

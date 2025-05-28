@@ -1,16 +1,18 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import DashboardLayout from "../shared-components/layouts/DashboardLayout";
 import CustomTable from "../shared-components/table";
 import { roleTableData } from "../../utils/table_data";
-import { FaPlus, FaFilter } from "react-icons/fa";
+import { FaPlus, FaFilter, FaDownload } from "react-icons/fa";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
 import CreateDamages from "../shared-components/modals/CreateDamages";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { usePDF } from 'react-to-pdf';
 
 const Damages = () => {
+  const { toPDF, targetRef } = usePDF({filename: 'damages-report.pdf'});
   const tableHeadings = [
     "Id",
     "Store",
@@ -272,9 +274,9 @@ const Damages = () => {
       <section className="w-full">
         <div className="w-[90%] mx-auto py-5">
           <div className="w-full lg:mt-10">
-            <section className="w-full mb-3 flex flex-col gap-4">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div className="w-full md:w-auto flex flex-col md:flex-row items-start md:items-center gap-4">
+            <section className="w-full mb-3">
+              <div className="flex flex-row justify-between items-center gap-4">
+                <div className="flex items-center gap-4">
                   {/* Filter Dropdown Button */}
                   <div className="relative">
                     <button
@@ -400,35 +402,46 @@ const Damages = () => {
                   )}
                 </div>
                 
-                <button
-                  className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
-                  type="button"
-                  onClick={() => setOpenCreateModal(true)}
-                >
-                  Add Damages
-                  <FaPlus />
-                </button>
+                <div className="flex items-center gap-4">
+                  <button
+                    className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
+                    type="button"
+                    onClick={() => setOpenCreateModal(true)}
+                  >
+                    Add Damages
+                    <FaPlus />
+                  </button>
+                  <button
+                    onClick={() => toPDF()}
+                    className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
+                  >
+                    Download PDF
+                    <FaDownload />
+                  </button>
+                </div>
               </div>
             </section>
 
-            <CustomTable
-              tableHeadings={tableHeadings}
-              tableData={currentRows}
-              isEllipseDropdwon={true}
-              tableType="damages"
-              handleDelete={handleDelete}
-              handleEdit={handleEdit}
-              openDeleteModal={openDeleteModal}
-              setOpenDeleteModal={setOpenDeleteModal}
-              setOpenEditModal={setOpenEditModal}
-              openEditDamageModal={openEditModal}
-              setOpenEditPaymentModal={setOpenEditModal}
-              handleDeleteItem={handleDeleteItem}
-              selectedDamage={editingVendor}
-              handleEditItem={handleEditItem}
-              label="me"
-              heading="Update Damage"
-            />
+            <div ref={targetRef}>
+              <CustomTable
+                tableHeadings={tableHeadings}
+                tableData={currentRows}
+                isEllipseDropdwon={true}
+                tableType="damages"
+                handleDelete={handleDelete}
+                handleEdit={handleEdit}
+                openDeleteModal={openDeleteModal}
+                setOpenDeleteModal={setOpenDeleteModal}
+                setOpenEditModal={setOpenEditModal}
+                openEditDamageModal={openEditModal}
+                setOpenEditPaymentModal={setOpenEditModal}
+                handleDeleteItem={handleDeleteItem}
+                selectedDamage={editingVendor}
+                handleEditItem={handleEditItem}
+                label="me"
+                heading="Update Damage"
+              />
+            </div>
 
             {/* Pagination Controls */}
             <div className="flex justify-between items-center mt-4 px-4 py-2 bg-gray-100">
