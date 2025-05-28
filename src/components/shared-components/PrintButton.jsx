@@ -50,7 +50,7 @@ const PrintButton = ({ data, fileName = "data_file" }) => {
       onClick={generatePDF}
       className="text-pumpkin flex gap-2 bd-white border text-[14pxp]  border-pumpkin px-2 py-2 rounded-lg hover:bg-gray-100"
     >
-      <p>Print</p>
+      <p className="">Print</p>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
