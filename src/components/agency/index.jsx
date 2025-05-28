@@ -24,7 +24,9 @@ const AgenciesPage = ({ user }) => {
   const fetchAllAgencies = async () => {
     try {
       setLoading(true);
-      const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/GetAllAgencies`);
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/Agencies/GetAllAgencies`
+      );
       if (response?.status === 200 && response.data?.StatusCode === 200) {
         setAgencies(response.data?.Data ?? []);
       } else {
@@ -40,7 +42,9 @@ const AgenciesPage = ({ user }) => {
   // ✅ Fetch active agencies
   const fetchActiveAgencies = async () => {
     try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/GetActiveAgencies`);
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/Agencies/GetActiveAgencies`
+      );
       if (response?.status === 200 && response.data?.StatusCode === 200) {
         setActiveAgencies(response.data?.Data ?? []);
       } else {
@@ -69,9 +73,13 @@ const AgenciesPage = ({ user }) => {
     }
 
     try {
-      const response = await AxiosGet(`${API_BASE_URL}/api/Agencies/Delete/${agencyId}`);
+      const response = await AxiosGet(
+        `${API_BASE_URL}/api/Agencies/Delete/${agencyId}`
+      );
       if (response?.data?.StatusCode === 200) {
-        toast.success(response.data.StatusMessage || "Agency deleted successfully!");
+        toast.success(
+          response.data.StatusMessage || "Agency deleted successfully!"
+        );
         refreshAgencies(); // ✅ Refresh data after deleting
       } else {
         toast.error(response.data.StatusMessage || "Delete failed.");
@@ -101,7 +109,9 @@ const AgenciesPage = ({ user }) => {
                 className="text-pumpkin font-medium rounded-lg text-sm px-5 py-2.5 border border-pumpkin"
                 onChange={(e) => {
                   const agencyId = Number(e.target.value);
-                  const agency = activeAgencies.find((a) => a.AgencyId === agencyId);
+                  const agency = activeAgencies.find(
+                    (a) => a.AgencyId === agencyId
+                  );
                   setSelectedAgency(agency);
                 }}
                 value={selectedAgency?.AgencyId || ""}
@@ -167,10 +177,3 @@ const AgenciesPage = ({ user }) => {
 };
 
 export default AgenciesPage;
-
-
-
-
-
-
-

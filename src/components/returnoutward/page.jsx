@@ -3,11 +3,12 @@ import React, { useEffect, useState } from "react";
 import DashboardLayout from "../shared-components/layouts/DashboardLayout";
 import CustomTable from "../shared-components/table";
 import { roleTableData } from "../../utils/table_data";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaFilter } from "react-icons/fa";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
-import CreateVendor from "../shared-components/modals/CreateVendor";
 import CreateOutward from "../shared-components/modals/CreateOutward";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const ReturnOutward = () => {
   const tableHeadings = [
@@ -18,7 +19,6 @@ const ReturnOutward = () => {
     "Store",
     "Return Date",
     "Actions",
-    
   ];
   const [tableData, setTableData] = useState(roleTableData);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -27,14 +27,58 @@ const ReturnOutward = () => {
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [authenticatedUser, setAuthenticatedUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [allStores, setAllStores] = useState([]);
+  const [allVendors, setAllVendors] = useState([]);
+  
+  // Filter states
+  const [selectedStore, setSelectedStore] = useState("all");
+  const [selectedVendor, setSelectedVendor] = useState("all");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [showFilters, setShowFilters] = useState(false); // State for dropdown visibility
 
   // Pagination States
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
-  const totalPages = Math.ceil(tableData.length / rowsPerPage);
+  
+  // Filter data based on selected filters
+  const filteredData = tableData.filter(item => {
+    // Store filter
+    const storeMatch = selectedStore === "all" ||
+                      item.Store === selectedStore;
+    
+    // Vendor filter
+    const vendorMatch = selectedVendor === "all" ||
+                       item.vendorName === selectedVendor;
+    
+    // Date filter
+    if (!startDate && !endDate) {
+      console.log('Filtering item:', {
+        itemStore: item.Store,
+        selectedStore: selectedStore,
+        storeMatch,
+        itemVendor: item.vendorName,
+        selectedVendor: selectedVendor,
+        vendorMatch
+      });
+      return storeMatch && vendorMatch;
+    }
+    
+    const itemDate = new Date(item.ReturnDate || item.Date);
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+    
+    let dateMatch = true;
+    if (start) dateMatch = dateMatch && itemDate >= start;
+    if (end) dateMatch = dateMatch && itemDate <= end;
+    
+    return storeMatch && vendorMatch && dateMatch;
+  });
+  
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = tableData.slice(indexOfFirstRow, indexOfLastRow);
+  const currentRows = filteredData.slice(indexOfFirstRow, indexOfLastRow);
 
   // Pagination Handlers
   const nextPage = () => {
@@ -55,21 +99,17 @@ const ReturnOutward = () => {
     setOpenEditModal(true);
   };
 
-  const handleDeleteItem = async (rOutwardId
-  ) => {
+  const handleDeleteItem = async (rOutwardId) => {
     try {
-      console.log("Return Outward ID to delete:", rOutwardId
-      );
+      console.log("Return Outward ID to delete:", rOutwardId);
       const deleteResponse = await AxiosGet(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/ReturnOutward/Delete/${rOutwardId
-}`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/ReturnOutward/Delete/${rOutwardId}`
       );
       
       if (deleteResponse?.status === 200 || deleteResponse?.StatusCode === 200) {
         toast.success("OutWard deleted successfully");
         setTableData((prevData) =>
-          prevData.filter((item) => item.rOutwardId !== rOutwardId
-    )
+          prevData.filter((item) => item.rOutwardId !== rOutwardId)
         );
         setOpenDeleteModal(false);
       } else {
@@ -81,23 +121,21 @@ const ReturnOutward = () => {
     }
   };
 
-//   edit Return Outward 
-const handleEditOutward = async (rOutwardId, itemCode, storeBranchId, description, vendor, qty) => {
+  const handleEditOutward = async (rOutwardId, itemCode, storeBranchId, description, vendor, qty) => {
     if (!rOutwardId) {
       toast.error("Outward ID is required");
       return;
     }
   
     const updatedOutward = {
-      rOutwardId, // Required identifier
+      rOutwardId,
       ItemCode: Number(itemCode),
       storeBranchId: Number(storeBranchId),
       description,
       vendor: Number(vendor),
       qty: Number(qty),
-      // These fields remain unchanged
-      Date: new Date().toISOString(), // You might want to keep original date
-      createdBy: "Admin" // Or keep original creator
+      Date: new Date().toISOString(),
+      createdBy: "Admin"
     };
   
     try {
@@ -108,7 +146,7 @@ const handleEditOutward = async (rOutwardId, itemCode, storeBranchId, descriptio
   
       if (response.StatusCode === 200) {
         toast.success("Outward updated successfully");
-        GetAllOutwards(); // Refresh the list
+        GetAllOutwards();
         setOpenEditModal(false);
       } else {
         toast.error(response.StatusMessage || "Update failed");
@@ -119,20 +157,18 @@ const handleEditOutward = async (rOutwardId, itemCode, storeBranchId, descriptio
     }
   };
 
-//   Create Outward
-// Create Outward
-const handleCreateOutward = async (ItemCode, rOutwardId, storeBranchId, description, vendor, qty) => {
+  const handleCreateOutward = async (ItemCode, rOutwardId, storeBranchId, description, vendor, qty) => {
     setIsLoading(true);
   
     const newOutward = {
       ItemCode: Number(ItemCode),
-      rOutwardId: Number(rOutwardId), // Typically 0 as it will be generated by backend
+      rOutwardId: Number(rOutwardId),
       storeBranchId: Number(storeBranchId),
       description: description,
       vendor: Number(vendor),
       qty: Number(qty),
-      createdBy: "Admin", // Automatically set
-      Date: new Date().toISOString() // Automatically set
+      createdBy: "Admin",
+      Date: new Date().toISOString()
     };
   
     try {
@@ -148,7 +184,7 @@ const handleCreateOutward = async (ItemCode, rOutwardId, storeBranchId, descript
       }
   
       toast.success("Outward record created successfully");
-      GetAllOutwards(); // Refresh the outward list
+      GetAllOutwards();
       setIsLoading(false);
       setOpenCreateModal(false);
     } catch (error) {
@@ -158,8 +194,7 @@ const handleCreateOutward = async (ItemCode, rOutwardId, storeBranchId, descript
     }
   };
 
-// Get all outwards 
-const GetAllOutwards = async () => {
+  const GetAllOutwards = async () => {
     try {
       const apiResponse = await AxiosGet(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/ReturnOutward/GetAll`
@@ -170,7 +205,7 @@ const GetAllOutwards = async () => {
         return;
       }
   
-      console.log("API Response:", apiResponse.data.Data);
+      console.log('Raw API Response:', apiResponse.data.Data);
   
       const formatDate = (dateString) => {
         if (!dateString) return '';
@@ -179,31 +214,99 @@ const GetAllOutwards = async () => {
           year: 'numeric',
           month: 'short',
           day: 'numeric',
-       
         });
       };
   
-      let tableData = apiResponse.data.Data.map((item) => ({
-        ...item,
-        rOutwardId: item.rOutwardId,
-        description: item.description,
-        qty: item.qty,
-        Store: item.Store,
-        VendorName: item.vendorName,
-        ReturnDate: formatDate(item.ReturnDate) // Format the date here
-      }));
+      let tableData = apiResponse.data.Data.map((item) => {
+        // Ensure we're working with valid numbers
+        const storeId = parseInt(item.storeBranchId, 10);
+        const vendorId = parseInt(item.vendor, 10);
+        
+        console.log('Processing item:', {
+          originalStoreId: item.storeBranchId,
+          parsedStoreId: storeId,
+          originalVendorId: item.vendor,
+          parsedVendorId: vendorId
+        });
+
+        return {
+          ...item,
+          rOutwardId: item.rOutwardId,
+          description: item.description,
+          qty: item.qty,
+          Store: item.Store,
+          VendorName: item.vendorName,
+          vendor: vendorId,
+          storeBranchId: storeId,
+          ReturnDate: formatDate(item.ReturnDate),
+          originalReturnDate: item.ReturnDate
+        };
+      });
   
+      console.log('Processed table data:', tableData);
       setTableData(tableData);
-      setCurrentPage(1); // Reset to first page when data changes
+      setCurrentPage(1);
     } catch (error) {
       toast.error("An error occurred while fetching Outwards");
       console.error("Fetch error:", error);
     }
   };
+
+  const fetchStores = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/StoreBranches/GetAll`
+      );
+      const branchesData = await response.json();
+      if (branchesData.StatusCode === 200) {
+        setAllStores(branchesData.Data);
+      } else {
+        toast.error("Failed to fetch stores");
+      }
+    } catch (error) {
+      console.error("Error fetching stores:", error);
+      toast.error("Error loading store branches");
+    }
+  };
+
+  const fetchVendors = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Vendors/GetAll`
+      );
+      const branchesData = await response.json();
+      if (branchesData.StatusCode === 200) {
+        setAllVendors(branchesData.Data);
+      } else {
+        toast.error("Failed to fetch vendors");
+      }
+    } catch (error) {
+      console.error("Error fetching vendors:", error);
+      toast.error("Error loading vendors");
+    }
+  };
+
+  const clearDateFilters = () => {
+    setStartDate(null);
+    setEndDate(null);
+  };
+
+  const clearAllFilters = () => {
+    setSelectedStore("all");
+    setSelectedVendor("all");
+    setStartDate(null);
+    setEndDate(null);
+  };
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("authDetails"));
     setAuthenticatedUser(user);
-    GetAllOutwards();
+    const fetchInitialData = async () => {
+      await GetAllOutwards();
+      await fetchStores();
+      await fetchVendors();
+    };
+    fetchInitialData();
   }, []);
 
   return (
@@ -211,15 +314,162 @@ const GetAllOutwards = async () => {
       <section className="w-full">
         <div className="w-[90%] mx-auto py-5">
           <div className="w-full lg:mt-10">
-            <section className="w-full mb-3 flex justify-end items-center gap-5 lg:justify-start">
-              <button
-                className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
-                type="button"
-                onClick={() => setOpenCreateModal(true)}
-              >
-                Create Return Outward
-                <FaPlus />
-              </button>
+            <section className="w-full mb-3 flex flex-col gap-4">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div className="w-full md:w-auto flex flex-col md:flex-row items-start md:items-center gap-4">
+                  {/* Filter Dropdown Button */}
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowFilters(!showFilters)}
+                      className="flex items-center gap-2 text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center border border-pumpkin"
+                    >
+                      <FaFilter />
+                      Filters
+                    </button>
+                    
+                    {/* Filter Dropdown Content */}
+                    {showFilters && (
+                      <div className="absolute z-10 mt-2 w-72 bg-white rounded-md shadow-lg p-4 border border-gray-200">
+                        <div className="space-y-4">
+                          {/* Store Filter */}
+                          <div>
+                            <label htmlFor="store-filter" className="block text-sm font-medium text-gray-700 mb-1">
+                              Store
+                            </label>
+                            <select
+                              id="store-filter"
+                              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pumpkin focus:border-pumpkin"
+                              value={selectedStore}
+                              onChange={(e) => {
+                                setSelectedStore(e.target.value);
+                                setCurrentPage(1);
+                              }}
+                            >
+                              <option value="all">All Stores</option>
+                              {allStores.map((store) => (
+                                <option key={store.branchId} value={store.branchName}>
+                                  {store.branchName}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* Vendor Filter */}
+                          <div>
+                            <label htmlFor="vendor-filter" className="block text-sm font-medium text-gray-700 mb-1">
+                              Vendor
+                            </label>
+                            <select
+                              id="vendor-filter"
+                              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pumpkin focus:border-pumpkin"
+                              value={selectedVendor}
+                              onChange={(e) => {
+                                setSelectedVendor(e.target.value);
+                                setCurrentPage(1);
+                              }}
+                            >
+                              <option value="all">All Vendors</option>
+                              {allVendors.map((vendor) => (
+                                <option key={vendor.vendorId} value={vendor.vendorName}>
+                                  {vendor.vendorName}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* Date Range Filter */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Date Range
+                            </label>
+                            <div className="space-y-2">
+                              <DatePicker
+                                selected={startDate}
+                                onChange={(date) => {
+                                  setStartDate(date);
+                                  setCurrentPage(1);
+                                }}
+                                selectsStart
+                                startDate={startDate}
+                                endDate={endDate}
+                                placeholderText="Start Date"
+                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pumpkin focus:border-pumpkin"
+                              />
+                              <DatePicker
+                                selected={endDate}
+                                onChange={(date) => {
+                                  setEndDate(date);
+                                  setCurrentPage(1);
+                                }}
+                                selectsEnd
+                                startDate={startDate}
+                                endDate={endDate}
+                                minDate={startDate}
+                                placeholderText="End Date"
+                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pumpkin focus:border-pumpkin"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Clear Filters Button */}
+                          <div className="flex justify-between">
+                            <button
+                              onClick={clearAllFilters}
+                              className="text-sm text-pumpkin hover:underline"
+                            >
+                              Clear All Filters
+                            </button>
+                            <button
+                              onClick={() => setShowFilters(false)}
+                              className="text-sm text-white bg-pumpkin px-3 py-1 rounded"
+                            >
+                              Apply
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Active Filters Indicator */}
+                  {(selectedStore !== "all" || selectedVendor !== "all" || startDate || endDate) && (
+                    <div className="flex items-center gap-2 text-sm text-pumpkin">
+                      <span>Filters Applied:</span>
+                      {selectedStore !== "all" && (
+                        <span className="bg-pumpkin/10 px-2 py-1 rounded">
+                          Store: {allStores.find(s => s.branchName === selectedStore)?.branchName}
+                        </span>
+                        
+                      )}
+                      {selectedVendor !== "all" && (
+                        <span className="bg-pumpkin/10 px-2 py-1 rounded">
+                          Vendor: {allVendors.find(v => v.vendorName === selectedVendor)?.vendorName}
+                        </span>
+                      )}
+                      {(startDate || endDate) && (
+                        <span className="bg-pumpkin/10 px-2 py-1 rounded">
+                          Date: {startDate?.toLocaleDateString()} {endDate ? `- ${endDate.toLocaleDateString()}` : ''}
+                        </span>
+                      )}
+                      <button
+                        onClick={clearAllFilters}
+                        className="text-pumpkin hover:underline"
+                      >
+                        Clear All
+                      </button>
+                    </div>
+                  )}
+                </div>
+                
+                <button
+                  className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
+                  type="button"
+                  onClick={() => setOpenCreateModal(true)}
+                >
+                  Create Return Outward
+                  <FaPlus />
+                </button>
+              </div>
             </section>
 
             <CustomTable
@@ -279,8 +529,6 @@ const GetAllOutwards = async () => {
             isLoading={isLoading}
           />
         )}
-
-        
       </section>
     </DashboardLayout>
   );

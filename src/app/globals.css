@@ -162,3 +162,15 @@
 .custom-scrollbar::-webkit-scrollbar {
   display: none; /* For Chrome, Safari, and Opera */
 }
+
+.custom-scrollbar-2::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+.custom-scrollbar-2::-webkit-scrollbar-thumb {
+  width: 3px;
+  height: 3px;
+  background-color: rgb(255, 117, 24);
+  border-radius: 20px;
+}
