@@ -8,6 +8,8 @@ import StoreIssueModal from "../shared-components/modals/StoreIssueModal";
 import EditStoreIssueModal from "../shared-components/modals/EditStoreIssueModal";
 import FilterModal from "../shared-components/modals/FilterModal";
 import { FaPlus, FaFilter } from "react-icons/fa";
+import PrintButton from "../shared-components/PrintButton";
+
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -151,6 +153,8 @@ const date = (item.IssuedDate || "").toString().slice(0, 10);
             <FaFilter />
             Filter
           </button>
+                        <PrintButton data={storeIssues} fileName="store_issues_list.csv" />
+          
         </div>
 
         {/* Table */}

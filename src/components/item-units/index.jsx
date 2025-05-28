@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 import ItemUnitModal from "../shared-components/modals/ItemUnitModal";
 import EditItemUnitModal from "../shared-components/modals/EditItemUnitModal";
 import { FaPlus } from "react-icons/fa";
+import PrintButton from "../shared-components/PrintButton";
+
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -103,6 +105,8 @@ const fetchItemUnits = async () => {
               {loading ? "Processing..." : "Create Item Unit"}
               <FaPlus />
             </button>
+                                    <PrintButton data={itemUnits} fileName="item_units_list.csv" />
+
           </div>
         </div>
 
