@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import DashboardLayout from "../shared-components/layouts/DashboardLayout";
 import CustomTable from "../shared-components/table";
 import { roleTableData } from "../../utils/table_data";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaFilter } from "react-icons/fa";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
 import CreateDamages from "../shared-components/modals/CreateDamages";
@@ -32,6 +32,7 @@ const Damages = () => {
   const [allStores, setAllStores] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [showFilters, setShowFilters] = useState(false);
 
   // Pagination States
   const [currentPage, setCurrentPage] = useState(1);
@@ -39,14 +40,18 @@ const Damages = () => {
   
   // Filter data based on selected store and date range
   const filteredData = tableData.filter(item => {
-    // Debug store matching
-    console.log("Filtering - Item storeBranchId:", item.storeBranchId, "Type:", typeof item.storeBranchId);
-    console.log("Selected store:", selectedStore, "Type:", typeof selectedStore);
-    
+    // Store filter
     const storeMatch = selectedStore === "all" || 
-                      String(item.storeBranchId) === String(selectedStore);
+                      item.store === selectedStore;
     
-    if (!startDate && !endDate) return storeMatch;
+    if (!startDate && !endDate) {
+      console.log('Filtering item:', {
+        itemStore: item.store,
+        selectedStore: selectedStore,
+        storeMatch
+      });
+      return storeMatch;
+    }
     
     const itemDate = new Date(item.originalIssuedDate || item.originalCreatedDate || item.IssuedDate || item.createdDate);
     const start = startDate ? new Date(startDate) : null;
@@ -56,9 +61,7 @@ const Damages = () => {
     if (start) dateMatch = dateMatch && itemDate >= start;
     if (end) dateMatch = dateMatch && itemDate <= end;
     
-    const finalMatch = storeMatch && dateMatch;
-    console.log("Item matches filters:", finalMatch, "Store match:", storeMatch, "Date match:", dateMatch);
-    return finalMatch;
+    return storeMatch && dateMatch;
   });
   
   const totalPages = Math.ceil(filteredData.length / rowsPerPage);
@@ -272,83 +275,129 @@ const Damages = () => {
             <section className="w-full mb-3 flex flex-col gap-4">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div className="w-full md:w-auto flex flex-col md:flex-row items-start md:items-center gap-4">
-                  {/* Store Filter */}
-                  <div className="flex items-center gap-2">
-                    <label htmlFor="store-filter" className="block text-sm font-medium text-gray-700">
-                      Filter by Store
-                    </label>
-                    <select
-                      id="store-filter"
-                      className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pumpkin focus:border-pumpkin"
-                      value={selectedStore}
-                      onChange={(e) => {
-                        console.log("Store selection changed:", e.target.value);
-                        setSelectedStore(e.target.value);
-                        setCurrentPage(1);
-                      }}
+                  {/* Filter Dropdown Button */}
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowFilters(!showFilters)}
+                      className="flex items-center gap-2 text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center border border-pumpkin"
                     >
-                      <option value="all">All Stores</option>
-                      {allStores.map((store) => (
-                        <option key={store.branchId} value={store.branchId}>
-                          {store.branchName}
-                        </option>
-                      ))}
-                    </select>
-                    {selectedStore !== "all" && (
-                      <button
-                        onClick={() => {
-                          setSelectedStore("all");
-                          setCurrentPage(1);
-                        }}
-                        className="text-sm text-pumpkin hover:underline"
-                      >
-                        Clear
-                      </button>
+                      <FaFilter />
+                      Filters
+                    </button>
+                    
+                    {/* Filter Dropdown Content */}
+                    {showFilters && (
+                      <div className="absolute z-10 mt-2 w-72 bg-white rounded-md shadow-lg p-4 border border-gray-200">
+                        <div className="space-y-4">
+                          {/* Store Filter */}
+                          <div>
+                            <label htmlFor="store-filter" className="block text-sm font-medium text-gray-700 mb-1">
+                              Store
+                            </label>
+                            <select
+                              id="store-filter"
+                              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pumpkin focus:border-pumpkin"
+                              value={selectedStore}
+                              onChange={(e) => {
+                                setSelectedStore(e.target.value);
+                                setCurrentPage(1);
+                              }}
+                            >
+                              <option value="all">All Stores</option>
+                              {allStores.map((store) => (
+                                <option key={store.branchId} value={store.branchName}>
+                                  {store.branchName}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* Date Range Filter */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Date Range
+                            </label>
+                            <div className="space-y-2">
+                              <DatePicker
+                                selected={startDate}
+                                onChange={(date) => {
+                                  setStartDate(date);
+                                  setCurrentPage(1);
+                                }}
+                                selectsStart
+                                startDate={startDate}
+                                endDate={endDate}
+                                placeholderText="Start Date"
+                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pumpkin focus:border-pumpkin"
+                              />
+                              <DatePicker
+                                selected={endDate}
+                                onChange={(date) => {
+                                  setEndDate(date);
+                                  setCurrentPage(1);
+                                }}
+                                selectsEnd
+                                startDate={startDate}
+                                endDate={endDate}
+                                minDate={startDate}
+                                placeholderText="End Date"
+                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pumpkin focus:border-pumpkin"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Clear Filters Button */}
+                          <div className="flex justify-between">
+                            <button
+                              onClick={() => {
+                                setSelectedStore("all");
+                                setStartDate(null);
+                                setEndDate(null);
+                                setCurrentPage(1);
+                              }}
+                              className="text-sm text-pumpkin hover:underline"
+                            >
+                              Clear All Filters
+                            </button>
+                            <button
+                              onClick={() => setShowFilters(false)}
+                              className="text-sm text-white bg-pumpkin px-3 py-1 rounded"
+                            >
+                              Apply
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     )}
                   </div>
 
-                  {/* Date Range Filter */}
-                  <div className="flex items-center gap-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Date Range
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <DatePicker
-                        selected={startDate}
-                        onChange={(date) => {
-                          setStartDate(date);
-                          setCurrentPage(1);
-                        }}
-                        selectsStart
-                        startDate={startDate}
-                        endDate={endDate}
-                        placeholderText="Start Date"
-                        className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pumpkin focus:border-pumpkin"
-                      />
-                      <span>to</span>
-                      <DatePicker
-                        selected={endDate}
-                        onChange={(date) => {
-                          setEndDate(date);
-                          setCurrentPage(1);
-                        }}
-                        selectsEnd
-                        startDate={startDate}
-                        endDate={endDate}
-                        minDate={startDate}
-                        placeholderText="End Date"
-                        className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pumpkin focus:border-pumpkin"
-                      />
-                      {(startDate || endDate) && (
-                        <button
-                          onClick={clearDateFilters}
-                          className="text-sm text-pumpkin hover:underline"
-                        >
-                          Clear Dates
-                        </button>
+                  {/* Active Filters Indicator */}
+                  {(selectedStore !== "all" || startDate || endDate) && (
+                    <div className="flex items-center gap-2 text-sm text-pumpkin">
+                      <span>Filters Applied:</span>
+                      {selectedStore !== "all" && (
+                        <span className="bg-pumpkin/10 px-2 py-1 rounded">
+                          Store: {selectedStore}
+                        </span>
                       )}
+                      {(startDate || endDate) && (
+                        <span className="bg-pumpkin/10 px-2 py-1 rounded">
+                          Date: {startDate?.toLocaleDateString()} {endDate ? `- ${endDate.toLocaleDateString()}` : ''}
+                        </span>
+                      )}
+                      <button
+                        onClick={() => {
+                          setSelectedStore("all");
+                          setStartDate(null);
+                          setEndDate(null);
+                          setCurrentPage(1);
+                        }}
+                        className="text-pumpkin hover:underline"
+                      >
+                        Clear All
+                      </button>
                     </div>
-                  </div>
+                  )}
                 </div>
                 
                 <button
