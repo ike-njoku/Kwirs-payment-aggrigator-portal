@@ -1,14 +1,18 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import DashboardLayout from "../shared-components/layouts/DashboardLayout";
 import CustomTable from "../shared-components/table";
 import { roleTableData } from "../../utils/table_data";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaFilter, FaDownload } from "react-icons/fa";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
 import CreateDamages from "../shared-components/modals/CreateDamages";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { usePDF } from 'react-to-pdf';
 
 const Damages = () => {
+  const { toPDF, targetRef } = usePDF({filename: 'damages-report.pdf'});
   const tableHeadings = [
     "Id",
     "Store",
@@ -26,14 +30,46 @@ const Damages = () => {
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [authenticatedUser, setAuthenticatedUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedStore, setSelectedStore] = useState("all");
+  const [allStores, setAllStores] = useState([]);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [showFilters, setShowFilters] = useState(false);
 
   // Pagination States
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 6;
-  const totalPages = Math.ceil(tableData.length / rowsPerPage);
+  
+  // Filter data based on selected store and date range
+  const filteredData = tableData.filter(item => {
+    // Store filter
+    const storeMatch = selectedStore === "all" || 
+                      item.store === selectedStore;
+    
+    if (!startDate && !endDate) {
+      console.log('Filtering item:', {
+        itemStore: item.store,
+        selectedStore: selectedStore,
+        storeMatch
+      });
+      return storeMatch;
+    }
+    
+    const itemDate = new Date(item.originalIssuedDate || item.originalCreatedDate || item.IssuedDate || item.createdDate);
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+    
+    let dateMatch = true;
+    if (start) dateMatch = dateMatch && itemDate >= start;
+    if (end) dateMatch = dateMatch && itemDate <= end;
+    
+    return storeMatch && dateMatch;
+  });
+  
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = tableData.slice(indexOfFirstRow, indexOfLastRow);
+  const currentRows = filteredData.slice(indexOfFirstRow, indexOfLastRow);
 
   // Pagination Handlers
   const nextPage = () => {
@@ -76,49 +112,41 @@ const Damages = () => {
     }
   };
 
-
-// Handle edit damage
-// Handle edit damage with improved error handling
-// Handle edit damage - structured like vendor update
-// Handle edit damage with proper ID validation
-// Updated handleEditItem function to match the modal's usage
-const handleEditItem = async (updatedDamage) => {
-  // Convert damageId to number and validate
-  const damageIdNum = Number(updatedDamage.damageId || updatedDamage.damageid);
-  if (!damageIdNum || isNaN(damageIdNum)) {
-    toast.error("Valid Damage ID is required");
-    return;
-  }
-
-  try {
-    const response = await AxiosPost(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/Damages/Update`,
-      {
-        ItemCode: Number(updatedDamage.itemCode),
-        damageid: damageIdNum,
-        storeBranchId: Number(updatedDamage.storeBranchId),
-        description: updatedDamage.description,
-        qty: Number(updatedDamage.quantity),
-        SIV: updatedDamage.sivNumber,
-        createdBy: updatedDamage.createdBy || "Admin",
-        Date: updatedDamage.date || new Date().toISOString()
-      }
-    );
-
-    if (response.StatusCode === 200) {
-      toast.success("Damage record updated successfully");
-      GetAllDamages();
-      setOpenEditModal(false);
-    } else {
-      toast.error(response.StatusMessage || "Update failed");
+  const handleEditItem = async (updatedDamage) => {
+    const damageIdNum = Number(updatedDamage.damageId || updatedDamage.damageid);
+    if (!damageIdNum || isNaN(damageIdNum)) {
+      toast.error("Valid Damage ID is required");
+      return;
     }
-  } catch (error) {
-    console.error("Update error:", error);
-    toast.error("Failed to update damage record");
-  }
-};
 
-// handle create damage 
+    try {
+      const response = await AxiosPost(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/Damages/Update`,
+        {
+          ItemCode: Number(updatedDamage.itemCode),
+          damageid: damageIdNum,
+          storeBranchId: Number(updatedDamage.storeBranchId),
+          description: updatedDamage.description,
+          qty: Number(updatedDamage.quantity),
+          SIV: updatedDamage.sivNumber,
+          createdBy: updatedDamage.createdBy || "Admin",
+          Date: updatedDamage.date || new Date().toISOString()
+        }
+      );
+
+      if (response.StatusCode === 200) {
+        toast.success("Damage record updated successfully");
+        GetAllDamages();
+        setOpenEditModal(false);
+      } else {
+        toast.error(response.StatusMessage || "Update failed");
+      }
+    } catch (error) {
+      console.error("Update error:", error);
+      toast.error("Failed to update damage record");
+    }
+  };
+
   const handleCreateDamage = async (damageData) => {
     setIsLoading(true);
   
@@ -156,10 +184,7 @@ const handleEditItem = async (updatedDamage) => {
     }
   };
 
-
-
-// get all damages 
-const GetAllDamages = async () => {
+  const GetAllDamages = async () => {
     try {
       const apiResponse = await AxiosGet(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/Inventory/Damages/GetAll`
@@ -169,9 +194,7 @@ const GetAllDamages = async () => {
         toast.error("Could not fetch Damages");
         return;
       }
-      console.log("Damages data:", apiResponse.data.Data);
   
-      // Date formatting function
       const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
         
@@ -181,13 +204,11 @@ const GetAllDamages = async () => {
             year: 'numeric',
             month: 'short',
             day: 'numeric',
-            // hour: '2-digit',
-            // minute: '2-digit',
             hour12: true
           });
         } catch (error) {
           console.error("Error formatting date:", dateString, error);
-          return dateString; // Return original if formatting fails
+          return dateString;
         }
       };
   
@@ -196,28 +217,56 @@ const GetAllDamages = async () => {
         ItemCode: item.ItemCode,
         damageId: item.DamageId,
         store: item.Store,
+        storeBranchId: item.storeBranchId || item.StoreBranchId || item.BranchId, // Multiple possible property names
         Description: item.Description,
         quantity: item.qty,
         SIVNo: item.SIVNo,
-        IssuedDate: formatDate(item.IssuedDate), // Formatted date
-        createdDate: formatDate(item.createdDate), // Formatted date
-        // Keep original dates in case you need them for sorting
+        IssuedDate: formatDate(item.IssuedDate),
+        createdDate: formatDate(item.createdDate),
         originalIssuedDate: item.IssuedDate,
         originalCreatedDate: item.createdDate
       }));
   
+      console.log("Fetched damages data:", tableData);
       setTableData(tableData);
-        console.log("Formatted table data:", tableData);
-      setCurrentPage(1); // Reset to first page when data changes
+      setCurrentPage(1);
     } catch (error) {
       toast.error("An error occurred while fetching Damages");
       console.error("Fetch error:", error);
     }
   };
+
+  const fetchStores = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/StoreBranches/GetAll`
+      );
+      const branchesData = await response.json();
+      if (branchesData.StatusCode === 200) {
+        console.log("Fetched stores:", branchesData.Data);
+        setAllStores(branchesData.Data);
+      } else {
+        toast.error("Failed to fetch stores");
+      }
+    } catch (error) {
+      console.error("Error fetching stores:", error);
+      toast.error("Error loading store branches");
+    }
+  };
+
+  const clearDateFilters = () => {
+    setStartDate(null);
+    setEndDate(null);
+  };
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("authDetails"));
     setAuthenticatedUser(user);
-    GetAllDamages();
+    const fetchInitialData = async () => {
+      await GetAllDamages();
+      await fetchStores();
+    };
+    fetchInitialData();
   }, []);
 
   return (
@@ -225,35 +274,174 @@ const GetAllDamages = async () => {
       <section className="w-full">
         <div className="w-[90%] mx-auto py-5">
           <div className="w-full lg:mt-10">
-            <section className="w-full mb-3 flex justify-end items-center gap-5 lg:justify-start">
-              <button
-                className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
-                type="button"
-                onClick={() => setOpenCreateModal(true)}
-              >
-                Add Damages
-                <FaPlus />
-              </button>
+            <section className="w-full mb-3">
+              <div className="flex flex-row justify-between items-center gap-4">
+                <div className="flex items-center gap-4">
+                  {/* Filter Dropdown Button */}
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowFilters(!showFilters)}
+                      className="flex items-center gap-2 text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center border border-pumpkin"
+                    >
+                      <FaFilter />
+                      Filters
+                    </button>
+                    
+                    {/* Filter Dropdown Content */}
+                    {showFilters && (
+                      <div className="absolute z-10 mt-2 w-72 bg-white rounded-md shadow-lg p-4 border border-gray-200">
+                        <div className="space-y-4">
+                          {/* Store Filter */}
+                          <div>
+                            <label htmlFor="store-filter" className="block text-sm font-medium text-gray-700 mb-1">
+                              Store
+                            </label>
+                            <select
+                              id="store-filter"
+                              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pumpkin focus:border-pumpkin"
+                              value={selectedStore}
+                              onChange={(e) => {
+                                setSelectedStore(e.target.value);
+                                setCurrentPage(1);
+                              }}
+                            >
+                              <option value="all">All Stores</option>
+                              {allStores.map((store) => (
+                                <option key={store.branchId} value={store.branchName}>
+                                  {store.branchName}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* Date Range Filter */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Date Range
+                            </label>
+                            <div className="space-y-2">
+                              <DatePicker
+                                selected={startDate}
+                                onChange={(date) => {
+                                  setStartDate(date);
+                                  setCurrentPage(1);
+                                }}
+                                selectsStart
+                                startDate={startDate}
+                                endDate={endDate}
+                                placeholderText="Start Date"
+                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pumpkin focus:border-pumpkin"
+                              />
+                              <DatePicker
+                                selected={endDate}
+                                onChange={(date) => {
+                                  setEndDate(date);
+                                  setCurrentPage(1);
+                                }}
+                                selectsEnd
+                                startDate={startDate}
+                                endDate={endDate}
+                                minDate={startDate}
+                                placeholderText="End Date"
+                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pumpkin focus:border-pumpkin"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Clear Filters Button */}
+                          <div className="flex justify-between">
+                            <button
+                              onClick={() => {
+                                setSelectedStore("all");
+                                setStartDate(null);
+                                setEndDate(null);
+                                setCurrentPage(1);
+                              }}
+                              className="text-sm text-pumpkin hover:underline"
+                            >
+                              Clear All Filters
+                            </button>
+                            <button
+                              onClick={() => setShowFilters(false)}
+                              className="text-sm text-white bg-pumpkin px-3 py-1 rounded"
+                            >
+                              Apply
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Active Filters Indicator */}
+                  {(selectedStore !== "all" || startDate || endDate) && (
+                    <div className="flex items-center gap-2 text-sm text-pumpkin">
+                      <span>Filters Applied:</span>
+                      {selectedStore !== "all" && (
+                        <span className="bg-pumpkin/10 px-2 py-1 rounded">
+                          Store: {selectedStore}
+                        </span>
+                      )}
+                      {(startDate || endDate) && (
+                        <span className="bg-pumpkin/10 px-2 py-1 rounded">
+                          Date: {startDate?.toLocaleDateString()} {endDate ? `- ${endDate.toLocaleDateString()}` : ''}
+                        </span>
+                      )}
+                      <button
+                        onClick={() => {
+                          setSelectedStore("all");
+                          setStartDate(null);
+                          setEndDate(null);
+                          setCurrentPage(1);
+                        }}
+                        className="text-pumpkin hover:underline"
+                      >
+                        Clear All
+                      </button>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="flex items-center gap-4">
+                  <button
+                    className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
+                    type="button"
+                    onClick={() => setOpenCreateModal(true)}
+                  >
+                    Add Damages
+                    <FaPlus />
+                  </button>
+                  <button
+                    onClick={() => toPDF()}
+                    className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
+                  >
+                    Download PDF
+                    <FaDownload />
+                  </button>
+                </div>
+              </div>
             </section>
 
-            <CustomTable
-              tableHeadings={tableHeadings}
-              tableData={currentRows}
-              isEllipseDropdwon={true}
-              tableType="damages"
-              handleDelete={handleDelete}
-              handleEdit={handleEdit}
-              openDeleteModal={openDeleteModal}
-              setOpenDeleteModal={setOpenDeleteModal}
-              setOpenEditModal={setOpenEditModal}
-              openEditDamageModal={openEditModal}
-              setOpenEditPaymentModal={setOpenEditModal}
-              handleDeleteItem={handleDeleteItem}
-              selectedDamage={editingVendor}
-              handleEditItem={handleEditItem}
-              label="me"
-              heading="Update Damage"
-            />
+            <div ref={targetRef}>
+              <CustomTable
+                tableHeadings={tableHeadings}
+                tableData={currentRows}
+                isEllipseDropdwon={true}
+                tableType="damages"
+                handleDelete={handleDelete}
+                handleEdit={handleEdit}
+                openDeleteModal={openDeleteModal}
+                setOpenDeleteModal={setOpenDeleteModal}
+                setOpenEditModal={setOpenEditModal}
+                openEditDamageModal={openEditModal}
+                setOpenEditPaymentModal={setOpenEditModal}
+                handleDeleteItem={handleDeleteItem}
+                selectedDamage={editingVendor}
+                handleEditItem={handleEditItem}
+                label="me"
+                heading="Update Damage"
+              />
+            </div>
 
             {/* Pagination Controls */}
             <div className="flex justify-between items-center mt-4 px-4 py-2 bg-gray-100">
