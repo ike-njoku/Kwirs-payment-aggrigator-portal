@@ -1,14 +1,16 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import DashboardLayout from "../shared-components/layouts/DashboardLayout";
 import CustomTable from "../shared-components/table";
 import { roleTableData } from "../../utils/table_data";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaFilter, FaDownload } from "react-icons/fa";
 import { AxiosGet, AxiosPost } from "../../services/http-service";
 import { toast } from "react-toastify";
 import CreateVendor from "../shared-components/modals/CreateVendor";
+import { usePDF } from 'react-to-pdf';
 
 const Vendors = () => {
+  const { toPDF, targetRef } = usePDF({filename: 'vendors-report.pdf'});
   const tableHeadings = [
     "Id",
     "Vendor Name",
@@ -24,14 +26,23 @@ const Vendors = () => {
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [authenticatedUser, setAuthenticatedUser] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedVendor, setSelectedVendor] = useState("all");
+  const [showFilters, setShowFilters] = useState(false);
 
   // Pagination States
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
-  const totalPages = Math.ceil(tableData.length / rowsPerPage);
+
+  // Filter data based on selected vendor
+  const filteredData = tableData.filter(item => {
+    return selectedVendor === "all" || 
+           item.vendorName?.toLowerCase().includes(selectedVendor.toLowerCase());
+  });
+  
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = tableData.slice(indexOfFirstRow, indexOfLastRow);
+  const currentRows = filteredData.slice(indexOfFirstRow, indexOfLastRow);
 
   // Pagination Handlers
   const nextPage = () => {
@@ -203,35 +214,124 @@ const Vendors = () => {
       <section className="w-full">
         <div className="w-[90%] mx-auto py-5">
           <div className="w-full lg:mt-10">
-            <section className="w-full mb-3 flex justify-end items-center gap-5 lg:justify-start">
-              <button
-                className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
-                type="button"
-                onClick={() => setOpenCreateModal(true)}
-              >
-                Create Vendor
-                <FaPlus />
-              </button>
+            <section className="w-full mb-3">
+              <div className="flex flex-row justify-between items-center gap-4">
+                <div className="flex items-center gap-4">
+                  {/* Filter Dropdown Button */}
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowFilters(!showFilters)}
+                      className="flex items-center gap-2 text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center border border-pumpkin"
+                    >
+                      <FaFilter />
+                      Filters
+                    </button>
+                    
+                    {/* Filter Dropdown Content */}
+                    {showFilters && (
+                      <div className="absolute z-10 mt-2 w-72 bg-white rounded-md shadow-lg p-4 border border-gray-200">
+                        <div className="space-y-4">
+                          {/* Vendor Name Filter */}
+                          <div>
+                            <label htmlFor="vendor-filter" className="block text-sm font-medium text-gray-700 mb-1">
+                              Vendor Name
+                            </label>
+                            <input
+                              type="text"
+                              id="vendor-filter"
+                              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pumpkin focus:border-pumpkin"
+                              placeholder="Search vendor name..."
+                              value={selectedVendor === "all" ? "" : selectedVendor}
+                              onChange={(e) => {
+                                setSelectedVendor(e.target.value || "all");
+                                setCurrentPage(1);
+                              }}
+                            />
+                          </div>
+
+                          {/* Clear Filters Button */}
+                          <div className="flex justify-between">
+                            <button
+                              onClick={() => {
+                                setSelectedVendor("all");
+                                setCurrentPage(1);
+                              }}
+                              className="text-sm text-pumpkin hover:underline"
+                            >
+                              Clear Filter
+                            </button>
+                            <button
+                              onClick={() => setShowFilters(false)}
+                              className="text-sm text-white bg-pumpkin px-3 py-1 rounded"
+                            >
+                              Apply
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Active Filters Indicator */}
+                  {selectedVendor !== "all" && (
+                    <div className="flex items-center gap-2 text-sm text-pumpkin">
+                      <span>Filter Applied:</span>
+                      <span className="bg-pumpkin/10 px-2 py-1 rounded">
+                        Vendor: {selectedVendor}
+                      </span>
+                      <button
+                        onClick={() => {
+                          setSelectedVendor("all");
+                          setCurrentPage(1);
+                        }}
+                        className="text-pumpkin hover:underline"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="flex items-center gap-4">
+                  <button
+                    className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
+                    type="button"
+                    onClick={() => setOpenCreateModal(true)}
+                  >
+                    Create Vendor
+                    <FaPlus />
+                  </button>
+                  <button
+                    onClick={() => toPDF()}
+                    className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
+                  >
+                    Download PDF
+                    <FaDownload />
+                  </button>
+                </div>
+              </div>
             </section>
 
-            <CustomTable
-              tableHeadings={tableHeadings}
-              tableData={currentRows}
-              isEllipseDropdwon={true}
-              tableType="vendor"
-              handleDelete={handleDelete}
-              handleEdit={handleEditVendor}
-              openDeleteModal={openDeleteModal}
-              setOpenDeleteModal={setOpenDeleteModal}
-              setOpenEditModal={setOpenEditModal}
-              openEditVendorModal={openEditModal}
-              setOpenEditPaymentModal={setOpenEditModal}
-              handleDeleteItem={handleDeleteItem}
-              editingVendor={editingVendor}
-              handleEditItem={handleEditItem}
-              label="me"
-              heading="Update Vendor"
-            />
+            <div ref={targetRef}>
+              <CustomTable
+                tableHeadings={tableHeadings}
+                tableData={currentRows}
+                isEllipseDropdwon={true}
+                tableType="vendor"
+                handleDelete={handleDelete}
+                handleEdit={handleEditVendor}
+                openDeleteModal={openDeleteModal}
+                setOpenDeleteModal={setOpenDeleteModal}
+                setOpenEditModal={setOpenEditModal}
+                openEditVendorModal={openEditModal}
+                setOpenEditPaymentModal={setOpenEditModal}
+                handleDeleteItem={handleDeleteItem}
+                editingVendor={editingVendor}
+                handleEditItem={handleEditItem}
+                label="me"
+                heading="Update Vendor"
+              />
+            </div>
 
             {/* Pagination Controls */}
             <div className="flex justify-between items-center mt-4 px-4 py-2 bg-gray-100">
