@@ -9,13 +9,13 @@ import { MdOutlinePayment } from "react-icons/md";
 import { Carter_One } from "next/font/google";
 
 export const sidebarMenu = [
-  {
-    MainMenu: "Dashboard",
-    submenu: [
-      { ResourceName: "Dashboard", URL: "/dashboard" },
-      { ResourceName: "Profile", URL: "/profile" },
-    ],
-  },
+  // {
+  //   MainMenu: "Dashboard",
+  //   submenu: [
+  //     { ResourceName: "Dashboard", URL: "/dashboard" },
+  //     { ResourceName: "Profile", URL: "/profile" },
+  //   ],
+  // },
   {
     MainMenu: "Settings",
     submenu: [{ ResourceName: "Change Password", URL: "/change-password" }],
