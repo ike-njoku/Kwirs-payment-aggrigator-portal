@@ -10,6 +10,7 @@ import { authenticateUser } from "../../services/auth-service";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { MAIN_MENU, SUB_MENU } from "../../utils/constants";
+import PrintButton from "../shared-components/PrintButton";
 
 const ResourcesPage = () => {
   const router = useRouter();
@@ -317,6 +318,7 @@ const ResourcesPage = () => {
                 >
                   Done
                 </button>
+                <PrintButton data={tableData} fileName="bulk_payment_file" />
               </div>
             </section>
 

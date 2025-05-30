@@ -237,7 +237,7 @@ const BankAccountPage = () => {
                 Create Return Inward
                 <FaPlus />
               </button>
-              <PrintButton data={tableData} fileName="return_inward_list.csv" />
+              <PrintButton data={tableData} fileName="return_inward_file.csv" />
             </section>
 
             {/* Table */}

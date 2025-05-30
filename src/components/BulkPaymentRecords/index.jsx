@@ -10,6 +10,7 @@ import { authenticateUser } from "../../services/auth-service";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { MAIN_MENU, SUB_MENU } from "../../utils/constants";
+import PrintButton from "../shared-components/PrintButton";
 
 const ResourcesPage = () => {
   const router = useRouter();
@@ -89,87 +90,89 @@ const ResourcesPage = () => {
   }, []);
 
   const handleCreateResourceModal = async (data) => {
-  console.log("Function called with:", data);
+    console.log("Function called with:", data);
 
-  try {
-    let response;
+    try {
+      let response;
 
-    if (data.mode === "batch") {
-      const { batchNumber } = data;
+      if (data.mode === "batch") {
+        const { batchNumber } = data;
 
-      if (!batchNumber) {
-        toast.error("Please provide a batch number.");
-        return;
+        if (!batchNumber) {
+          toast.error("Please provide a batch number.");
+          return;
+        }
+
+        const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/DLPayments/GetPaymentByBatch/${batchNumber}`;
+        response = await AxiosGet(url);
+      } else if (data.mode === "date") {
+        const { startDate, endDate, TaxofficeId } = data;
+
+        if (!startDate || !endDate || !TaxofficeId) {
+          toast.error("Please provide all required fields for Date filter.");
+          return;
+        }
+
+        const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/DLPayments/GetPaymentByDate`;
+        response = await AxiosPost(url, {
+          startDate,
+          endDate,
+          taxOfficeId: TaxofficeId,
+        });
       }
 
-      const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/DLPayments/GetPaymentByBatch/${batchNumber}`;
-      response = await AxiosGet(url);
-    } else if (data.mode === "date") {
-      const { startDate, endDate, TaxofficeId } = data;
+      console.log("API response:", response);
 
-      if (!startDate || !endDate || !TaxofficeId) {
-        toast.error("Please provide all required fields for Date filter.");
-        return;
+      const rawData = response?.data?.Data || response?.Data || [];
+
+      if (rawData.length > 0 && rawData[0].BatchNumber) {
+        setLastBatchNumber(rawData[0].BatchNumber);
+        localStorage.setItem(
+          "lastBatchNumber2",
+          JSON.stringify(rawData[0].BatchNumber)
+        );
       }
 
-      const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/DLPayments/GetPaymentByDate`;
-      response = await AxiosPost(url, {
-        startDate,
-        endDate,
-        taxOfficeId: TaxofficeId,
-      });
-    }
+      const formattedData = rawData.map((item) => ({
+        BatchNumber: item.BatchNumber,
+        Channel: item.Channel,
+        PaymentRef: item.PaymentRef,
+        RequestId: item.RequestId,
+        createdBy: item.createdBy,
+        createdDate: item.createdDate,
+        description: item.description,
+        paymentDate: item.paymentDate,
+        taxTypeId: item.taxTypeId,
+        taxpayerName: item.taxpayerName,
+        taxpayerTIN: item.taxpayerTIN,
+      }));
 
-    console.log("API response:", response);
+      if (formattedData.length === 0) {
+        toast.info("No records found.");
+      }
 
-    const rawData = response?.data?.Data || response?.Data || [];
-
-    if (rawData.length > 0 && rawData[0].BatchNumber) {
-      setLastBatchNumber(rawData[0].BatchNumber);
+      setTableData(formattedData);
       localStorage.setItem(
-        "lastBatchNumber2",
-        JSON.stringify(rawData[0].BatchNumber)
+        "persistedTableData2",
+        JSON.stringify(formattedData)
       );
+
+      fetchAllResources?.();
+    } catch (error) {
+      console.error("Error getting payment data:", error);
+
+      // 👇 Add fallback toast for known bad request
+      if (error?.response?.status === 400) {
+        toast.error("Could not retrieve payments. Bad request.");
+      } else {
+        toast.error(
+          `An error occurred: ${
+            error?.response?.data?.message || "Request failed"
+          }`
+        );
+      }
     }
-
-    const formattedData = rawData.map((item) => ({
-      BatchNumber: item.BatchNumber,
-      Channel: item.Channel,
-      PaymentRef: item.PaymentRef,
-      RequestId: item.RequestId,
-      createdBy: item.createdBy,
-      createdDate: item.createdDate,
-      description: item.description,
-      paymentDate: item.paymentDate,
-      taxTypeId: item.taxTypeId,
-      taxpayerName: item.taxpayerName,
-      taxpayerTIN: item.taxpayerTIN,
-    }));
-
-    if (formattedData.length === 0) {
-      toast.info("No records found.");
-    }
-    
-    setTableData(formattedData);
-    localStorage.setItem("persistedTableData2", JSON.stringify(formattedData));
-
-    fetchAllResources?.();
-  } catch (error) {
-    console.error("Error getting payment data:", error);
-
-    // 👇 Add fallback toast for known bad request
-    if (error?.response?.status === 400) {
-      toast.error("Could not retrieve payments. Bad request.");
-    } else {
-      toast.error(
-        `An error occurred: ${
-          error?.response?.data?.message || "Request failed"
-        }`
-      );
-    }
-  }
-};
-
+  };
 
   // Undo handler
   const handleUndo = async () => {
@@ -336,6 +339,11 @@ const ResourcesPage = () => {
                 >
                   Refresh
                 </button>
+
+                <PrintButton
+                  data={tableData}
+                  fileName="bulk_payment_records_file"
+                />
               </div>
             </section>
 

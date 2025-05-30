@@ -10,6 +10,7 @@ import { authenticateUser } from "../../services/auth-service";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { MAIN_MENU, SUB_MENU } from "../../utils/constants";
+import PrintButton from "../shared-components/PrintButton";
 
 const ResourcesPage = () => {
   const router = useRouter();
@@ -207,7 +208,7 @@ const ResourcesPage = () => {
         <div className="w-[90%] mx-auto py-5">
           <div className="w-full lg:mt-10">
             {/* Search bar and filter options */}
-            <section className="w-full mb-3 flex justify-end items-center gap-5 lg:justify-start">
+            <section className="w-full mb-3 flex justify-between items-center gap-5 ">
               <button
                 className="text-pumpkin focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 border border-pumpkin"
                 type="button"
@@ -216,6 +217,8 @@ const ResourcesPage = () => {
                 Create Resource
                 <FaPlus />
               </button>
+
+              <PrintButton data={tableData} fileName="resource_file.csv" />
             </section>
 
             {/* Table */}
