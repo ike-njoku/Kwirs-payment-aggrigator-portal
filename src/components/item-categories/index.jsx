@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 import ItemCategoryModal from "../shared-components/modals/ItemCategoryModal";
 import EditItemCategoryModal from "../shared-components/modals/EditItemCategories";
 import { FaPlus } from "react-icons/fa";
+import PrintButton from "../shared-components/PrintButton";
+
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -83,6 +85,8 @@ const ItemCategoryPage = () => {
               {loading ? "Processing..." : "Create Item Category"}
               <FaPlus />
             </button>
+                                    <PrintButton data={itemCategories} fileName="item_categories_list.csv" />
+
           </div>
         </div>
 
