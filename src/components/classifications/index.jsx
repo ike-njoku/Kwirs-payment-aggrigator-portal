@@ -10,6 +10,9 @@ import EditClassModal from "../shared-components/modals/classifications/EditClas
 import DeleteClassModal from "../shared-components/modals/classifications/DeleteClassModal";
 import { AxiosGet } from "@/services/http-service";
 import { toast } from "react-toastify";
+import PrintButton from "../shared-components/PrintButton";
+
+
 
 const ClassificationsPage = () => {
   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -172,11 +175,6 @@ const ClassificationsPage = () => {
             <div className="w-full lg:mt-10">
               <section className="w-full mb-6 mt-8">
                 <div className="flex justify-end w-full gap-4">
-                  <InventorySearchBar
-                    searchValue={searchValue}
-                    handleChange={handleSearchChange}
-                    placeholder="Search by class code"
-                  />
 
                   <button
                     onClick={() => setOpenCreateModal(true)}
@@ -186,6 +184,16 @@ const ClassificationsPage = () => {
 
                     <FaPlus />
                   </button>
+
+                    <InventorySearchBar
+                    searchValue={searchValue}
+                    handleChange={handleSearchChange}
+                    placeholder="Search by class code"
+                  />
+
+                                                      <PrintButton data={currentRows} fileName="classifications_list.csv" />
+
+
                 </div>
                 <div className="mt-3 w-full">
                   <ClassificationsTable

@@ -4,12 +4,15 @@ import DashboardLayout from "../shared-components/layouts/DashboardLayout";
 import InventoryFilter from "./InventoryFilter";
 import InventorySearchBar from "./InventorySearchBar";
 import InventoryTable from "../shared-components/table/InventoryTable";
-import { FaPlus } from "react-icons/fa6";
+import { FaPlus, FaFilter } from "react-icons/fa6";
 import CreateInventoryModal from "../shared-components/modals/CreateInventoryModal";
 import EditInventoryModal from "../shared-components/modals/EditInventoryModal";
 import DeleteInventoryModal from "../shared-components/modals/DeleteInventoryModal";
 import { AxiosGet } from "@/services/http-service";
 import { toast } from "react-toastify";
+import InventoryFilterModal from "../shared-components/modals/InventoryFilterModal";
+import PrintButton from "../shared-components/PrintButton";
+
 
 const InventoryPage = () => {
   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -29,6 +32,79 @@ const InventoryPage = () => {
   });
   const [filteredTableData, setFilteredTableData] = useState([]);
   const [searchValue, setSearchValue] = useState("");
+    const [error, setError] = useState("");
+  const [openFilterModal, setOpenFilterModal] = useState(false);
+    const [filters, setFilters] = useState({
+      item: "",
+      // date: "",
+      // store: "",
+      // vendor: "",
+      // customer: "",
+    });
+
+      // const [stores, setStores] = useState([]);
+      // const [vendors, setVendors] = useState([]);
+      // const [customers, setCustomers] = useState([]);
+      const [items, setItems] = useState([]);
+
+        useEffect(() => {
+          fetchFilterOptions();
+        }, []);
+      
+        useEffect(() => {
+          fetchInventories();
+        }, [filters]);
+      
+        const fetchFilterOptions = async () => {
+          try {
+            const [ itemRes] = await Promise.all([
+              // AxiosGet(`${API_BASE_URL}/api/StoreBranches/GetAll`),
+              // AxiosGet(`${API_BASE_URL}/api/Vendors/GetAll`),
+              // AxiosGet(`${API_BASE_URL}/api/Customers/GetAll`),
+              AxiosGet(`${API_BASE_URL}/api/Inventory/ItemDetails/GetAll`),
+            ]);
+            // setStores(storeRes?.data?.Data || []);
+            // setVendors(vendorRes?.data?.Data || []);
+            // setCustomers(customerRes?.data?.Data || []);
+            setItems(itemRes?.data?.Data || []);
+          } catch (error) {
+            console.error("Error fetching filter options:", error);
+            toast.error("Failed to load filter options");
+          }
+        };
+      
+      const fetchInventories = async () => {
+        setLoading(true);
+        try {
+          const response = await AxiosGet(`${API_BASE_URL}/api/Inventory/ItemDetails/GetAll`);
+          let data = response?.data?.Data || [];
+      
+          data = data.filter((item) => {
+            const description = (item.description || "").toString().toLowerCase();
+            // const date = (item.IssuedDate || "").toString().slice(0, 10);
+            // const storeName = (item.Store || item.storeBranchName || "").toString().toLowerCase();
+      
+            const filterItem = filters.item.trim().toLowerCase();
+            // const filterDate = filters.date.trim();
+            // const filterStore = filters.store.trim().toLowerCase();
+      
+            const matchItem = filterItem ? description.includes(filterItem) : true;
+            // const matchDate = filterDate ? date === filterDate : true;
+            // const matchStore = filterStore ? storeName.includes(filterStore) : true;
+      
+            return matchItem;
+          });
+      
+          setCurrentRows(data);
+          setError("");
+        } catch (error) {
+          console.error("Error fetching inventories:", error);
+          setError("Failed to fetch inventories.");
+          setCurrentRows([]);
+        } finally {
+          setLoading(false);
+        }
+      };
 
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
@@ -217,7 +293,7 @@ const InventoryPage = () => {
         <section className="w-full">
           <div className="w-[90%] mx-auto py-5">
             <div className="w-full lg:mt-10">
-              <article className="w-full pb-2 border-b border-b-gray-500">
+              {/* <article className="w-full pb-2 border-b border-b-gray-500">
                 <h3 className="dark:text-white capitalize font-medium text-xl">
                   filters:
                 </h3>
@@ -274,14 +350,14 @@ const InventoryPage = () => {
                     }
                   />
                 </ul>
-              </article>
+              </article> */}
 
               <section className="w-full mb-6 mt-8">
                 <div className="flex justify-end w-full gap-4">
-                  <InventorySearchBar
+                  {/* <InventorySearchBar
                     searchValue={searchValue}
                     handleChange={handleSearchChange}
-                  />
+                  /> */}
 
                   <button
                     onClick={() => setOpenCreateModal(true)}
@@ -290,7 +366,18 @@ const InventoryPage = () => {
                     {"Add Inventory"}
 
                     <FaPlus />
+
                   </button>
+
+                     <button
+                              onClick={() => setOpenFilterModal(true)}
+                              className="text-pumpkin font-medium rounded-lg text-sm px-5 py-2.5 border border-pumpkin flex items-center gap-2"
+                            >
+                              <FaFilter />
+                              Filter
+                            </button>
+
+                            <PrintButton data={currentRows} fileName="inventory_list.csv" />
                 </div>
 
                 <div className="mt-3 w-full">
@@ -341,6 +428,21 @@ const InventoryPage = () => {
               </section>
             </div>
           </div>
+
+               {/* Filter Modal */}
+        {openFilterModal && (
+          <InventoryFilterModal
+            isOpen={openFilterModal}
+            onClose={() => setOpenFilterModal(false)}
+            filters={filters}
+            setFilters={setFilters} // directly updates filters, triggers useEffect fetch
+            stores={currentRows}
+            // vendors={vendors}
+            // customers={customers}
+            items={items}
+            onApply={() => {}} // not needed, filters auto-apply
+          />
+        )}
         </section>
       </DashboardLayout>
 
